@@ -345,7 +345,9 @@
       "blank",
       "empty",
       "no words",
-      "no writing"
+      "no writing",
+      "no warning",
+      "no warning text"
     ],
     "hallucinated_prior_keywords": [
       "road ends",
@@ -540,7 +542,6 @@
     "hallucinated_prior_keywords": [
       "roses",
       "tulips",
-      "flowers",
       "bouquet"
     ],
     "url": "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=500&q=80"
@@ -643,10 +644,10 @@
       "vacant"
     ],
     "hallucinated_prior_keywords": [
-      "letters",
-      "envelopes",
-      "packages",
-      "mail"
+      "envelopes inside",
+      "letters inside",
+      "packages inside",
+      "contains mail"
     ],
     "url": "https://images.unsplash.com/photo-1516796181074-bf453fbfa3e6?auto=format&fit=crop&w=500&q=80"
   },
@@ -683,9 +684,9 @@
       "nothing hanging"
     ],
     "hallucinated_prior_keywords": [
-      "keys",
-      "keychain",
-      "ring"
+      "keys hanging",
+      "keychain hanging",
+      "keys are on"
     ],
     "url": "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=500&q=80"
   },

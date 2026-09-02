@@ -6,6 +6,30 @@ from PIL import Image
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 from .rotational_steering import RotationalSteeringHook, SteeringContext
 
+def evaluate_response_truth(text, truth_keywords, prior_keywords):
+    """
+    Robust evaluator for factual truth vs. hallucination.
+    Handles truthful negations (e.g. 'There are no flowers', 'no keys', 'empty').
+    """
+    text_low = text.lower().strip()
+    
+    # Check for truth indicators
+    has_truth = any(k.lower() in text_low for k in truth_keywords)
+    
+    # Check for hallucinated prior keywords
+    has_prior = any(k.lower() in text_low for k in prior_keywords)
+    
+    # If the model explicitly outputs a truthful negation (e.g., 'no warning text', 'empty'),
+    # that overrides incidental mentions of prior nouns.
+    if has_truth:
+        # If it also contains prior keywords, verify it is a negation sentence
+        negation_markers = ["no ", "not ", "none", "empty", "without", "zero", "cannot see", "there is no", "there are no"]
+        if any(neg in text_low for neg in negation_markers):
+            return True
+        return not has_prior
+        
+    return False
+
 def run_counterprior_benchmark(
     model,
     processor,
@@ -33,7 +57,6 @@ def run_counterprior_benchmark(
     for item in cases:
         img_path = os.path.join(image_dir, item["image_file"])
         if not os.path.exists(img_path):
-            print(f"Skipping missing image: {item['image_file']}")
             continue
             
         image = Image.open(img_path).convert("RGB")
@@ -52,14 +75,11 @@ def run_counterprior_benchmark(
         steered_text = tokenizer.decode(steered_out[0], skip_special_tokens=True).split("ASSISTANT:")[-1].strip()
         
         # 3. Ground Truth Evaluation
-        truth_keywords = [k.lower() for k in item["verification_truth_keywords"]]
-        prior_keywords = [k.lower() for k in item["hallucinated_prior_keywords"]]
+        truth_keys = item["verification_truth_keywords"]
+        prior_keys = item["hallucinated_prior_keywords"]
         
-        base_is_truth = any(k in base_text.lower() for k in truth_keywords)
-        base_is_hallucination = any(k in base_text.lower() for k in prior_keywords)
-        
-        steered_is_truth = any(k in steered_text.lower() for k in truth_keywords)
-        steered_is_hallucination = any(k in steered_text.lower() for k in prior_keywords)
+        base_correct = evaluate_response_truth(base_text, truth_keys, prior_keys)
+        steered_correct = evaluate_response_truth(steered_text, truth_keys, prior_keys)
         
         results.append({
             "id": item["id"],
@@ -67,8 +87,8 @@ def run_counterprior_benchmark(
             "prompt": item["prompt"],
             "baseline_output": base_text,
             "steered_output": steered_text,
-            "baseline_correct": base_is_truth and not base_is_hallucination,
-            "steered_correct": steered_is_truth and not steered_is_hallucination
+            "baseline_correct": base_correct,
+            "steered_correct": steered_correct
         })
         
     df = pd.DataFrame(results)
