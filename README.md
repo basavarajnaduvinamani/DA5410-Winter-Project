@@ -226,7 +226,7 @@ Completed as part of the **DA5410 Winter Project (Industrial Placement)** at the
 ```bibtex
 @techreport{naduvinamani2026counterprior,
   title={Predictive Emergence of Hallucination-Conditioned Internal Representations in a Multimodal LLM},
-  author={Naduvinamani, Basavaraj A. and Khapra, Mitesh and Khan, Mohammed Safi Ur Rahman},
+  author={Basavaraj A. Naduvinamani and Mohammed Safi Ur Rahman Khan and Mitesh M. Khapra},
   institution={Department of Data Science and Artificial Intelligence, Indian Institute of Technology Madras},
   year={2026},
   type={Technical Report (DA5410)},
