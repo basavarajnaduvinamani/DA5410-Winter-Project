@@ -22,29 +22,39 @@ Using **LLaVA-1.5-7B** as an analyzable case study, this project investigates ha
 ### Key Empirical Findings:
 1. **The Representation Emergence Window (Layers 13–17):** Layer-wise linear classifier probing demonstrates that internal representations for truth-conditioned vs. hallucination-conditioned states become linearly separable ($>90\%$ accuracy by Layer 14, peaking at $100\%$ at Layer 17), well before token-level probability divergence occurs at **Layer 25**.
 2. **Latent Truth Axis Geometry:** Principal Component Analysis (PCA) over terminal prompt representations isolates a dominant axis accounting for **$34.48\%$ of activation variance** at the decision layer.
-3. **Bidirectional Causal Verification:** Negative activation steering along the truth direction ($\\alpha = -0.35$) causally forces hallucinated object generation on unpopulated scenes (e.g., inducing imaginary objects next to a solitary banana).
-4. **Norm-Preserving Rotational Steering (SLERP):** Standard vector addition ($h + \\alpha v$) causes activation norm explosion, degrading linguistic fluency. We formulate **Spherical Linear Interpolation (SLERP)** with dynamic threshold gating, eliminating hallucinations on absence scenes while maintaining **$85.7\%$ sightedness retention** on real objects (*The Lobotomy Check*).
+3. **Bidirectional Causal Verification:** Negative activation steering along the truth direction ($\alpha = -0.35$) causally forces hallucinated object generation on unpopulated scenes (e.g., inducing imaginary objects next to a solitary banana).
+4. **Norm-Preserving Rotational Steering (SLERP):** Standard vector addition ($h + \alpha v$) causes activation norm explosion, degrading linguistic fluency. We formulate **Spherical Linear Interpolation (SLERP)** with dynamic threshold gating, eliminating hallucinations on absence scenes while maintaining **$85.7\%$ sightedness retention** on real objects (*The Lobotomy Check*).
 
 ```mermaid
 flowchart TD
-    subgraph EarlyLayers ["Layers 0–6: Raw Multimodal Integration"]
-        A["Vision Embeddings (CLIP-ViT-L/14) + Text Tokens"] --> B["Low Representational Separability (~50% Baseline)"]
+    subgraph Phase1 ["1. Input & Early Integration (Layers 0–6)"]
+        A["Vision Tokens (CLIP-ViT-L/14) + Prompt Tokens"] --> B["Initial Multimodal Fusion
+(Near-Chance Linear Separability ~50%)"]
     end
 
-    subgraph MidLayers ["Layers 13–17: The Emergence Window"]
+    subgraph Phase2 ["2. Mid-Decoder Emergence Window (Layers 13–17)"]
         B --> C["Linear Separability Surges (>90% → 100%)"]
-        C --> D["Latent Geometry Splits into Truth vs. Hallucination Manifolds"]
+        C --> D["Latent Geometry Splits into Truth vs. Lie Manifolds"]
     end
 
-    subgraph DecisionLayer ["Layer 25: Conflict & Token Commitment"]
-        D --> E["Attention Decoupling (Liar Heads Decouple from Image Tokens)"]
-        E --> F["Logit Divergence (Vocabulary-level Probability Flip)"]
+    subgraph Phase3 ["3. Decision Layer & Adaptive Steering (Layer 25)"]
+        D --> E{"Adaptive Gating:
+Alignment < τ ?"}
+        E -- "No (Truth Confident)" --> F["Standard Forward Pass
+(Natural Sightedness Retained)"]
+        E -- "Yes (Hallucination Detected)" --> G["SLERP Rotational Steering
+(Norm-Preserving Hypersphere Rotation)"]
     end
 
-    subgraph InferenceIntervention ["Inference-Time Rotational Steering"]
-        D -.->|"Adaptive Gate: Alignment < τ"| G["SLERP Rotation toward Truth Axis (||h|| Preserved)"]
-        G -.->|"Prevents Activation Norm Blowup"| F
+    subgraph Phase4 ["4. Autoregressive Token Decoding"]
+        F --> H["Truthful / Factual Output Generation"]
+        G --> H
     end
+
+    style Phase1 fill:#f9f9fb,stroke:#d0d7de,stroke-width:1px
+    style Phase2 fill:#f0f7ff,stroke:#0969da,stroke-width:1px
+    style Phase3 fill:#fff8c5,stroke:#d4a72c,stroke-width:1px
+    style Phase4 fill:#dafbe1,stroke:#1a7f37,stroke-width:1px
 ```
 
 ---
@@ -54,27 +64,27 @@ flowchart TD
 ### 1. Representation Extraction (Terminal Prompt State)
 To avoid lexical semantic leakage (e.g., extracting on tokens like `"Yes"` or `"No"` which inherently encode affirmation/negation semantics), hidden representations are extracted strictly at the terminal prompt prefix token (the colon in `ASSISTANT:`):
 
-$$h_{\\ell} = \\text{TransformerLayer}_{\\ell}(x)_{[\\text{seq}\\text{-}1]}, \quad h_{\\ell} \in \mathbb{R}^{d}$$
+$$h_{\ell} = \text{TransformerLayer}_{\ell}(x)_{[\text{seq}-1]}, \quad h_{\ell} \in \mathbb{R}^{d}$$
 
 ### 2. The PCA Truth Axis
-Given calibration matrices $H_{\\text{truth}}, H_{\\text{lie}} \in \mathbb{R}^{N \times d}$ at Layer $\\ell = 25$, we stack $X = [H_{\\text{lie}}; H_{\\text{truth}}]$ and compute the first principal component:
+Given calibration matrices $H_{\text{truth}}, H_{\text{lie}} \in \mathbb{R}^{N \times d}$ at Layer $\ell = 25$, we stack $X = [H_{\text{lie}}; H_{\text{truth}}]$ and compute the first principal component:
 
-$$\\vec{v}_{\\text{PCA}} = \arg\max_{\\|v\\|=1} \text{Var}(Xv)$$
+$$\vec{v}_{\text{PCA}} = \arg\max_{\|v\|=1} \text{Var}(Xv)$$
 
 To ensure directional consistency:
-$$\\vec{v}_{\\text{truth}} = \text{sign}\\left(\\langle \mu_{\\text{truth}} - \mu_{\\text{lie}}, \vec{v}_{\\text{PCA}} \\rangle\\right) \cdot \vec{v}_{\\text{PCA}}$$
+$$\vec{v}_{\text{truth}} = \text{sign}\left(\langle \mu_{\text{truth}} - \mu_{\text{lie}}, \vec{v}_{\text{PCA}} \rangle\right) \cdot \vec{v}_{\text{PCA}}$$
 
 ### 3. Spherical Linear Interpolation (SLERP) Steering
-To preserve the natural activation magnitude $\\|h\\|$ while altering its directional subspace alignment:
+To preserve the natural activation magnitude $\|h\|$ while altering its directional subspace alignment:
 
-$$\\hat{h} = \frac{h}{\\|h\\|}, \quad \hat{u} = \frac{\\vec{v}_{\\text{truth}}}{\\|\\vec{v}_{\\text{truth}}\\|}, \quad \theta = \arccos(\\text{clamp}(\\hat{h} \cdot \hat{u}, -1, 1))$$
+$$\hat{h} = \frac{h}{\|h\|}, \quad \hat{u} = \frac{\vec{v}_{\text{truth}}}{\|\vec{v}_{\text{truth}}\|}, \quad \theta = \arccos(\text{clamp}(\hat{h} \cdot \hat{u}, -1, 1))$$
 
-$$\\hat{h}_{\\text{rot}} = \frac{\\sin((1 - \\alpha)\\theta)}{\\sin\\theta}\\hat{h} + \frac{\\sin(\\alpha\\theta)}{\\sin\\theta}\\hat{u}, \quad h_{\\text{steered}} = \\hat{h}_{\\text{rot}} \cdot \\|h\\|$$
+$$\hat{h}_{\text{rot}} = \frac{\sin((1 - \alpha)\theta)}{\sin\theta}\hat{h} + \frac{\sin(\alpha\theta)}{\sin\theta}\hat{u}, \quad h_{\text{steered}} = \hat{h}_{\text{rot}} \cdot \|h\|$$
 
 ### 4. Adaptive Smart-Switch Gating
 Steering is applied conditionally during autoregressive decoding based on alignment with the truth subspace:
-$$\\text{Intervention}(\\hat{h}) = \\begin{cases} \\text{SLERP}(\\hat{h}, \\hat{u}, \\alpha) & \\text{if } \\langle \hat{h}, \hat{u} \\rangle < \\tau \\\\ \\hat{h} & \\text{otherwise} \\end{cases}$$
-where $\\tau = 15.0$ is the empirical confidence threshold.
+$$\text{Intervention}(\hat{h}) = \begin{cases} \text{SLERP}(\hat{h}, \hat{u}, \alpha) & \text{if } \langle \hat{h}, \hat{u} \rangle < \tau \\ \hat{h} & \text{otherwise} \end{cases}$$
+where $\tau = 15.0$ is the empirical confidence threshold.
 
 ---
 
@@ -87,7 +97,7 @@ where $\\tau = 15.0$ is the empirical confidence threshold.
 | **Emergence Window** | Layers 13–17 | — | Sharp transition from chance to $>90\%$ linear separability |
 | **PC1 Variance Explained** | — | **$34.48\%$** | Dominant single-axis structure of truth vs. hallucination |
 | **Random-Direction Baseline** | $0/100$ beat Truth Axis | — | Statistically significant ($p < 0.01$) |
-| **Random-Label Control** | $\\approx 40.0\%$ | — | Confirms separability is not an artifact of classifier overfitting |
+| **Random-Label Control** | $\approx 40.0\%$ | — | Confirms separability is not an artifact of classifier overfitting |
 | **Sightedness Retention (Lobotomy Check)** | $100\%$ | **$85.7\%$ (12/14)** | Preserves perception of genuine objects with high sensitivity |
 | **Absence Trap Suppression** | $0\%$ (Hallucinates) | **Clean Negations** | Model outputs truthful denials (*"There is no X"*) |
 
@@ -119,7 +129,9 @@ DA5410-Winter-Project/
 ├── requirements.txt                    <-- Python dependency specifications
 ├── .gitignore                          <-- Git exclusion rules
 ├── docs/                               <-- Academic reports & research documentation
-│   ├── DA5410_Winter_Project_Report.pdf        <-- Formal 17-page IIT Madras project report
+│   ├── DA5410_Winter_Project_Report.pdf        <-- Formal 15-page IIT Madras project report
+│   ├── main.tex                                <-- Full publication LaTeX source
+│   ├── reference.bib                           <-- Complete IEEEtran bibliography
 │   ├── Research_Proposal_Literature_Survey.pdf  <-- Initial proposal & survey (Dec 2025)
 │   └── Research_Log_Trajectory.pdf             <-- Experimental trajectory & notes
 ├── dataset/
@@ -131,7 +143,7 @@ DA5410-Winter-Project/
 │   ├── probe.py                        <-- Terminal prompt hidden-state & logit lens probes
 │   ├── latent_geometry.py              <-- PCA Truth Axis & layer-wise linear classifier probes
 │   ├── rotational_steering.py          <-- SLERP rotational forward hook & adaptive switch
-│   └── benchmark.py                    <-- Automated evaluation & scoring engine
+│   └── benchmark.py                    <-- Negation-aware evaluation & scoring engine
 ├── scripts/
 │   └── generate_dataset.py             <-- Dataset acquisition & validation script
 └── notebooks/
