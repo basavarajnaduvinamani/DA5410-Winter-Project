@@ -338,6 +338,8 @@ Our benchmark reveals an important distinction: \textbf{spatial presence} (absen
 
 \subsection{Future Research Directions}
 \begin{enumerate}
+    \item \textbf{Temporal Video Generalization:} Video inputs in multimodal architectures are processed as temporal sequences of discrete visual frame embeddings. Because transformer decoders project video frames into the same continuous token space, the mid-decoder Emergence Window identified in this study provides a concrete foundation for detecting \textit{temporal truth-drift} and frame-level hallucination accumulation across video sequences.
+    \item \textbf{Spectral Audio \& Speech Extension:} In speech-language models, acoustic inputs are encoded as spectral-temporal frequency patches. The geometric subspace framework (extracting latent truth axes on the unit hypersphere) provides a principled blueprint for identifying audio-conditioned hallucinations and suppressing acoustic hallucinations.
     \item \textbf{Multi-Layer Distributed Steering:} Extending SLERP to simultaneously steer early MLP layers (for color/attribute priors) and mid attention heads (for existence grounding).
     \item \textbf{Real-Time Early Exit \& Safety Gating:} Utilizing Layer 14 linear probes to dynamically trigger early inference rejection on high-risk hallucinated prompts.
 \end{enumerate}

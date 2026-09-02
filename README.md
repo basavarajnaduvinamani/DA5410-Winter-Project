@@ -207,6 +207,16 @@ The primary interactive workflow can be executed directly via [`notebooks/Counte
 
 ---
 
+
+---
+
+## 🔮 Multimodal Generalization: Video & Audio Extensions
+
+While this investigation established internal representational emergence on static image–text pairs, the underlying mathematical principles generalize naturally across broader modalities:
+
+* **Temporal Video Reasoning:** Video inputs in architectures like Video-LLaVA are processed as temporal sequences of discrete visual frame embeddings. Because transformer decoders unify video frames into continuous token streams, the **Emergence Window (Layers 13–17)** provides a foundation for monitoring **temporal truth-drift** and inter-frame hallucination accumulation.
+* **Spectral Audio & Voice Reasoning:** Audio-conditioned language models process continuous spectral-temporal frequency representations. The geometric truth axis and norm-preserving SLERP steering can be directly applied to audio token representations to prevent acoustic and speech hallucination.
+
 ## 📜 Citation & Academic Context
 
 Completed as part of the **DA5410 Winter Project (Industrial Placement)** at the **Indian Institute of Technology (IIT) Madras** under the supervision of **Dr. Mitesh Khapra** (AI4Bharat Lab).
