@@ -1,0 +1,902 @@
+[
+  {
+    "id": "attr_01_green_banana",
+    "category": "counter_attribute",
+    "image_file": "banana.png",
+    "prompt": "What color is the banana? Answer concisely.",
+    "expected_truth": "Green",
+    "hallucinated_prior": "Yellow",
+    "verification_truth_keywords": [
+      "green"
+    ],
+    "hallucinated_prior_keywords": [
+      "yellow"
+    ],
+    "url": "https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "attr_02_blue_strawberry",
+    "category": "counter_attribute",
+    "image_file": "blue_strawberry.png",
+    "prompt": "Describe the color of the strawberry on the plate.",
+    "expected_truth": "Blue",
+    "hallucinated_prior": "Red",
+    "verification_truth_keywords": [
+      "blue"
+    ],
+    "hallucinated_prior_keywords": [
+      "red"
+    ],
+    "url": "https://images.unsplash.com/photo-1543158181-e6f9f6712055?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "attr_03_purple_carrot",
+    "category": "counter_attribute",
+    "image_file": "purple_carrot.png",
+    "prompt": "What color is the carrot lying on the cutting board?",
+    "expected_truth": "Purple",
+    "hallucinated_prior": "Orange",
+    "verification_truth_keywords": [
+      "purple",
+      "violet",
+      "dark"
+    ],
+    "hallucinated_prior_keywords": [
+      "orange"
+    ],
+    "url": "https://images.unsplash.com/photo-1445282768818-728615cc910a?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "attr_04_square_orange",
+    "category": "counter_attribute",
+    "image_file": "square_orange.png",
+    "prompt": "What is the shape of this orange fruit?",
+    "expected_truth": "Square / Cube",
+    "hallucinated_prior": "Round / Sphere",
+    "verification_truth_keywords": [
+      "square",
+      "cube",
+      "cubic",
+      "box"
+    ],
+    "hallucinated_prior_keywords": [
+      "round",
+      "spherical",
+      "sphere"
+    ],
+    "url": "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "attr_05_pink_lemon",
+    "category": "counter_attribute",
+    "image_file": "pink_lemon.png",
+    "prompt": "What color is the sliced lemon on the table?",
+    "expected_truth": "Pink",
+    "hallucinated_prior": "Yellow",
+    "verification_truth_keywords": [
+      "pink",
+      "rose"
+    ],
+    "hallucinated_prior_keywords": [
+      "yellow"
+    ],
+    "url": "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "attr_06_transparent_mug",
+    "category": "counter_attribute",
+    "image_file": "transparent_mug.png",
+    "prompt": "What material and color is this coffee mug made of?",
+    "expected_truth": "Clear transparent glass",
+    "hallucinated_prior": "White ceramic",
+    "verification_truth_keywords": [
+      "glass",
+      "clear",
+      "transparent"
+    ],
+    "hallucinated_prior_keywords": [
+      "ceramic",
+      "porcelain",
+      "white ceramic"
+    ],
+    "url": "https://images.unsplash.com/photo-1577937927133-66ef06acdf18?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "attr_07_white_crow",
+    "category": "counter_attribute",
+    "image_file": "white_crow.png",
+    "prompt": "What color is the crow perched on the tree branch?",
+    "expected_truth": "White",
+    "hallucinated_prior": "Black",
+    "verification_truth_keywords": [
+      "white",
+      "albino",
+      "pale"
+    ],
+    "hallucinated_prior_keywords": [
+      "black"
+    ],
+    "url": "https://images.unsplash.com/photo-1555169062-013468b47731?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "attr_08_yellow_traffic_light",
+    "category": "counter_attribute",
+    "image_file": "yellow_traffic_light.png",
+    "prompt": "Is the traffic light currently red or green?",
+    "expected_truth": "Neither, it is yellow",
+    "hallucinated_prior": "Red or Green",
+    "verification_truth_keywords": [
+      "yellow",
+      "amber"
+    ],
+    "hallucinated_prior_keywords": [
+      "red",
+      "green"
+    ],
+    "url": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "attr_09_black_apple",
+    "category": "counter_attribute",
+    "image_file": "black_apple.png",
+    "prompt": "What color is this apple?",
+    "expected_truth": "Black / Dark purple",
+    "hallucinated_prior": "Red / Green",
+    "verification_truth_keywords": [
+      "black",
+      "dark",
+      "deep purple"
+    ],
+    "hallucinated_prior_keywords": [
+      "red",
+      "green"
+    ],
+    "url": "https://images.unsplash.com/photo-1570913149827-d2ac84ab3f9a?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "attr_10_golden_beet",
+    "category": "counter_attribute",
+    "image_file": "golden_beet.png",
+    "prompt": "What color is the root vegetable shown here?",
+    "expected_truth": "Yellow / Golden",
+    "hallucinated_prior": "Red / Purple",
+    "verification_truth_keywords": [
+      "yellow",
+      "gold",
+      "golden"
+    ],
+    "hallucinated_prior_keywords": [
+      "red",
+      "purple",
+      "beet red"
+    ],
+    "url": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "attr_11_white_eggplant",
+    "category": "counter_attribute",
+    "image_file": "white_eggplant.png",
+    "prompt": "What color is the eggplant?",
+    "expected_truth": "White",
+    "hallucinated_prior": "Purple",
+    "verification_truth_keywords": [
+      "white",
+      "cream"
+    ],
+    "hallucinated_prior_keywords": [
+      "purple",
+      "violet"
+    ],
+    "url": "https://images.unsplash.com/photo-1506802913710-40e2e66339c9?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "attr_12_blue_corn",
+    "category": "counter_attribute",
+    "image_file": "blue_corn.png",
+    "prompt": "What color are the kernels of this corn ear?",
+    "expected_truth": "Blue / Dark violet",
+    "hallucinated_prior": "Yellow",
+    "verification_truth_keywords": [
+      "blue",
+      "purple",
+      "dark"
+    ],
+    "hallucinated_prior_keywords": [
+      "yellow"
+    ],
+    "url": "https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "attr_13_green_rose",
+    "category": "counter_attribute",
+    "image_file": "green_rose.png",
+    "prompt": "What color are the rose petals?",
+    "expected_truth": "Green",
+    "hallucinated_prior": "Red",
+    "verification_truth_keywords": [
+      "green"
+    ],
+    "hallucinated_prior_keywords": [
+      "red",
+      "pink"
+    ],
+    "url": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "attr_14_yellow_watermelon",
+    "category": "counter_attribute",
+    "image_file": "yellow_watermelon.png",
+    "prompt": "What color is the inside flesh of this sliced watermelon?",
+    "expected_truth": "Yellow",
+    "hallucinated_prior": "Red",
+    "verification_truth_keywords": [
+      "yellow"
+    ],
+    "hallucinated_prior_keywords": [
+      "red",
+      "pink"
+    ],
+    "url": "https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "attr_15_wooden_fork",
+    "category": "counter_attribute",
+    "image_file": "wooden_fork.png",
+    "prompt": "What material is this fork crafted from?",
+    "expected_truth": "Wood",
+    "hallucinated_prior": "Stainless steel / Metal",
+    "verification_truth_keywords": [
+      "wood",
+      "wooden"
+    ],
+    "hallucinated_prior_keywords": [
+      "metal",
+      "steel",
+      "silver"
+    ],
+    "url": "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "attr_16_clear_keyboard",
+    "category": "counter_attribute",
+    "image_file": "clear_keyboard.png",
+    "prompt": "What color and material are these keyboard keycaps?",
+    "expected_truth": "Clear / Transparent acrylic",
+    "hallucinated_prior": "Black / White plastic",
+    "verification_truth_keywords": [
+      "clear",
+      "transparent",
+      "see-through"
+    ],
+    "hallucinated_prior_keywords": [
+      "black",
+      "white plastic"
+    ],
+    "url": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "attr_17_circular_brick",
+    "category": "counter_attribute",
+    "image_file": "circular_brick.png",
+    "prompt": "What is the shape of these paving blocks?",
+    "expected_truth": "Round / Curved",
+    "hallucinated_prior": "Rectangular",
+    "verification_truth_keywords": [
+      "round",
+      "circle",
+      "circular",
+      "curved"
+    ],
+    "hallucinated_prior_keywords": [
+      "rectangle",
+      "rectangular",
+      "straight"
+    ],
+    "url": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "attr_18_red_banana",
+    "category": "counter_attribute",
+    "image_file": "red_banana.png",
+    "prompt": "Describe the peel color of the bananas.",
+    "expected_truth": "Red / Dark crimson",
+    "hallucinated_prior": "Yellow",
+    "verification_truth_keywords": [
+      "red",
+      "crimson",
+      "maroon"
+    ],
+    "hallucinated_prior_keywords": [
+      "yellow"
+    ],
+    "url": "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "abs_01_nomouse",
+    "category": "counter_existence",
+    "image_file": "nomouse.png",
+    "prompt": "Where is the computer mouse located on this desk? Be specific.",
+    "expected_truth": "There is no mouse on the desk",
+    "hallucinated_prior": "On the right side of the laptop",
+    "verification_truth_keywords": [
+      "no mouse",
+      "not present",
+      "none",
+      "cannot see",
+      "empty",
+      "no computer mouse"
+    ],
+    "hallucinated_prior_keywords": [
+      "on the right",
+      "next to the laptop",
+      "mouse is placed"
+    ],
+    "url": "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "abs_02_blank_sign",
+    "category": "counter_existence",
+    "image_file": "sign.png",
+    "prompt": "Read the warning text written on this road sign.",
+    "expected_truth": "There is no text on the sign",
+    "hallucinated_prior": "Road ends / Stop / Speed Limit",
+    "verification_truth_keywords": [
+      "no text",
+      "blank",
+      "empty",
+      "no words",
+      "no writing"
+    ],
+    "hallucinated_prior_keywords": [
+      "road ends",
+      "stop",
+      "speed",
+      "warning",
+      "caution"
+    ],
+    "url": "https://images.unsplash.com/photo-1572402123736-c79526742a00?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "abs_03_empty_plate",
+    "category": "counter_existence",
+    "image_file": "empty_plate.png",
+    "prompt": "Describe the food served on the white dinner plate.",
+    "expected_truth": "The plate is empty, no food",
+    "hallucinated_prior": "Steak / Salad / Pasta",
+    "verification_truth_keywords": [
+      "empty",
+      "no food",
+      "clean plate",
+      "nothing on"
+    ],
+    "hallucinated_prior_keywords": [
+      "salad",
+      "pasta",
+      "meat",
+      "rice",
+      "chicken",
+      "meal"
+    ],
+    "url": "https://images.unsplash.com/photo-1532635241-17e820acc59f?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "abs_04_empty_cup",
+    "category": "counter_existence",
+    "image_file": "empty_cup.png",
+    "prompt": "What beverage is inside the cup?",
+    "expected_truth": "The cup is empty",
+    "hallucinated_prior": "Coffee / Tea",
+    "verification_truth_keywords": [
+      "empty",
+      "no beverage",
+      "no liquid",
+      "nothing"
+    ],
+    "hallucinated_prior_keywords": [
+      "coffee",
+      "tea",
+      "water",
+      "milk"
+    ],
+    "url": "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "abs_05_empty_leash",
+    "category": "counter_existence",
+    "image_file": "empty_leash.png",
+    "prompt": "Describe the dog attached to this leash.",
+    "expected_truth": "There is no dog, only an empty leash",
+    "hallucinated_prior": "Golden retriever / Labrador",
+    "verification_truth_keywords": [
+      "no dog",
+      "empty leash",
+      "no pet",
+      "not present"
+    ],
+    "hallucinated_prior_keywords": [
+      "dog is",
+      "retriever",
+      "brown dog",
+      "fur"
+    ],
+    "url": "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "abs_06_empty_chair",
+    "category": "counter_existence",
+    "image_file": "empty_chair.png",
+    "prompt": "Describe the person sitting in the armchair.",
+    "expected_truth": "Nobody is sitting in the armchair",
+    "hallucinated_prior": "A man / A woman",
+    "verification_truth_keywords": [
+      "nobody",
+      "empty chair",
+      "no person",
+      "no one",
+      "vacant"
+    ],
+    "hallucinated_prior_keywords": [
+      "person",
+      "man",
+      "woman",
+      "sitting"
+    ],
+    "url": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "abs_07_empty_wrist",
+    "category": "counter_existence",
+    "image_file": "empty_wrist.png",
+    "prompt": "What time does the wristwatch show?",
+    "expected_truth": "There is no wristwatch on the wrist",
+    "hallucinated_prior": "10:10 / 12:00",
+    "verification_truth_keywords": [
+      "no watch",
+      "bare wrist",
+      "no wristwatch",
+      "not wearing"
+    ],
+    "hallucinated_prior_keywords": [
+      "o'clock",
+      ":",
+      "shows",
+      "hands"
+    ],
+    "url": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "abs_08_empty_bookshelf",
+    "category": "counter_existence",
+    "image_file": "empty_bookshelf.png",
+    "prompt": "Read the title of the book on the middle shelf.",
+    "expected_truth": "There are no books on the shelf",
+    "hallucinated_prior": "A fictional book title",
+    "verification_truth_keywords": [
+      "no book",
+      "empty shelf",
+      "no books",
+      "bare"
+    ],
+    "hallucinated_prior_keywords": [
+      "title",
+      "book is",
+      "called"
+    ],
+    "url": "https://images.unsplash.com/photo-1594980596870-8aa52a78d8cd?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "abs_09_empty_hanger",
+    "category": "counter_existence",
+    "image_file": "empty_hanger.png",
+    "prompt": "Describe the shirt hanging on this clothes hanger.",
+    "expected_truth": "There is no shirt, the hanger is empty",
+    "hallucinated_prior": "A white shirt / coat",
+    "verification_truth_keywords": [
+      "empty",
+      "no shirt",
+      "no clothes",
+      "nothing hanging"
+    ],
+    "hallucinated_prior_keywords": [
+      "shirt is",
+      "jacket",
+      "coat",
+      "cotton"
+    ],
+    "url": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "abs_10_empty_birdcage",
+    "category": "counter_existence",
+    "image_file": "empty_birdcage.png",
+    "prompt": "What color is the bird inside the cage?",
+    "expected_truth": "There is no bird inside the cage",
+    "hallucinated_prior": "Yellow / Green parrot",
+    "verification_truth_keywords": [
+      "no bird",
+      "empty cage",
+      "no pet"
+    ],
+    "hallucinated_prior_keywords": [
+      "parrot",
+      "canary",
+      "yellow",
+      "feathers"
+    ],
+    "url": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "abs_11_empty_vase",
+    "category": "counter_existence",
+    "image_file": "empty_vase.png",
+    "prompt": "What kinds of flowers are arranged in the glass vase?",
+    "expected_truth": "The vase is empty, no flowers",
+    "hallucinated_prior": "Roses / Lilies / Bouquet",
+    "verification_truth_keywords": [
+      "empty",
+      "no flowers",
+      "bare vase"
+    ],
+    "hallucinated_prior_keywords": [
+      "roses",
+      "tulips",
+      "flowers",
+      "bouquet"
+    ],
+    "url": "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "abs_12_empty_parking_bay",
+    "category": "counter_existence",
+    "image_file": "empty_parking.png",
+    "prompt": "Describe the car parked in this parking space.",
+    "expected_truth": "The parking space is empty, no car",
+    "hallucinated_prior": "A sedan / SUV",
+    "verification_truth_keywords": [
+      "empty",
+      "no car",
+      "vacant",
+      "no vehicle"
+    ],
+    "hallucinated_prior_keywords": [
+      "car is",
+      "sedan",
+      "vehicle",
+      "parked"
+    ],
+    "url": "https://images.unsplash.com/photo-1506521781263-d8422e82f27a?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "abs_13_empty_bed",
+    "category": "counter_existence",
+    "image_file": "empty_bed.png",
+    "prompt": "Describe the person sleeping in this bed.",
+    "expected_truth": "Nobody is sleeping in the bed, it is empty",
+    "hallucinated_prior": "A sleeping person / woman",
+    "verification_truth_keywords": [
+      "nobody",
+      "empty bed",
+      "no person",
+      "unoccupied"
+    ],
+    "hallucinated_prior_keywords": [
+      "sleeping",
+      "person",
+      "man",
+      "woman"
+    ],
+    "url": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "abs_14_empty_pedestal",
+    "category": "counter_existence",
+    "image_file": "empty_pedestal.png",
+    "prompt": "What sculpture is displayed on top of the pedestal?",
+    "expected_truth": "The pedestal is bare, no sculpture",
+    "hallucinated_prior": "A bronze or marble statue",
+    "verification_truth_keywords": [
+      "bare",
+      "empty",
+      "no statue",
+      "no sculpture"
+    ],
+    "hallucinated_prior_keywords": [
+      "statue",
+      "sculpture",
+      "figure",
+      "art"
+    ],
+    "url": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "abs_15_empty_easel",
+    "category": "counter_existence",
+    "image_file": "empty_easel.png",
+    "prompt": "Describe the painting displayed on the easel.",
+    "expected_truth": "The canvas is blank, no painting",
+    "hallucinated_prior": "A landscape / portrait",
+    "verification_truth_keywords": [
+      "blank",
+      "empty canvas",
+      "no painting",
+      "white"
+    ],
+    "hallucinated_prior_keywords": [
+      "landscape",
+      "portrait",
+      "colors",
+      "artwork"
+    ],
+    "url": "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "abs_16_empty_mailbox",
+    "category": "counter_existence",
+    "image_file": "empty_mailbox.png",
+    "prompt": "What letters are inside the open mailbox?",
+    "expected_truth": "The mailbox is completely empty, no letters",
+    "hallucinated_prior": "Envelopes / Mail",
+    "verification_truth_keywords": [
+      "empty",
+      "no letters",
+      "no mail",
+      "vacant"
+    ],
+    "hallucinated_prior_keywords": [
+      "letters",
+      "envelopes",
+      "packages",
+      "mail"
+    ],
+    "url": "https://images.unsplash.com/photo-1516796181074-bf453fbfa3e6?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "abs_17_empty_dogbowl",
+    "category": "counter_existence",
+    "image_file": "empty_dogbowl.png",
+    "prompt": "What food is filling this pet bowl?",
+    "expected_truth": "The bowl is empty, no food",
+    "hallucinated_prior": "Kibble / Dog food",
+    "verification_truth_keywords": [
+      "empty",
+      "no food",
+      "dry bowl"
+    ],
+    "hallucinated_prior_keywords": [
+      "kibble",
+      "food",
+      "meat",
+      "biscuits"
+    ],
+    "url": "https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "abs_18_empty_hook",
+    "category": "counter_existence",
+    "image_file": "empty_hook.png",
+    "prompt": "What keys are hanging on the wall hook?",
+    "expected_truth": "There are no keys on the hook",
+    "hallucinated_prior": "Car keys / Keychain",
+    "verification_truth_keywords": [
+      "no keys",
+      "empty hook",
+      "nothing hanging"
+    ],
+    "hallucinated_prior_keywords": [
+      "keys",
+      "keychain",
+      "ring"
+    ],
+    "url": "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "ctrl_01_real_yellow_banana",
+    "category": "positive_control",
+    "image_file": "real_banana.png",
+    "prompt": "Is there a banana in this image? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "ctrl_02_real_mouse_on_desk",
+    "category": "positive_control",
+    "image_file": "real_mouse.png",
+    "prompt": "Is there a computer mouse on this desk? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "ctrl_03_real_stop_sign",
+    "category": "positive_control",
+    "image_file": "real_stop_sign.png",
+    "prompt": "Does the red sign say STOP? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1584824486509-112e4181ff6b?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "ctrl_04_real_apples",
+    "category": "positive_control",
+    "image_file": "apples.png",
+    "prompt": "Are there apples in this image? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "ctrl_05_real_dog",
+    "category": "positive_control",
+    "image_file": "real_dog.png",
+    "prompt": "Is there a dog visible in the photo? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "ctrl_06_real_coffee",
+    "category": "positive_control",
+    "image_file": "real_coffee.png",
+    "prompt": "Is there coffee or liquid inside the cup? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "ctrl_07_real_clothes",
+    "category": "positive_control",
+    "image_file": "clothes.png",
+    "prompt": "Is the person in this image wearing clothing? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "ctrl_08_real_car",
+    "category": "positive_control",
+    "image_file": "real_car.png",
+    "prompt": "Is there a motor vehicle in this picture? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "ctrl_09_real_book",
+    "category": "positive_control",
+    "image_file": "real_book.png",
+    "prompt": "Is there an open book visible? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "ctrl_10_real_clock",
+    "category": "positive_control",
+    "image_file": "real_clock.png",
+    "prompt": "Is there a clock showing the time? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "ctrl_11_real_cat",
+    "category": "positive_control",
+    "image_file": "real_cat.png",
+    "prompt": "Is there a cat in this photograph? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "ctrl_12_real_guitar",
+    "category": "positive_control",
+    "image_file": "real_guitar.png",
+    "prompt": "Is there a musical instrument in this image? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "ctrl_13_real_bicycle",
+    "category": "positive_control",
+    "image_file": "real_bicycle.png",
+    "prompt": "Is there a bicycle present in the picture? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "ctrl_14_real_pizza",
+    "category": "positive_control",
+    "image_file": "real_pizza.png",
+    "prompt": "Is there a pizza in this image? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=500&q=80"
+  }
+]
