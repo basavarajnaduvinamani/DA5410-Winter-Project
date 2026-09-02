@@ -6,24 +6,24 @@
 [![IIT Madras](https://img.shields.io/badge/IIT%20Madras-DA5410%20Winter%20Project-800000.svg)](https://www.iitm.ac.in/)
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/basavarajnaduvinamani/DA5410-Winter-Project/blob/main/notebooks/CounterPrior_Mechanistic_Steering.ipynb)
 
-> **Technical Report & Codebase for DA5410 Winter Project — Industrial Placement**  
+> **Technical Report & Official Codebase for DA5410 Winter Project (Industrial Placement)**  
 > **Author:** Basavaraj A. Naduvinamani (Roll No: `DA25C005`)  
 > **Supervisor:** Dr. Mitesh Khapra | **Mentorship:** Mohammed Safi Ur Rahman Khan  
 > **Affiliation:** [AI4Bharat Lab](https://ai4bharat.iitm.ac.in/), Department of Data Science & Artificial Intelligence, Indian Institute of Technology (IIT) Madras
 
 ---
 
-## 📌 Abstract & Overview
+## 📌 Executive Summary
 
-Multimodal Large Language Models (MLLMs) frequently generate descriptions that are inconsistent with visual evidence when prompts induce strong textual language priors (*Prior Dominance*). While standard mitigation frameworks rely on post-hoc filtering, visual contrastive decoding, or compute-intensive alignment tuning (RLHF-V), comparatively little is understood regarding **how and where hallucination manifests within intermediate transformer representations**.
+Multimodal Large Language Models (MLLMs) frequently generate descriptions that contradict visual evidence when prompts induce strong language priors (*Prior Dominance*). While existing mitigation methods rely on post-hoc filtering, visual contrastive decoding, or compute-intensive alignment tuning (RLHF-V), comparatively little is understood regarding **how and where hallucination manifests within intermediate transformer representations**.
 
-Using **LLaVA-1.5-7B** as an analyzable case study, this project investigates hallucination through representation-level geometric analysis across the decoder stack.
+Using **LLaVA-1.5-7B** as an analyzable case study, this project investigates multimodal hallucination through representation-level geometric analysis across the decoder stack.
 
-### Key Empirical Findings:
+### Key Empirical Discoveries:
 1. **The Representation Emergence Window (Layers 13–17):** Layer-wise linear classifier probing demonstrates that internal representations for truth-conditioned vs. hallucination-conditioned states become linearly separable ($>90\%$ accuracy by Layer 14, peaking at $100\%$ at Layer 17), well before token-level probability divergence occurs at **Layer 25**.
 2. **Latent Truth Axis Geometry:** Principal Component Analysis (PCA) over terminal prompt representations isolates a dominant axis accounting for **$34.48\%$ of activation variance** at the decision layer.
-3. **Bidirectional Causal Verification:** Negative activation steering along the truth direction ($\alpha = -0.35$) causally forces hallucinated object generation on unpopulated scenes (e.g., inducing imaginary objects next to a solitary banana).
-4. **Norm-Preserving Rotational Steering (SLERP):** Standard vector addition ($h + \alpha v$) causes activation norm explosion, degrading linguistic fluency. We formulate **Spherical Linear Interpolation (SLERP)** with dynamic threshold gating, eliminating hallucinations on absence scenes while maintaining **$85.7\%$ sightedness retention** on real objects (*The Lobotomy Check*).
+3. **Norm-Preserving Rotational Steering (SLERP):** Standard vector addition ($h + \alpha v$) causes activation norm explosion ($\|h\| \to 180+$), degrading linguistic fluency. We formulate **Spherical Linear Interpolation (SLERP)** with dynamic threshold gating, eliminating hallucinations on absence scenes while maintaining **$85.7\%$ sightedness retention** on real objects (*The Lobotomy Check*).
+4. **Bidirectional Causal Verification:** Inverting the steering direction ($\alpha = -0.35$) causally forces hallucinated object generation on unpopulated scenes (e.g., inducing imaginary objects next to a solitary banana), confirming directional causality.
 
 ```mermaid
 flowchart TD
@@ -54,7 +54,7 @@ flowchart TD
 ## 🔬 Mathematical Formulation
 
 ### 1. Representation Extraction (Terminal Prompt State)
-To avoid lexical semantic leakage (e.g., extracting on tokens like `"Yes"` or `"No"` which inherently encode affirmation/negation semantics), hidden representations are extracted strictly at the terminal prompt prefix token (the colon in `ASSISTANT:`):
+To eliminate lexical semantic leakage (e.g., extracting on tokens like `"Yes"` or `"No"` which inherently encode affirmation/negation semantics), hidden representations are extracted strictly at the terminal prompt prefix token (the colon in `ASSISTANT:`):
 
 $$h_{\ell} = \text{TransformerLayer}_{\ell}(x)_{[\text{seq}-1]}, \quad h_{\ell} \in \mathbb{R}^{d}$$
 
@@ -80,18 +80,37 @@ where $\tau = 15.0$ is the empirical confidence threshold.
 
 ---
 
-## 📊 Empirical Evaluation & Results
+## 📊 Empirical Results & Visualizations
 
-### Core Probing & Steering Metrics
+<p align="center">
+  <img src="docs/Projection_onto_Truth_Axis.png" width="48%" />
+  <img src="docs/Hallucination_Prediction_Accuracy_Across_Layers.png" width="48%" />
+</p>
+<p align="center">
+  <em><b>Left (Figure 1):</b> Bimodal separation along the PCA Truth Axis at Layer 25 (34.48% explained variance). <br/>
+  <b>Right (Figure 2):</b> Layer-wise linear probing accuracy showing the sharp Emergence Window across Layers 13–17.</em>
+</p>
 
-| Experiment / Metric | Baseline LLaVA-1.5 | With Rotational Steering | Scientific Significance |
+<p align="center">
+  <img src="docs/Layer_wise_Prediction_Accuracy_Bootstrap_Confidence.png" width="48%" />
+  <img src="docs/Probability_of_Mouse_Token_Across_Layers.png" width="48%" />
+</p>
+<p align="center">
+  <em><b>Left (Figure 3):</b> Bootstrap confidence bands (±1 Std Dev across 50 iterations), confirming emergence stability. <br/>
+  <b>Right (Figure 4):</b> Logit lens projection for the target token across layers, identifying the acute Layer 25 crossover peak.</em>
+</p>
+
+### Benchmark Metrics Summary
+
+| Evaluation Metric / Category | Baseline (Unsteered) | Steered (SLERP) | Scientific Significance |
 | :--- | :---: | :---: | :--- |
 | **Emergence Window** | Layers 13–17 | — | Sharp transition from chance to $>90\%$ linear separability |
 | **PC1 Variance Explained** | — | **$34.48\%$** | Dominant single-axis structure of truth vs. hallucination |
 | **Random-Direction Baseline** | $0/100$ beat Truth Axis | — | Statistically significant ($p < 0.01$) |
 | **Random-Label Control** | $\approx 40.0\%$ | — | Confirms separability is not an artifact of classifier overfitting |
-| **Sightedness Retention (Lobotomy Check)** | $100\%$ | **$85.7\%$ (12/14)** | Preserves perception of genuine objects with high sensitivity |
-| **Absence Trap Suppression** | $0\%$ (Hallucinates) | **Clean Negations** | Model outputs truthful denials (*"There is no X"*) |
+| **Positive Controls (Lobotomy Check)** | $100.0\%$ | **$85.7\%$ (12/14)** | High sensitivity and retention of genuine object recognition |
+| **Absence Trap Suppression** | $0.0\%$ (Hallucinates) | **Truthful Negations** | Model outputs clean refusals (*"There is no X"*) |
+| **Inception Hook ($\alpha = -0.35$)** | $0.0\%$ (Factual) | **$100.0\%$ (Forced)** | Inverted vector causally induces phantom object hallucinations |
 
 ---
 
