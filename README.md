@@ -5,11 +5,13 @@
 [![Model: LLaVA-1.5-7B](https://img.shields.io/badge/Model-LLaVA--1.5--7B-green.svg)](https://huggingface.co/llava-hf/llava-1.5-7b-hf)
 [![IIT Madras](https://img.shields.io/badge/IIT%20Madras-DA5410%20Winter%20Project-800000.svg)](https://www.iitm.ac.in/)
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/basavarajnaduvinamani/DA5410-Winter-Project/blob/main/notebooks/CounterPrior_Mechanistic_Steering.ipynb)
+[![Technical Report PDF](https://img.shields.io/badge/Technical_Report-PDF-b31b1b.svg?logo=adobeacrobatreader)](docs/DA5410_Winter_Project_Report.pdf)
 
 > **Technical Report & Official Codebase for DA5410 Winter Project (Industrial Placement)**  
 > **Author:** Basavaraj A. Naduvinamani (Roll No: `DA25C005`)  
 > **Supervisor:** Dr. Mitesh Khapra | **Mentorship:** Mohammed Safi Ur Rahman Khan  
-> **Affiliation:** [AI4Bharat Lab](https://ai4bharat.iitm.ac.in/), Department of Data Science & Artificial Intelligence, Indian Institute of Technology (IIT) Madras
+> **Affiliation:** [AI4Bharat Lab](https://ai4bharat.iitm.ac.in/), Department of Data Science & Artificial Intelligence, Indian Institute of Technology (IIT) Madras  
+> 📄 **[Read the Full 15-Page Technical Report (PDF)](docs/DA5410_Winter_Project_Report.pdf)**
 
 ---
 
