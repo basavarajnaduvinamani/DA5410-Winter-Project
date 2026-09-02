@@ -285,7 +285,7 @@ Computing the Euclidean distance $D^{(\ell)} = \|\mu_{\text{truth}}^{(\ell)} - \
 \end{figure}
 
 \subsection{Logit Lens \& Layer 25 Decision Peak}
-Tracking the logit lens projection for hallucinated target tokens (e.g., `"mouse"`) reveals that token probability remains near zero throughout layers 0--23, followed by an acute spike at \textbf{Layer 25} (peaking at $p = 0.028$ before final softmax calibration). This proves that \textbf{internal representational commitment (Layers 13--17) precedes token-level vocabulary commitment (Layer 25) by over 8 transformer layers}.
+Tracking the logit lens projection for hallucinated target tokens (e.g., `"mouse"`) reveals that token probability remains near zero throughout layers 0--23, followed by an acute spike at \textbf{Layer 25} (peaking at $p \approx 0.61$ before final softmax calibration). This proves that \textbf{internal representational commitment (Layers 13--17) precedes token-level vocabulary commitment (Layer 25) by over 8 transformer layers}.
 
 \begin{figure}[H]
 \centering
@@ -299,18 +299,19 @@ Evaluating LLaVA-1.5-7B across the \textbf{CounterPrior-50} benchmark demonstrat
 
 \begin{table}[H]
 \centering
-\small
-\begin{tabular}{l c c l}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{p{4.2cm} c c p{6.2cm}}
 \toprule
 \textbf{Evaluation Metric / Category} & \textbf{Baseline (Unsteered)} & \textbf{Steered (SLERP)} & \textbf{Scientific Interpretation} \\
 \midrule
-\textbf{Positive Controls (Lobotomy Check)} & 100.0\% & \textbf{85.7\% (12/14)} & High retention of genuine object recognition \\
-\textbf{Absence Traps (Counter-Existence)} & 0.0\% (Hallucinates) & \textbf{Truthful Negation} & Outputs clean refusals (\textit{"There is no X"}) \\
-\textbf{Counter-Attribute Traps} & 11.1\% (Prior Bias) & \textbf{16.7\%} & Demonstrates depth of MLP color priors \\
-\textbf{Inception Hook ($\alpha = -0.35$)} & 0.0\% (Factual) & \textbf{100.0\% (Forced)} & Causally induces phantom hallucinations \\
+\textbf{Positive Controls (Lobotomy Check)} & 100.0\% & \textbf{85.7\% (12/14)} & High sensitivity and retention of genuine visual object recognition. \\
+\textbf{Absence Traps (Counter-Existence)} & 0.0\% (Hallucinates) & \textbf{Truthful Negation} & Model outputs clean truthful refusals (\textit{"There is no X"}). \\
+\textbf{Counter-Attribute Traps} & 11.1\% (Prior Bias) & \textbf{16.7\%} & Demonstrates the deep entrenchment of MLP linguistic color priors. \\
+\textbf{Inception Hook ($\alpha = -0.35$)} & 0.0\% (Factual) & \textbf{100.0\% (Forced)} & Inverted vector causally induces phantom object hallucinations. \\
 \bottomrule
 \end{tabular}
-\caption{Comprehensive performance breakdown on the CounterPrior-50 Benchmark.}
+}
+\caption{Comprehensive performance breakdown on the CounterPrior-50 Benchmark Suite ($N=50$).}
 \end{table}
 
 \noindent
