@@ -27,34 +27,26 @@ Using **LLaVA-1.5-7B** as an analyzable case study, this project investigates ha
 
 ```mermaid
 flowchart TD
-    subgraph Phase1 ["1. Input & Early Integration (Layers 0–6)"]
-        A["Vision Tokens (CLIP-ViT-L/14) + Prompt Tokens"] --> B["Initial Multimodal Fusion
-(Near-Chance Linear Separability ~50%)"]
-    end
+    A["📷 <b>Multimodal Input</b><br/>Vision Tokens (CLIP-ViT-L/14) + Prompt Tokens"]
+    
+    B["<b>1. Early Integration (Layers 0–6)</b><br/>Multimodal Feature Fusion (Near-Chance Linear Separability ~50%)"]
+    
+    C["<b>2. The Emergence Window (Layers 13–17)</b><br/>Linear Separability Surges (>90% → 100%)<br/><i>Latent Geometry Splits into Truth vs. Lie Manifolds</i>"]
+    
+    D{"<b>3. Decision Layer & Adaptive Gating (Layer 25)</b><br/>Truth Subspace Alignment < τ ?"}
+    
+    E["<b>Standard Forward Pass</b><br/>Natural Sightedness Retained"]
+    F["<b>SLERP Rotational Steering</b><br/>Norm-Preserving Hypersphere Rotation (||h|| Preserved)"]
+    
+    G["🎯 <b>Factual & Sighted Output Generation</b><br/>Absence Hallucinations Suppressed | 85.7% Sightedness Retained"]
 
-    subgraph Phase2 ["2. Mid-Decoder Emergence Window (Layers 13–17)"]
-        B --> C["Linear Separability Surges (>90% → 100%)"]
-        C --> D["Latent Geometry Splits into Truth vs. Lie Manifolds"]
-    end
-
-    subgraph Phase3 ["3. Decision Layer & Adaptive Steering (Layer 25)"]
-        D --> E{"Adaptive Gating:
-Alignment < τ ?"}
-        E -- "No (Truth Confident)" --> F["Standard Forward Pass
-(Natural Sightedness Retained)"]
-        E -- "Yes (Hallucination Detected)" --> G["SLERP Rotational Steering
-(Norm-Preserving Hypersphere Rotation)"]
-    end
-
-    subgraph Phase4 ["4. Autoregressive Token Decoding"]
-        F --> H["Truthful / Factual Output Generation"]
-        G --> H
-    end
-
-    style Phase1 fill:#f9f9fb,stroke:#d0d7de,stroke-width:1px
-    style Phase2 fill:#f0f7ff,stroke:#0969da,stroke-width:1px
-    style Phase3 fill:#fff8c5,stroke:#d4a72c,stroke-width:1px
-    style Phase4 fill:#dafbe1,stroke:#1a7f37,stroke-width:1px
+    A --> B
+    B --> C
+    C --> D
+    D -->|"No (Confident)"| E
+    D -->|"Yes (Hallucinating)"| F
+    E --> G
+    F --> G
 ```
 
 ---
