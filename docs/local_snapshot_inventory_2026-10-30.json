@@ -1,0 +1,23 @@
+{
+  "status": "privacy-preserving snapshot inventory; not raw original artifacts",
+  "files": [
+    {
+      "alias": "final_report.pdf",
+      "sha256": "fb3602386b2b368d7802dc1891eb3416d63409dae6043164f3e8a626a0254aeb",
+      "modified": "2026-09-02T23:13:43.795348+00:00",
+      "preservation": "original remains local; verified private backup; raw file excluded from Git"
+    },
+    {
+      "alias": "poster.pdf",
+      "sha256": "f9802ee742cca398ac6eaf43ee74fb98ce33ab1d529b767d395324f1479717c7",
+      "modified": "2026-09-19T11:16:25.126136+00:00",
+      "preservation": "original remains local; verified private backup; raw file excluded from Git"
+    },
+    {
+      "alias": "poster.pptx",
+      "sha256": "ab3d146a63d0949f6ff6114f00c7385614bcf5770ae1d687b84ac1bd56949a23",
+      "modified": "2026-09-19T11:16:19.274616+00:00",
+      "preservation": "original remains local; verified private backup; raw file excluded from Git"
+    }
+  ]
+}
