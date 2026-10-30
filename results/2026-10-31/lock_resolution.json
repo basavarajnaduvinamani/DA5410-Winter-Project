@@ -1,0 +1,8 @@
+{
+  "command": "uv pip compile requirements-colab.txt --python-version 3.11 --python-platform x86_64-manylinux_2_28 --generate-hashes -o requirements-colab.lock",
+  "resolver": "uv 0.9.7",
+  "change": "added matplotlib==3.10.7 and its dependencies; existing pins unchanged",
+  "lock_sha256": "504efc3b6dc3cf9e00c2a37610f2306c90896f4aa22d850e2a9c2c7bddda01d6",
+  "clean_gpu_install_executed": false,
+  "local_test_env": "Python 3.13, torch 2.15.0, transformers 4.57.1 (CI uses Python 3.11, torch 2.7.0)"
+}

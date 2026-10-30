@@ -1,0 +1,50 @@
+test_chat_template_adapters_with_stub_processor (test_adapters.Adapters.test_chat_template_adapters_with_stub_processor) ... ok
+test_layer_finder_skips_vision_tower (test_adapters.Adapters.test_layer_finder_skips_vision_tower) ... ok
+test_llava_adapter_runs_tiny_model_with_capture_and_steering (test_adapters.Adapters.test_llava_adapter_runs_tiny_model_with_capture_and_steering) ... ok
+test_registry_and_flags (test_adapters.Adapters.test_registry_and_flags) ... ok
+test_adversarial_negations (test_adjudication.ScoringTests.test_adversarial_negations) ... ok
+test_attributes_and_controls (test_adjudication.ScoringTests.test_attributes_and_controls) ... ok
+test_legacy_cannot_accept_contradiction (test_adjudication.ScoringTests.test_legacy_cannot_accept_contradiction) ... ok
+test_complete_reviews_and_paired_metrics (test_analysis.AnalysisTests.test_complete_reviews_and_paired_metrics) ... ok
+test_directions_point_toward_correct_and_controls_differ (test_detection.Detection.test_directions_point_toward_correct_and_controls_differ) ... ok
+test_logit_baselines_orientation (test_detection.Detection.test_logit_baselines_orientation) ... ok
+test_requires_two_classes_and_groups (test_detection.Detection.test_requires_two_classes_and_groups) ... ok
+test_sweep_selects_informative_layer (test_detection.Detection.test_sweep_selects_informative_layer) ... ok
+test_resamples_whole_images_and_pairs_arms (test_pope.ClusterBootstrap.test_resamples_whole_images_and_pairs_arms) ... ok
+test_committed_split_manifest_is_reproducible_and_disjoint (test_pope.PopeParsingAndMetrics.test_committed_split_manifest_is_reproducible_and_disjoint) ... ok
+test_metrics_hand_computed (test_pope.PopeParsingAndMetrics.test_metrics_hand_computed) ... ok
+test_missing_file_names_source (test_pope.PopeParsingAndMetrics.test_missing_file_names_source) ... ok
+test_official_parser (test_pope.PopeParsingAndMetrics.test_official_parser) ... ok
+test_split_depends_only_on_image_ids (test_pope.PopeParsingAndMetrics.test_split_depends_only_on_image_ids) ... ok
+test_vendored_files_load_and_match_pins (test_pope.PopeParsingAndMetrics.test_vendored_files_load_and_match_pins) ... ok
+test_notebook_cells_parse (test_pope_pipeline.CommandLine.test_notebook_cells_parse) ... ok
+test_placeholder_report (test_pope_pipeline.CommandLine.test_placeholder_report) ... ok
+test_write_splits_and_prepare_only_without_gpu (test_pope_pipeline.CommandLine.test_write_splits_and_prepare_only_without_gpu) ... wrote /tmp/tmp1nnu7tpw/s.json
+{
+  "baseline": 2880,
+  "validation_sweep": 2880,
+  "test_steering": 7200,
+  "questions_per_partition": {
+    "calibration": 720,
+    "validation": 360,
+    "test": 1800
+  }
+}
+ok
+test_detection_files_cover_held_out_only (test_pope_pipeline.PipelineEndToEnd.test_detection_files_cover_held_out_only) ... ok
+test_raw_rows_complete_and_partitions_image_disjoint (test_pope_pipeline.PipelineEndToEnd.test_raw_rows_complete_and_partitions_image_disjoint) ... ok
+test_report_from_saved_files (test_pope_pipeline.PipelineEndToEnd.test_report_from_saved_files) ... ok
+test_resume_does_not_duplicate (test_pope_pipeline.PipelineEndToEnd.test_resume_does_not_duplicate) ... ok
+test_selection_never_reads_test_labels (test_pope_pipeline.PipelineEndToEnd.test_selection_never_reads_test_labels) ... ok
+test_calibration_requires_class_support (test_protocol.ProtocolTests.test_calibration_requires_class_support) ... ok
+test_calibration_selection_fits_only_supplied_images (test_protocol.ProtocolTests.test_calibration_selection_fits_only_supplied_images) ... ok
+test_group_disjoint_and_reproducible (test_protocol.ProtocolTests.test_group_disjoint_and_reproducible) ... ok
+test_hook_per_sample_terminal_and_removal (test_protocol.ProtocolTests.test_hook_per_sample_terminal_and_removal) ... ok
+test_paired_cluster_resampling (test_protocol.ProtocolTests.test_paired_cluster_resampling) ... ok
+test_slerp_edge_norms (test_protocol.ProtocolTests.test_slerp_edge_norms) ... ok
+test_random_weight_tiny_model_no_download (test_protocol.TinyLlavaIntegration.test_random_weight_tiny_model_no_download) ... ok
+
+----------------------------------------------------------------------
+Ran 34 tests in 11.621s
+
+OK
