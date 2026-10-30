@@ -1,16 +1,45 @@
 #!/usr/bin/env bash
 set -euo pipefail
-# Execute from a clone of upgrade/2026-10-30. Logs survive failures.
-run="${COUNTERPRIOR_RUN:-results/2026-10-30/llava-$(date -u +%Y%m%dT%H%M%SZ)}"
+# One-command Colab/GPU runner. Usage: bash scripts/colab_run.sh [setup|timing|run|report|all] [extra run_pope args]
+#   COUNTERPRIOR_RUN      run directory (put it on Google Drive so a disconnect can resume)
+#   COUNTERPRIOR_PROFILE  quick (160 images) | full (500 images); default quick
+#   COUNTERPRIOR_COCO     COCO val2014 image folder; default data/coco/val2014
+#   COUNTERPRIOR_CUSTOM=1 also run the secondary 16-row CounterPrior set (pauses for manual review)
+# Logs survive failures; re-running the same command resumes from the run directory.
+mode="${1:-all}"; shift || true
+run="${COUNTERPRIOR_RUN:-results/2026-10-31/pope-$(date -u +%Y%m%dT%H%M%SZ)}"
+profile="${COUNTERPRIOR_PROFILE:-quick}"
+coco="${COUNTERPRIOR_COCO:-data/coco/val2014}"
+py=.venv-colab/bin/python
 mkdir -p "$run"
-python -m venv .venv-bootstrap
-.venv-bootstrap/bin/python -m pip install uv==0.9.7 2>&1 | tee -a "$run/bootstrap.log"
-if [ ! -x .venv-colab/bin/python ]; then
-  .venv-bootstrap/bin/uv venv --python 3.11.9 .venv-colab 2>&1 | tee -a "$run/python-setup.log"
+
+setup() {
+  if [ ! -x .venv-bootstrap/bin/uv ]; then
+    python -m venv .venv-bootstrap
+    .venv-bootstrap/bin/python -m pip install uv==0.9.7 2>&1 | tee -a "$run/bootstrap.log"
+  fi
+  if [ ! -x "$py" ]; then
+    .venv-bootstrap/bin/uv venv --python 3.11.9 .venv-colab 2>&1 | tee -a "$run/python-setup.log"
+  fi
+  .venv-bootstrap/bin/uv pip sync --python "$py" --require-hashes --only-binary :all: requirements-colab.lock 2>&1 | tee -a "$run/install.log"
+  .venv-bootstrap/bin/uv pip check --python "$py" 2>&1 | tee -a "$run/pip-check.log"
+  .venv-bootstrap/bin/uv pip freeze --python "$py" > "$run/environment-freeze.txt"
+  "$py" -m unittest discover -s tests -v 2>&1 | tee -a "$run/tests.log"
+  "$py" -m scripts.fetch_pope --coco-dir "$coco" 2>&1 | tee -a "$run/fetch.log"
+}
+timing() { "$py" -m scripts.run_pope --output "$run" --profile "$profile" --coco-dir "$coco" --timing-probe 20 "$@" 2>&1 | tee -a "$run/inference.log"; }
+pope() { "$py" -m scripts.run_pope --output "$run" --profile "$profile" --coco-dir "$coco" "$@" 2>&1 | tee -a "$run/inference.log"; }
+report() { "$py" -m scripts.make_report --run "$run" --out results/REPORT.md --figures results/figures --readme README.md 2>&1 | tee -a "$run/report.log"; }
+
+case "$mode" in
+  setup) setup ;;
+  timing) timing "$@" ;;
+  run) pope "$@" ;;
+  report) report ;;
+  all) setup; timing "$@"; pope "$@"; report ;;
+  *) echo "unknown mode $mode (setup|timing|run|report|all)"; exit 2 ;;
+esac
+if [ "${COUNTERPRIOR_CUSTOM:-0}" = 1 ]; then
+  "$py" -m scripts.run_experiment --config configs/llava.json --output "$run/custom" 2>&1 | tee -a "$run/custom.log"
 fi
-.venv-bootstrap/bin/uv pip sync --python .venv-colab/bin/python --require-hashes --only-binary :all: requirements-colab.lock 2>&1 | tee -a "$run/install.log"
-.venv-bootstrap/bin/uv pip check --python .venv-colab/bin/python 2>&1 | tee -a "$run/pip-check.log"
-.venv-bootstrap/bin/uv pip freeze --python .venv-colab/bin/python > "$run/environment-freeze.txt"
-.venv-colab/bin/python -m unittest discover -s tests -v 2>&1 | tee -a "$run/tests.log"
-.venv-colab/bin/python -m scripts.run_experiment --config configs/llava.json --output "$run" "$@" 2>&1 | tee -a "$run/inference.log"
-echo "Artifacts: $run (download before ending the Colab runtime)"
+echo "Artifacts: $run (results/REPORT.md and README.md are updated by the report step)"
