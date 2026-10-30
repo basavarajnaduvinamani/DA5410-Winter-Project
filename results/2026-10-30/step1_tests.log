@@ -1,0 +1,8 @@
+test_adversarial_negations (test_adjudication.ScoringTests.test_adversarial_negations) ... ok
+test_attributes_and_controls (test_adjudication.ScoringTests.test_attributes_and_controls) ... ok
+test_legacy_cannot_accept_contradiction (test_adjudication.ScoringTests.test_legacy_cannot_accept_contradiction) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.002s
+
+OK

@@ -1,0 +1,502 @@
+[
+  {
+    "id": "attr_01_green_banana",
+    "image_file": "banana.png",
+    "file_sha256": "eb40395a207b6ad4eba6275f078fe5c65c94769f22f8f063b01e5fbebcd7d1d1",
+    "pixel_sha256": "330e4253831436532a2d610c32f2f9a081bd6c7b39c3c09cf08905e422941c1d",
+    "decision": "retain_provisional",
+    "pixel_observation": "green banana visible",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "attr_02_blue_strawberry",
+    "image_file": "blue_strawberry.png",
+    "file_sha256": "e9a4b97e062e4b54896632984c76cb70e3405aecd7c2be2a465a5f77672d9bce",
+    "pixel_sha256": "049553e0087045096640619f453a508a5e8b527147749f0c7767e55e419bdac9",
+    "decision": "exclude",
+    "pixel_observation": "red strawberries; not blue",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "attr_03_purple_carrot",
+    "image_file": "purple_carrot.png",
+    "file_sha256": "1edb3c25d6d80178d3549d4292ab56014dc36eb2ecdc304dbe6749b4675fff59",
+    "pixel_sha256": "ce551db882771ad8a1bf3403ae9ed2ae768ec8e3edb801d4d5c0884932a1d97c",
+    "decision": "exclude",
+    "pixel_observation": "orange carrots; not purple",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "attr_04_square_orange",
+    "image_file": "square_orange.png",
+    "file_sha256": "57655282060e39e389b4fc18fd30a4937042e8859965f18695538f678b836d68",
+    "pixel_sha256": "372393a9e10518110b2647470e7516d7cb327f9edad2a419e9282c77986076b8",
+    "decision": "exclude",
+    "pixel_observation": "round oranges; not square",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "attr_05_pink_lemon",
+    "image_file": "pink_lemon.png",
+    "file_sha256": "efb6be970bb12bf1e2db2c97a3dffd56c98b68b4760abd7690fd6d033b30558c",
+    "pixel_sha256": "58fa0109a19b9f6461a1e925e8db98bf339c7a95b8cd37d8dc7c3e426d97716a",
+    "decision": "exclude",
+    "pixel_observation": "breakfast plate, no identified pink lemon",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "attr_06_transparent_mug",
+    "image_file": "transparent_mug.png",
+    "file_sha256": "2b0c10d9b181f432bcedd4f741533801e94b2129eda9943f4f7a2a1b0057d86d",
+    "pixel_sha256": "5550e794b292b7c8be2c2298656d80d70466bf1e6b3a04c1c698a5b1d0fc627b",
+    "decision": "exclude",
+    "pixel_observation": "paper takeaway cups; not transparent glass mug",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "attr_07_white_crow",
+    "image_file": "white_crow.png",
+    "file_sha256": "0a751f58bfe5282fb745e631a13d534185c0ca8ed1218c7bf02459f58e786270",
+    "pixel_sha256": "4607ff90bcb78f2977e80bbb9c994939cef24ee21cd219c36b430ff8e0d9d02b",
+    "decision": "exclude",
+    "pixel_observation": "orange/yellow bird; not white crow",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "attr_08_yellow_traffic_light",
+    "image_file": "yellow_traffic_light.png",
+    "file_sha256": "279c57b4c6e473685934700c983d9321cf1aecf067a924eb877956391876d338",
+    "pixel_sha256": "b751158d4529365278db63c2601c2c783b81bb34ef44a09144d7b0bc91e4dc73",
+    "decision": "exclude",
+    "pixel_observation": "hands holding plant; no traffic light",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "attr_09_black_apple",
+    "image_file": "black_apple.png",
+    "file_sha256": "06750d6e804d75910e6e81c74d12da1811267e5a9bd622c0e03f66caea6e7995",
+    "pixel_sha256": "51ae1c070d6e525c124d2b77a8649e6c63ee638dc16db63dd251286293de5dab",
+    "decision": "exclude",
+    "pixel_observation": "red apple; not black",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "attr_10_golden_beet",
+    "image_file": "golden_beet.png",
+    "file_sha256": "84028ff482cdafc937c9a9ad436bd2c28abe5b188d82fe5aee4ae114ac3af1e6",
+    "pixel_sha256": "ff85497e3c298b63886b13d3e1805b2b05c5631547e7329f4aca87da72edf750",
+    "decision": "exclude",
+    "pixel_observation": "mixed salad; no identifiable golden beet target",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "attr_11_white_eggplant",
+    "image_file": "white_eggplant.png",
+    "file_sha256": "13f9bd142028544119de60a4b9d90538d3100806a57be62ac8cfb923bb21fdb5",
+    "pixel_sha256": "559cc17605de62ce44d8cb8c703d9c0afa8a352f36f503d17943539196b42170",
+    "decision": "exclude",
+    "pixel_observation": "drink with lemon garnish; no eggplant",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "attr_12_blue_corn",
+    "image_file": "blue_corn.png",
+    "file_sha256": "98fb4894400d85d914d047526aacd73b73532302d240b8b1e6ced331324d966e",
+    "pixel_sha256": "5613e35d4c608bed1e074b03400e1921cba36baeea52916e84d8bf2b119914b7",
+    "decision": "exclude",
+    "pixel_observation": "yellow corn; not blue",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "attr_13_green_rose",
+    "image_file": "green_rose.png",
+    "file_sha256": "14a6c6c34aa5915ed6a4bcdbdc4c0dc447045d0c1c78ea4e0e213afc710779f3",
+    "pixel_sha256": "297c8c6cb9798553a7fc38bbea494c18e957a3aa0e39b117ee2232d470f2177e",
+    "decision": "exclude",
+    "pixel_observation": "castle; no rose; duplicate of birdcage case",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "attr_14_yellow_watermelon",
+    "image_file": "yellow_watermelon.png",
+    "file_sha256": "3ed367b009e4816cdac2fdc8b3810d86fec6eac4479bae1f506cecb22d3953d6",
+    "pixel_sha256": "92a93f4517d89ca4a59553305c4fa8d6b422a913f89fb8564db3ed8466043e4c",
+    "decision": "exclude",
+    "pixel_observation": "red watermelon flesh; not yellow",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "attr_15_wooden_fork",
+    "image_file": "wooden_fork.png",
+    "file_sha256": "1f1e3ba00d91a3cfcad0c469387504aa88d855fc546a53776b18f4a5b5583874",
+    "pixel_sha256": "8063d6c059a220d53cd5e9c8edbbf68552daf5e8bc3c1b1855a295b975d3915b",
+    "decision": "exclude",
+    "pixel_observation": "rice dish; no verified wooden fork",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "attr_16_clear_keyboard",
+    "image_file": "clear_keyboard.png",
+    "file_sha256": "96b50e73eaf03f8160028ade30767036476fcab90ad0ed2fc48079090e08757d",
+    "pixel_sha256": "75734b6cd95784934d093c7c8985ed55ad33a9778b2d66fe1d60094c0a60b36e",
+    "decision": "exclude",
+    "pixel_observation": "opaque white keyboard; not clear",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "attr_17_circular_brick",
+    "image_file": "circular_brick.png",
+    "file_sha256": "485169612c5c6132e1a0c8d00fe0f18f176a5e3a52df4b57a265cf7a340cfcac",
+    "pixel_sha256": "ffd6ddf891065115cc4fd0cdd5cedd6010b32a9a583f0a37fe49fbaaa3febee7",
+    "decision": "exclude",
+    "pixel_observation": "living room; no paving blocks; duplicate pedestal case",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "attr_18_red_banana",
+    "image_file": "red_banana.png",
+    "file_sha256": "b38bf622366aa9722250196af4f5210e4cbc27a3c5c83bf33f26931990c8d648",
+    "pixel_sha256": "aaba3ce4c2e9f0ee350fe915a1384ccf938b07385bf6a31a31cd6e303191f58d",
+    "decision": "exclude",
+    "pixel_observation": "pineapple; no red banana",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "abs_01_nomouse",
+    "image_file": "nomouse.png",
+    "file_sha256": "394b6c91eef0c5dc0ad55ba885d6d4e90c0933bd8c1ced250c98a25ea93a65d6",
+    "pixel_sha256": "653efc77b569ede02c5d2df93ed3622b026fcd5da0b0891dba4d269965d95a8c",
+    "decision": "retain_provisional",
+    "pixel_observation": "desk with laptop; no mouse visible",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "abs_02_blank_sign",
+    "image_file": "sign.png",
+    "file_sha256": "7ecee3ac415f7751fb6f75b58cd7bf927d65bf820b7b37d753bfa3c2e9181abf",
+    "pixel_sha256": "82fb73bfdeb838eb65378e10a27595c0fd81a3bf6d6ba40eecf8f7b36c6e56b9",
+    "decision": "retain_provisional",
+    "pixel_observation": "blank roadside sign",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "abs_03_empty_plate",
+    "image_file": "empty_plate.png",
+    "file_sha256": "a8443e5f6ed146afac62e385896a47b1af7b58df36e8c3dd7dddea6a2603b24e",
+    "pixel_sha256": "aa21ae27aee6f6d98efb312da2d5d160bc8e08d67f8a30f41da030ea01968e65",
+    "decision": "exclude",
+    "pixel_observation": "people holding drinks; no dinner plate target",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "abs_04_empty_cup",
+    "image_file": "empty_cup.png",
+    "file_sha256": "be5fe1d10b48750283965a0fdbfc9fd410c85712b9af8be359802d5ce41716b3",
+    "pixel_sha256": "a24cf69e5c924ec50af59c735110cdc50063ef33bdba4af81575d2178722edf8",
+    "decision": "exclude",
+    "pixel_observation": "cup contains coffee; not empty",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "abs_05_empty_leash",
+    "image_file": "empty_leash.png",
+    "file_sha256": "91bcf396557d71206d2ca27f1cedc985fd1bd0b0dcd4eb0d22943f6bf099aaa7",
+    "pixel_sha256": "0d7aa90a78a5461badae483e4dcaa61d1a1a6a31600affee29423fbaffd954b4",
+    "decision": "exclude",
+    "pixel_observation": "dog eating from bowl; no empty leash target",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "abs_06_empty_chair",
+    "image_file": "empty_chair.png",
+    "file_sha256": "be931e9e7be29f9c09aa226e07702ec6d5965a45d9ca0cb5b0de6796b60ad9e0",
+    "pixel_sha256": "cf2019f921b49425e4b5aab8f9b397d6a03e59d625f0f0051a33093285854592",
+    "decision": "retain_provisional",
+    "pixel_observation": "unoccupied yellow armchair",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "abs_07_empty_wrist",
+    "image_file": "empty_wrist.png",
+    "file_sha256": "7122ba81e724d094ea95a4c21eb3963ad58fb06128143045e1120a1c9ff30592",
+    "pixel_sha256": "546bc1f23a3d87c906295c28a2982c79925715837ec36cf7c51e1a984d062dd2",
+    "decision": "exclude",
+    "pixel_observation": "portrait; no wrist/watch region to inspect",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "abs_08_empty_bookshelf",
+    "image_file": "empty_bookshelf.png",
+    "file_sha256": "b346073649991349a58e0ebd7925cb515db39c3191866058d9f7d7d3a23a87bf",
+    "pixel_sha256": "0f267513ba33ec5c2f2755ab1950d933aa0721665187e312449a705eb7eb7701",
+    "decision": "exclude",
+    "pixel_observation": "phone/calculator and stationery; no middle bookshelf target",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "abs_09_empty_hanger",
+    "image_file": "empty_hanger.png",
+    "file_sha256": "f98b05a9ddfd5e0188d23b601c9425e6abc4c9f947ec88e77fe2d604bb1bd66a",
+    "pixel_sha256": "b4a1ca82d702b65462aca8239c756486c6d142bbcb68fbd480d5cdc1b28519aa",
+    "decision": "exclude",
+    "pixel_observation": "bedroom; no identifiable empty hanger",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "abs_10_empty_birdcage",
+    "image_file": "empty_birdcage.png",
+    "file_sha256": "14a6c6c34aa5915ed6a4bcdbdc4c0dc447045d0c1c78ea4e0e213afc710779f3",
+    "pixel_sha256": "297c8c6cb9798553a7fc38bbea494c18e957a3aa0e39b117ee2232d470f2177e",
+    "decision": "exclude",
+    "pixel_observation": "castle; no birdcage target; duplicate rose case",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "abs_11_empty_vase",
+    "image_file": "empty_vase.png",
+    "file_sha256": "c84cb5b0c53ba6c45677cc7c79faee87b8f99d010ce472069ed3e8233ef6dc2b",
+    "pixel_sha256": "e212d997e19198fb92fb9c24a8b136b9fb169b478d898ede2f5c0972fd0071aa",
+    "decision": "exclude",
+    "pixel_observation": "stacked plates and bowls; no glass vase target",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "abs_12_empty_parking_bay",
+    "image_file": "empty_parking.png",
+    "file_sha256": "b5ad379f51d3cb1fbc4795c7896acbf8a1b084839b66c87c71cbcbb7a562ac2b",
+    "pixel_sha256": "fe7d3deef8aef6bdc2efa73c415c48a71cf6643f689e7b7d0aba0ef7bb881880",
+    "decision": "exclude",
+    "pixel_observation": "occupied parking lot; target space unspecified",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "abs_13_empty_bed",
+    "image_file": "empty_bed.png",
+    "file_sha256": "9b6cfcbda27c0ba3f3c8837babf6deef3fc2ad1bf4d6f30f6652c468d00f123e",
+    "pixel_sha256": "510d48f6c725912a6768aad901a50f1eb4e2d855090ec3d436e5fa4ac8928286",
+    "decision": "retain_provisional",
+    "pixel_observation": "unoccupied bed",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "abs_14_empty_pedestal",
+    "image_file": "empty_pedestal.png",
+    "file_sha256": "485169612c5c6132e1a0c8d00fe0f18f176a5e3a52df4b57a265cf7a340cfcac",
+    "pixel_sha256": "ffd6ddf891065115cc4fd0cdd5cedd6010b32a9a583f0a37fe49fbaaa3febee7",
+    "decision": "exclude",
+    "pixel_observation": "living room; no pedestal target; duplicate paving-block case",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "abs_15_empty_easel",
+    "image_file": "empty_easel.png",
+    "file_sha256": "b116eb52df3486367e2d82dc728431c2f2fdca24a7a1f94fa73ce080565e8b13",
+    "pixel_sha256": "e38e1b20d2b1b74d14eca4ee71bc89d2e096936a0a7d1d2f55df0ef32b8641a0",
+    "decision": "exclude",
+    "pixel_observation": "paintbrushes; no easel or blank canvas target",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "abs_16_empty_mailbox",
+    "image_file": "empty_mailbox.png",
+    "file_sha256": "2c56980f1723acada88f8b9f198bd66179cd369a8f167eaff44580f69f85db5d",
+    "pixel_sha256": "129ca822d859fdf258b0f1f8c5979973fe3fe0d7751dde90ca64e754c47a8974",
+    "decision": "exclude",
+    "pixel_observation": "colored paper; no mailbox target",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "abs_17_empty_dogbowl",
+    "image_file": "empty_dogbowl.png",
+    "file_sha256": "8dae6152f948836da80c73c2a9826481132c0a0b0f73e262ceaead3b3c66f780",
+    "pixel_sha256": "3bb0863e62ff6c8c367a358e4e8155ce969a802ee12167eda9e817243ff64bf7",
+    "decision": "exclude",
+    "pixel_observation": "guinea pigs and food; no verified empty pet bowl",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "abs_18_empty_hook",
+    "image_file": "empty_hook.png",
+    "file_sha256": "832f20b0e08d0222c78f6a42eaf794e709f841e7c302576481bf73d7b7787032",
+    "pixel_sha256": "fd45f15f43c636ddac95fa1bfb6f0837916c3d43b04b30071697c1506726aa4a",
+    "decision": "exclude",
+    "pixel_observation": "display shelves; no identifiable key hook target",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "ctrl_01_real_yellow_banana",
+    "image_file": "real_banana.png",
+    "file_sha256": "5e153e0f41ab109dd1493483d221b414b63adcdf2896aa1ace12d8c7e4ba73f0",
+    "pixel_sha256": "61d4a13e9de4d6bf9c34366f9d19b17133038083571ed0176dd3c837ac33a1de",
+    "decision": "retain_provisional",
+    "pixel_observation": "yellow bananas visible",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "ctrl_02_real_mouse_on_desk",
+    "image_file": "real_mouse.png",
+    "file_sha256": "875d288a7de0c7459a90438045d1433254d84449b2cf6c03cdcefa55924af360",
+    "pixel_sha256": "952ae03d28fadd7fb47feae657add2059e5aa4782a998689c44abe7ec218a2a8",
+    "decision": "exclude",
+    "pixel_observation": "mouse visible on black surface; desk context unverified",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "ctrl_03_real_stop_sign",
+    "image_file": "real_stop_sign.png",
+    "file_sha256": "f035de803ef68da138cee2f85c01bceae57554dde43d92ab63e151251f01bb95",
+    "pixel_sha256": "280068f419fa41cfa07ba25916f422da4b79b65847e2be5741421b7bb691b44d",
+    "decision": "exclude",
+    "pixel_observation": "laptop with 404; no STOP sign",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "ctrl_04_real_apples",
+    "image_file": "apples.png",
+    "file_sha256": "61810689971148e6b0d34b1af6677e910cd257a8ca864af611543658b0d072c9",
+    "pixel_sha256": "2d10d078b1c0b17b41eacfe3d502fea69858a7109c5f39b2b1557065c2509abc",
+    "decision": "retain_provisional",
+    "pixel_observation": "apples visible",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "ctrl_05_real_dog",
+    "image_file": "real_dog.png",
+    "file_sha256": "064d2076241364f7f643c6499fb7a3a0e2f0d19ae1fc1b6457137b965cb03146",
+    "pixel_sha256": "0098a0867e5052fcfe9bd3d53613b15fc49982b6163a86adfbae136cd1f4b925",
+    "decision": "retain_provisional",
+    "pixel_observation": "dog visible",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "ctrl_06_real_coffee",
+    "image_file": "real_coffee.png",
+    "file_sha256": "0dc9c3679e5c817819b2be9b2c2df549bc16b2173e49aaa0bcdfb5d078bf5a91",
+    "pixel_sha256": "f687a7beab3d25468c0592839ebdd5b9b2c42b6cafa2af8b12a801b7aa7aedfb",
+    "decision": "retain_provisional",
+    "pixel_observation": "coffee in cup",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "ctrl_07_real_clothes",
+    "image_file": "clothes.png",
+    "file_sha256": "c35e991953a21dbc9493cf6adc0808bc69bbadca6b4fe528be6d3df802d5328a",
+    "pixel_sha256": "d905ebbcae7fc982e13272972618b2f73bd63f3fce8c3bd0c6544a265280c642",
+    "decision": "retain_provisional",
+    "pixel_observation": "clothed person",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "ctrl_08_real_car",
+    "image_file": "real_car.png",
+    "file_sha256": "e824d355e5b0e0da8712839c52d886a3e4aa1390f76fd8ceee05e6c7b39bb43c",
+    "pixel_sha256": "a680fb4c08d86b14d5c4d8770ce342bbafa7f581883fc587f2a154130b4d03af",
+    "decision": "retain_provisional",
+    "pixel_observation": "car visible",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "ctrl_09_real_book",
+    "image_file": "real_book.png",
+    "file_sha256": "7c61f0f57062f05da5b627a4850839ecc819b07275db5a53375059911d29109c",
+    "pixel_sha256": "7fc57d6f2cc9d3165328f3a692c831cf103deda12191e2252ac153caff9f146b",
+    "decision": "retain_provisional",
+    "pixel_observation": "open book visible",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "ctrl_10_real_clock",
+    "image_file": "real_clock.png",
+    "file_sha256": "a320fade38f2cb32d9d99697698056ecf1fdf651eb33a4818696beeac9c13000",
+    "pixel_sha256": "6635ce2e73328e621732c487c06c3a0dabd55401066ac0dcb015eafd5f14c47f",
+    "decision": "exclude",
+    "pixel_observation": "coffee cups; no clock visible",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "ctrl_11_real_cat",
+    "image_file": "real_cat.png",
+    "file_sha256": "bf220e5b6921262503d42d8ff73069ff9476719ef79749306b9a931e30cefd9a",
+    "pixel_sha256": "6f4184377180331504d8b5e71790ec589ebaa17a27da9b8632aa6f03f2df114e",
+    "decision": "retain_provisional",
+    "pixel_observation": "cat visible",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "ctrl_12_real_guitar",
+    "image_file": "real_guitar.png",
+    "file_sha256": "857cb99fa35f1430496f38b115e687ff505f9db85fcd054cc435bcced27faf81",
+    "pixel_sha256": "deab940614175d43a03ada7a7a703885e0530f5f1a5ba9c7478a273005af7f02",
+    "decision": "retain_provisional",
+    "pixel_observation": "guitar visible",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "ctrl_13_real_bicycle",
+    "image_file": "real_bicycle.png",
+    "file_sha256": "2c219a8c8b4f57dda6d1bc421a2b4f0757b4d6cdad483325316aed78f166acd1",
+    "pixel_sha256": "534f97e544004cf87b968b486e3359d8329df731e4837e9696662557f6cc5988",
+    "decision": "retain_provisional",
+    "pixel_observation": "bicycle visible",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  },
+  {
+    "id": "ctrl_14_real_pizza",
+    "image_file": "real_pizza.png",
+    "file_sha256": "dbc943f407907f79563b0cfec8d1744ae79b00d3cf9bd997d7248dea4c7f701f",
+    "pixel_sha256": "96aa5af5044bf16af55a4b6d330af5b803cc9ca25d0d1a55009980c2400a9c3c",
+    "decision": "retain_provisional",
+    "pixel_observation": "pizza visible",
+    "reviewer": "Codex visual inspection 2026-10-30",
+    "source": "results/2026-10-30/image_audit_contact_sheet.jpg"
+  }
+]

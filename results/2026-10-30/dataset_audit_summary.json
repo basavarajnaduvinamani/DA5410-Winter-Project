@@ -1,0 +1,24 @@
+{
+  "command": "python -m scripts.audit_dataset",
+  "seed": null,
+  "commit": "8d7c1829c3d00211564ca6dd5342ac1128df65a9",
+  "original_rows": 50,
+  "retained_rows": 16,
+  "excluded_rows": 34,
+  "category_counts": {
+    "counter_attribute": 1,
+    "counter_existence": 4,
+    "positive_control": 11
+  },
+  "exact_duplicate_image_groups": [
+    [
+      "attr_13_green_rose",
+      "abs_10_empty_birdcage"
+    ],
+    [
+      "attr_17_circular_brick",
+      "abs_14_empty_pedestal"
+    ]
+  ],
+  "manifest_sha256": "51b4f2090b600367169eb93659117e71333e67b2827a59a55f23d8a9ba67e6de"
+}
