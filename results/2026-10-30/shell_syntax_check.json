@@ -1,0 +1,5 @@
+{
+  "command": "C:/Program Files/Git/bin/bash.exe -n scripts/colab_run.sh",
+  "exit_code": 0,
+  "source_commit": "d292b5cbbe5fab3d761e70f19efc905bb73a369b"
+}

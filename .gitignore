@@ -3,3 +3,11 @@ __pycache__/
 *.class
 .ipynb_checkpoints
 *.tmp
+
+.venv*/
+*.private.json
+.tools/
+
+# POPE runs: COCO images and hidden-state shards stay out of git
+data/
+results/**/states/

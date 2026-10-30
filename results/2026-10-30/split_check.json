@@ -1,0 +1,27 @@
+{
+  "command": "python -m scripts.run_experiment --config configs/llava.json --output results/2026-10-30/cpu_preflight --prepare-only",
+  "seed": 20261030,
+  "identity": "results/2026-10-30/cpu_preflight/identity.json",
+  "split_counts": {
+    "calibration": 8,
+    "validation": 4,
+    "test": 4
+  },
+  "category_counts": {
+    "calibration": {
+      "counter_attribute": 1,
+      "counter_existence": 2,
+      "positive_control": 5
+    },
+    "test": {
+      "counter_existence": 1,
+      "positive_control": 3
+    },
+    "validation": {
+      "counter_existence": 1,
+      "positive_control": 3
+    }
+  },
+  "pairwise_image_group_overlap": 0,
+  "inference_executed": false
+}
