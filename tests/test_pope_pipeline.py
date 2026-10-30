@@ -99,14 +99,14 @@ class PipelineEndToEnd(unittest.TestCase):
         readme = self.tmp / 'README.md'
         readme.write_text(f'# x\n{README_START}\nold\n{README_END}\ntail\n')
         metrics = build_report(self.out, self.tmp / 'results' / 'REPORT.md', self.tmp / 'results' / 'figures', readme)
-        text = (self.tmp / 'results' / 'REPORT.md').read_text()
+        text = (self.tmp / 'results' / 'REPORT.md').read_text(encoding='utf8')
         for needle in ('POPE baseline', 'Linear probe', 'SLERP', 'Control: random direction', 'Δ accuracy', 'Retention'):
             self.assertIn(needle, text)
         self.assertTrue((self.tmp / 'results' / 'figures' / 'layer_sweep.png').exists())
         self.assertTrue((self.tmp / 'results' / 'figures' / 'steering_tradeoff_validation.png').exists())
         self.assertIn('slerp_pca', metrics['steering'])
         self.assertIsNotNone(metrics['steering']['slerp_pca']['delta_accuracy']['ci95'])
-        r = readme.read_text()
+        r = readme.read_text(encoding='utf8')
         self.assertNotIn('old', r); self.assertIn('tail', r); self.assertIn('Auto-filled from run', r)
 
 
