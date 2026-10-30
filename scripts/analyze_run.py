@@ -38,8 +38,8 @@ def analyze(run, review_file):
         group=[r for r in rows if r['split']==split]
         metrics={}
         for method in sorted({r['method'] for r in group}):
-            for category in ['counter_attribute','counter_existence','positive_control']:
-                subset=[r for r in group if r['method']==method and r['category']==category]
+            for category in ['overall','counter_attribute','counter_existence','positive_control']:
+                subset=[r for r in group if r['method']==method and (category=='overall' or r['category']==category)]
                 entry=dict(n=len(subset),correct=sum(r['label']=='correct' for r in subset),
                            hallucinated=sum(r['label']=='hallucinated' for r in subset),
                            incorrect=sum(r['label']=='incorrect' for r in subset))
@@ -50,8 +50,8 @@ def analyze(run, review_file):
             matched=[r for r in group if r['method'] in {'baseline',method}]
             if {r['id'] for r in matched if r['method']==method}!=held_ids.intersection(r['id'] for r in group):
                 raise ValueError('Incomplete ablation coverage')
-            for category in ['counter_attribute','counter_existence','positive_control']:
-                pairs=[r for r in matched if r['category']==category]
+            for category in ['overall','counter_attribute','counter_existence','positive_control']:
+                pairs=[r for r in matched if category=='overall' or r['category']==category]
                 def delta(rs):
                     b=[r for r in rs if r['method']=='baseline']; s=[r for r in rs if r['method']==method]
                     if not b or not s:return None

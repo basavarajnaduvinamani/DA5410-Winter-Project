@@ -99,7 +99,9 @@ def main():
                       category=c['category'], image_group=c['image_group'], image_sha256=c['image_sha256'],
                       prompt=c['prompt'], answer=answer, automatic_adjudication=adjudicate(answer,c),
                       seed=seed, config=config, dataset_sha256=identity['dataset_sha256'],
-                      run_id=identity['run_id'], commit=identity['commit'], probe_probability=probability)
+                      run_id=identity['run_id'], commit=identity['commit'], probe_probability=probability,
+                      intervention=dict(layer=layer,alpha=hook.alpha,threshold=hook.threshold,mode=hook.mode,
+                                        operation=hook.operation,vector_sha256=__import__('hashlib').sha256(hook.steering_vector.cpu().numpy().tobytes()).hexdigest()) if hook else None)
         append(predpath,record); records.append(record); done.add(pid)
     for c in cases:
         statefile = out/(c['id']+'.npy')

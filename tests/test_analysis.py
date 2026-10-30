@@ -30,6 +30,7 @@ class AnalysisTests(unittest.TestCase):
             self.assertEqual(result['metrics']['test']['probe:auroc']['estimate'],1.)
             self.assertIsNone(result['metrics']['test']['baseline:counter_attribute']['accuracy']['estimate'])
             self.assertEqual(result['metrics']['test']['steered:counter_existence:hallucination_delta']['estimate'],-.5)
+            self.assertEqual(result['metrics']['test']['steered:overall:hallucination_delta']['estimate'],-.5)
 
 
 if __name__=='__main__':unittest.main()
