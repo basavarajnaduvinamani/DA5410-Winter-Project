@@ -1,6 +1,7 @@
 ### FILE: PROTOCOL.md
 
 status: prepared CPU-verified protocol; full LLaVA inference and clean GPU installation remain UNKNOWN. [results/2026-10-30]
+round 2 (2026-10-31): POPE is the PRIMARY benchmark; the custom set below is a secondary small-scale probe set. See 'POPE primary protocol' at the end. [scripts/run_pope.py]
 Colab: https://colab.research.google.com/github/basavarajnaduvinamani/DA5410-Winter-Project/blob/upgrade/2026-10-30/notebooks/CounterPrior_Mechanistic_Steering.ipynb [notebooks/CounterPrior_Mechanistic_Steering.ipynb]
 
 ## Execution
@@ -35,3 +36,21 @@ command: add --ablations to the resume command; fixed selected layer, gate thres
 interpretation: ablations reuse the primary method's gate instead of optimizing per direction; vector addition uses unit-vector strength alpha while SLERP uses angular fraction alpha, so these doses are not equal in geometric magnitude. [scripts/run_experiment.py]
 newer model: UNKNOWN; this runner supports LLaVA only. Qwen/InternVL require a separately verified architecture adapter and GPU run. [src/model_loader.py]
 primary implementation references: https://huggingface.co/llava-hf/llava-1.5-7b-hf ; https://huggingface.co/docs/transformers/v4.57.1/en/model_doc/llava [LIVE retrieved 2026-10-30]
+
+## POPE primary protocol (round 2, 2026-10-31)
+benchmark: POPE random/popular/adversarial, 3,000 questions each, same 500 COCO val2014 images; question files vendored at AoiDragon/POPE@08d957b with sha256 pins. [dataset/pope/sources.json]
+images: COCO val2014, fetched per image or from val2014.zip; fetch_pope writes a sha256 manifest of the bytes used. [scripts/fetch_pope.py]
+command: bash scripts/colab_run.sh setup|timing|run|report (notebook cells 3-6); resumable from RUN/predictions.jsonl and RUN/states. [scripts/colab_run.sh]
+prompt: 'USER: <image>\n{question}\nAnswer the question using a single word or phrase. ASSISTANT:'; greedy, max_new_tokens 3. [src/adapters.py]
+scoring: official POPE parser (first sentence; 'No'/'no'/'not' => no); accuracy, precision, recall, F1 (yes positive), yes-ratio, false-yes rate on label=no. [src/pope.py]
+split: image-disjoint 20/10/70% calibration/validation/test by sha256(seed:image); seed 20261030; 100/50/350 images; IDs committed. quick profile takes the first 40/20/100 in the same order. [dataset/pope/splits_seed20261030.json]
+detection target: baseline answer wrong (config detection.target='error'; 'false_yes' restricts to object hallucination). [src/pope_pipeline.py]
+detection selection: per layer, 5-fold GroupKFold (groups = images) out-of-fold AUROC on calibration only for (a) standardised logistic probe C=1, (b) mean-difference cosine projection, (c) class-balanced PCA-axis projection; each detector takes its best calibration layer (ties to earlier). Logit baselines (-log p, entropy of first answer token) are not fitted. [src/detection.py]
+held-out: validation/test scores saved per item; per-layer test AUROC curve is descriptive only and never used for selection. [scripts/make_report.py]
+steering: layer = probe layer; directions fitted on calibration states at that layer: PCA (balanced) for SLERP, mean difference for addition, Gaussian random and shuffled-label mean difference as controls (a shuffled-label PCA axis would equal the real one up to sign, since PC1 does not use labels); cosine gate threshold per direction maximises calibration balanced accuracy. [src/pope_pipeline.py]
+strength: SLERP alpha in {0.05,0.1,0.2,0.3}; addition beta in {0.05,0.1,0.2,0.3} times mean calibration norm; chosen by validation accuracy (ties to smaller); controls reuse the SLERP alpha. Strength 0 is not a candidate, so a steered test row always exists; validation_sweep.json records whether it beat baseline. [configs/pope_llava.json]
+test: each method answers every test question once with frozen settings; utility = recall on present objects and retention of baseline-correct answers. [src/pope_pipeline.py]
+statistics: 95% percentile image-cluster bootstrap (1,000); paired deltas resample identical images for both arms; conditional on frozen selection. [src/evaluation.py]
+report: scripts/make_report.py reads only saved run files and writes results/REPORT.md, results/REPORT_metrics.json, results/figures/*.png and the README block between RESULTS markers. [scripts/make_report.py]
+manual review: POPE is scored automatically; the blinded manual review pause applies only to the custom set. [scripts/run_experiment.py]
+cross-model: --adapter qwen2_5_vl | internvl selects chat-template adapters (stub-tested only; revision unpinned until verified). [src/adapters.py]
