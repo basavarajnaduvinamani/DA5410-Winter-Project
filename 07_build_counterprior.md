@@ -5,7 +5,7 @@ repo: DA5410-Winter-Project | upgrade/2026-10-30 | 8d7c1829c3d00211564ca6dd5342a
 ## Step 1
 what was done: pixel audit; original benchmark preserved; corrected provisional manifest; conservative case-aware scoring and explicit adjudication policy. [dataset/audit_2026-10-30.json] [src/adjudication.py] [docs/ADJUDICATION.md]
 commands: git fetch origin; git switch -c upgrade/2026-10-30; git merge --ff-only origin/main; python -m scripts.audit_dataset; Python pixel contact-sheet inspection. [results/2026-10-30/dataset_audit_summary.json]
-files changed: src/benchmark.py; src/adjudication.py; docs/ADJUDICATION.md; dataset/audit_2026-10-30.json; dataset/counterprior_corrected.json. [repo]
+files changed: src/benchmark.py; src/adjudication.py; docs/ADJUDICATION.md; dataset/audit_2026-10-30.json; dataset/counterprior_corrected.json. [07_build_counterprior.md]
 new results: {"command": "python -m scripts.audit_dataset", "seed": null, "base_commit": "8d7c1829c3d00211564ca6dd5342ac1128df65a9", "original_rows": 50, "retained_rows": 16, "excluded_rows": 34, "category_counts": {"counter_attribute": 1, "counter_existence": 4, "positive_control": 11}, "manifest_sha256": "51b4f2090b600367169eb93659117e71333e67b2827a59a55f23d8a9ba67e6de"} [results/2026-10-30/dataset_audit_summary.json]
 duplicates: castle image excludes attr_13_green_rose and abs_10_empty_birdcage; living-room image excludes attr_17_circular_brick and abs_14_empty_pedestal. [results/2026-10-30/duplicate_detail.jpg]
 local folders used: repository root, docs/, notebooks/; C:/Users/Viraj/Documents/Codex/2026-08-29/referenced-chatgpt-conversation-this-is-an/tmp/handover/counterprior_evidence/; C:/Users/Viraj/Documents/Codex/2026-10-02/job-description-overview-come-build-community/work/project-review/. [results/2026-10-30/local_sources.json]
@@ -18,7 +18,7 @@ step 1 status: completed provisionally; independent pixel/adjudication review re
 ## Step 2
 what was done: repaired notebook cells 2 and 15 by replacing duplicated experimental code with shared scripts; removed fixed F1/matrix and summary claims; pinned checkpoint and direct dependencies; added CPU integrity/tiny-LLaVA integration checks and CI; disabled unsafe URL replacement and leaky row-level LOO. [notebooks/CounterPrior_Mechanistic_Steering.ipynb] [src/probe.py] [src/latent_geometry.py] [scripts/generate_dataset.py]
 commands: python -m compileall -q src scripts; python -m unittest discover -s tests -v; python -m scripts.run_experiment --config configs/llava.json --output results/2026-10-30/cpu_preflight --prepare-only. [results/2026-10-30/cpu_tests.log] [results/2026-10-30/cpu_preflight/environment.json]
-files changed: src/model_loader.py, src/probe.py, src/rotational_steering.py, src/latent_geometry.py, scripts/run_experiment.py, scripts/colab_run.sh, scripts/generate_dataset.py, requirements-colab.txt, configs/llava.json, notebook, tests/, .github/workflows/cpu.yml. [repo]
+files changed: src/model_loader.py, src/probe.py, src/rotational_steering.py, src/latent_geometry.py, scripts/run_experiment.py, scripts/colab_run.sh, scripts/generate_dataset.py, requirements-colab.txt, configs/llava.json, notebook, tests/, .github/workflows/cpu.yml. [07_build_counterprior.md]
 new results: CPU regression and random-weight tiny-LLaVA integration passed; this verifies mechanics, not pretrained-model performance. [results/2026-10-30/cpu_tests.log]
 new results: full-model clean GPU end-to-end run | UNKNOWN | no GPU inference | vs old one-click claim | results/2026-10-30/no_gpu_attempt/status.json. [results/2026-10-30/no_gpu_attempt/status.json]
 config: seed and all settings in configs/llava.json; actual CPU package versions and source hashes in preflight identity/environment. [configs/llava.json] [results/2026-10-30/cpu_preflight/identity.json] [results/2026-10-30/cpu_preflight/environment.json]
@@ -28,7 +28,7 @@ possible resume bullet: Added regression tests and a versioned experiment runner
 ## Step 3
 what was done: attempted experiment command; saved hardware/environment, config, dataset hash, source hashes and failure log; no model download/inference was attempted after CUDA preflight failed. [results/2026-10-30/no_gpu_attempt]
 commands: python -m scripts.run_experiment --config configs/llava.json --output results/2026-10-30/no_gpu_attempt. [results/2026-10-30/no_gpu_attempt/environment.json]
-files changed: results/2026-10-30/no_gpu_attempt/; results/2026-10-30/no_gpu_attempt.log. [repo]
+files changed: results/2026-10-30/no_gpu_attempt/; results/2026-10-30/no_gpu_attempt.log. [07_build_counterprior.md]
 new results: LLaVA baseline vs steered | UNKNOWN | all splits | vs historical claims unresolved | results/2026-10-30/no_gpu_attempt/status.json. [results/2026-10-30/no_gpu_attempt/status.json]
 blocker: ONLY COLAB NO GPU AVAILABLE NOW. [memory: user message 2026-10-30]
 required action: select Colab GPU and execute bash scripts/colab_run.sh; baseline collection then requires blind calibration reviews before frozen selection; full answer review before reporting. [docs/PROTOCOL.md]
@@ -38,7 +38,7 @@ possible resume bullet: UNKNOWN; no inference result achieved. [results/2026-10-
 ## Step 4
 what was done: built and checked deterministic image-disjoint calibration/validation/test partitions; implemented calibration-only group-LOO layer/gate selection, probe metrics, per-category hallucination/accuracy, paired sightedness retention and paired image-bootstrap intervals. [src/protocol.py] [scripts/analyze_run.py]
 commands: python -m scripts.run_experiment --config configs/llava.json --output results/2026-10-30/cpu_preflight --prepare-only; Python split disjointness check. [results/2026-10-30/split_check.json]
-files changed: src/protocol.py; scripts/analyze_run.py; scripts/blind_review.py; tests/test_protocol.py; tests/test_analysis.py. [repo]
+files changed: src/protocol.py; scripts/analyze_run.py; scripts/blind_review.py; tests/test_protocol.py; tests/test_analysis.py. [07_build_counterprior.md]
 new results: {"command": "python -m scripts.run_experiment --config configs/llava.json --output results/2026-10-30/cpu_preflight --prepare-only", "seed": 20261030, "identity": "results/2026-10-30/cpu_preflight/identity.json", "split_counts": {"calibration": 8, "validation": 4, "test": 4}, "category_counts": {"calibration": {"counter_attribute": 1, "counter_existence": 2, "positive_control": 5}, "test": {"counter_existence": 1, "positive_control": 3}, "validation": {"counter_existence": 1, "positive_control": 3}}, "pairwise_image_group_overlap": 0, "inference_executed": false} [results/2026-10-30/split_check.json]
 new results: hallucination rates, AUROC, precision/recall/F1, sightedness and CIs | UNKNOWN | validation and test | historical values not reproduced | results/2026-10-30/no_gpu_attempt/status.json. [results/2026-10-30/no_gpu_attempt/status.json]
 what is still open: GPU inference, independent pixel review, full answer adjudication and sufficient calibration class support. The retained attribute category is calibration-only; no held-out attribute metric is available. [dataset/counterprior_corrected.json] [results/2026-10-30/split_check.json]
@@ -47,7 +47,7 @@ possible resume bullet: Implemented image-grouped evaluation with calibration-on
 ## Step 5
 what was done: preserved conflicting historical values and marked them unverified; defined one indexing, gate and normalization contract for future runs; added evidence notice to README and TeX source. [README.md:1] [docs/main.tex:1] [docs/PROTOCOL.md]
 commands: rg -n historical claims in README.md and docs/main.tex; reopened local research-log/report/resume text and hashed local report PDFs. [results/2026-10-30/local_sources.json] [results/2026-10-30/resume_claim_sources.json]
-files changed: README.md; docs/main.tex; docs/PROTOCOL.md; 07_build_counterprior.md. [repo]
+files changed: README.md; docs/main.tex; docs/PROTOCOL.md; 07_build_counterprior.md. [07_build_counterprior.md]
 conflict: 34.48% | report/README claim; 34.97% | old notebook summary; 34.78% | local historical transcript; new measured PCA variance UNKNOWN. No source chosen as correct. [docs/main.tex] [results/2026-10-30/original_notebook_cells.json] [C:/Users/Viraj/Documents/Codex/2026-08-29/referenced-chatgpt-conversation-this-is-an/tmp/handover/counterprior_evidence/local_Research_Log_Trajectory.txt:748]
 conflict: 50 bootstrap iterations | README; 1,000 | report; new configuration uses bootstrap_iterations from configs/llava.json, but executed scientific-bootstrap result UNKNOWN. [README.md] [docs/main.tex] [configs/llava.json]
 conflict: historical normalized alignment with threshold 15.0 versus raw-dot implementation; new gate uses cosine alignment and a calibration-selected threshold; new layer IDs are zero-based raw block outputs, embeddings excluded; logit lens applies final normalization once. Old Layer 17/25 results cannot be mapped confidently without their raw state extraction metadata. [docs/PROTOCOL.md] [src/probe.py] [src/rotational_steering.py] [results/2026-10-30/original_notebook_cells.json]
@@ -58,17 +58,26 @@ possible resume bullet: Audited benchmark labels and added reproducible evaluati
 ## Step 6
 what was done: implemented optional matched random-direction, shuffled-label, mean-difference, addition and constant-gate ablations with saved answers and shared image-bootstrap analysis. [scripts/run_experiment.py] [scripts/analyze_run.py]
 commands: prepared --ablations flag; no GPU ablation executed. [docs/PROTOCOL.md]
-files changed: scripts/run_experiment.py; scripts/analyze_run.py. [repo]
+files changed: scripts/run_experiment.py; scripts/analyze_run.py. [07_build_counterprior.md]
 new results: ablation comparisons and CIs | UNKNOWN | held-out | vs old claims unverified | results/2026-10-30/no_gpu_attempt/status.json. [results/2026-10-30/no_gpu_attempt/status.json]
 what is still open: GPU, complete human adjudication and calibration class support; ablation gate/dose limitations documented. [docs/PROTOCOL.md]
 possible resume bullet: UNKNOWN; no measured ablation achieved. [results/2026-10-30/no_gpu_attempt/status.json]
 
 ## Step 7
 what was done: not executed; no GPU; runner currently supports LLaVA only. [src/model_loader.py] [results/2026-10-30/no_gpu_attempt/status.json]
-commands: NONE; files changed: NONE. [repo]
+commands: NONE; files changed: NONE. [07_build_counterprior.md]
 new results: cross-model transfer | UNKNOWN | all splits | vs no supported old result | results/2026-10-30/no_gpu_attempt/status.json. [results/2026-10-30/no_gpu_attempt/status.json]
 what is still open: Qwen2.5-VL or InternVL adapter, pinned checkpoint and independent GPU verification after LLaVA. [docs/PROTOCOL.md]
 possible resume bullet: UNKNOWN. [results/2026-10-30/no_gpu_attempt/status.json]
+
+## Final verification and delivery
+implementation commit: d292b5cbbe5fab3d761e70f19efc905bb73a369b. [LIVE DA5410-Winter-Project@d292b5cbbe5fab3d761e70f19efc905bb73a369b]
+commands: python -m scripts.verify_cpu --output results/2026-10-30/verified_d292b5c; python -m scripts.run_experiment --config configs/llava.json --output results/2026-10-30/prepared_d292b5c --prepare-only; bash -n scripts/colab_run.sh; git diff --check. [results/2026-10-30/verified_d292b5c/verification.json] [results/2026-10-30/prepared_d292b5c/identity.json] [results/2026-10-30/shell_syntax_check.json]
+verification result: see committed-code test manifest for dynamically measured test count/outcome, seed, complete config, commit and source hashes. Unit-test fixtures are synthetic and are never reported as pretrained-model measurements. [results/2026-10-30/verified_d292b5c/verification.json]
+environment lock: Linux/CPython 3.11 dependency closure resolved with hashes; launcher provisions Python 3.11.9 through pinned uv; actual clean GPU installation remains UNKNOWN. [requirements-colab.lock] [results/2026-10-30/lock_resolution.json] [scripts/colab_run.sh]
+Colab notebook: https://colab.research.google.com/github/basavarajnaduvinamani/DA5410-Winter-Project/blob/upgrade/2026-10-30/notebooks/CounterPrior_Mechanistic_Steering.ipynb [notebooks/CounterPrior_Mechanistic_Steering.ipynb]
+GPU command: bash scripts/colab_run.sh; baseline review and resume instructions in docs/PROTOCOL.md. [scripts/colab_run.sh] [docs/PROTOCOL.md]
+resume-ready wording: Audited image-label consistency in a multimodal hallucination benchmark and built a versioned evaluation pipeline with image-disjoint splits, conservative answer adjudication and CPU regression checks for activation steering. [dataset/audit_2026-10-30.json] [scripts/run_experiment.py] [results/2026-10-30/verified_d292b5c/verification.json]
 
 ## OLD CLAIM -> NEW STATUS
 AI4Bharat Lab, IIT  • Achieved 100% predictive accuracy by Layer 17 in identifying hallucination-emergence windows, [C:\Users\Viraj\Documents\Codex\2026-08-29\referenced-chatgpt-conversation-this-is-an\tmp\handover\counterprior_evidence\F1.txt:25]
