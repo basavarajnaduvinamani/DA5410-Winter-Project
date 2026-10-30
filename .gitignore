@@ -3,3 +3,7 @@ __pycache__/
 *.class
 .ipynb_checkpoints
 *.tmp
+
+.venv*/
+*.private.json
+.tools/

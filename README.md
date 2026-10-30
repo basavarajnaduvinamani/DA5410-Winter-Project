@@ -1,3 +1,7 @@
+> **2026-10-30 evidence update:** Historical numerical results below are unverified claims, not reproduced results. A pixel audit excludes mislabeled/irrelevant images from a separate provisional manifest. The original dataset, figures and report remain preserved. Do not use the historical accuracy, reduction or retention numbers in applications without new run-linked evidence. See [build report](07_build_counterprior.md), [protocol](docs/PROTOCOL.md), and [adjudication policy](docs/ADJUDICATION.md).
+>
+> **Current execution:** select a Colab GPU and run `bash scripts/colab_run.sh` from this branch. Baseline collection pauses for blinded calibration reviews; full human adjudication is required before publishing metrics. The repaired notebook wraps the same scripts. Full-model GPU results remain UNKNOWN.
+
 # CounterPrior: Predictive Emergence & Causal Rotational Steering of Multimodal Hallucinations
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)

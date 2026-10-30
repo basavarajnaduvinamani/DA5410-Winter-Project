@@ -1,0 +1,41 @@
+{
+  "config": {
+    "model_id": "llava-hf/llava-1.5-7b-hf",
+    "revision": "b234b804b114d9e37bb655e11cbbb5f5e971b7a9",
+    "dataset": "dataset/counterprior_corrected.json",
+    "seed": 20261030,
+    "bootstrap_iterations": 1000,
+    "alpha": 0.25,
+    "max_new_tokens": 40,
+    "attn_implementation": "eager",
+    "load_in_4bit": true,
+    "direction": "pca",
+    "gate": "calibration_group_loo_cosine",
+    "layer_indexing": "zero_based_raw_decoder_output",
+    "ablation_methods": [
+      "random_direction",
+      "shuffled_labels",
+      "mean_difference",
+      "addition",
+      "constant"
+    ]
+  },
+  "dataset_sha256": "51b4f2090b600367169eb93659117e71333e67b2827a59a55f23d8a9ba67e6de",
+  "source_sha256": {
+    "scripts\\analyze_run.py": "9e8cf830ee93e7de92b6c76b6cb347b2a862a01206a97c2624c09a3f3e40f9d0",
+    "scripts\\audit_dataset.py": "fe5110ec48c38a4926877d348e3c7787e18550634b09b0d101823247d50047b1",
+    "scripts\\blind_review.py": "d1bbc57a74455ae89a01a8d59c8c38386e12444f06c95f30cd5884eaca24bff9",
+    "scripts\\generate_dataset.py": "144799256c0476987e6e5c148d00c8cfcdd989a62a00fbfae2209616c2872667",
+    "scripts\\run_experiment.py": "c2b01783d3c2de83311ffb84c14f5586a56ad124def5c55cc7eb53fb4dccd2aa",
+    "src\\__init__.py": "5380b65f5f00d929432c58e1e33ffd04ec9442c1ada40e355108385f05f7cad7",
+    "src\\adjudication.py": "9ca2d33c2fa0aca3efb496c679be8430e74729419a5302e283434a5f1ca98fd2",
+    "src\\benchmark.py": "45136e1e019028cd923959d8144ebc733e29d955308b8cc927a256b0942edf4e",
+    "src\\latent_geometry.py": "bde767f172ec3c24a194fc04f98c318b89205a56e30f5a4e6731d89e4e1125ee",
+    "src\\model_loader.py": "750a6967f221b85f0d3156495711a6e48d2a5b11cee2bf2660aa8ab82882012b",
+    "src\\probe.py": "433ab7b25df78abba7f28329646d9952feebe36a8538b2b6a81f32b0e35615c6",
+    "src\\protocol.py": "a536cb01f10bbb69ccfc7e2a1b0aab57b6c735a24028469f1cff7b19fe625541",
+    "src\\rotational_steering.py": "bbfb4cfee5717c982509c725cdad30af8b6c5d33825687cd380ceb35842ab0a4"
+  },
+  "commit": "89d0850f7785f14384b2cc36147931ab3d74f5a2",
+  "run_id": "4aeeb30a199673979bf1a29a21b5bbbcb9a21afbd0a404865f516957ba8682bb"
+}

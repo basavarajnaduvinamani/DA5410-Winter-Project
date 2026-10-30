@@ -13,6 +13,7 @@ def load_llava_model(
     model_id="llava-hf/llava-1.5-7b-hf",
     attn_implementation="sdpa",
     load_in_4bit=True,
+    revision="b234b804b114d9e37bb655e11cbbb5f5e971b7a9",
     device="cuda" if torch.cuda.is_available() else "cpu"
 ):
     """
@@ -37,10 +38,11 @@ def load_llava_model(
 
     print(f"Loading {model_id} (attn_implementation='{attn_implementation}', 4-bit={load_in_4bit})...")
     
-    processor = AutoProcessor.from_pretrained(model_id)
+    processor = AutoProcessor.from_pretrained(model_id, revision=revision)
     
     model = LlavaForConditionalGeneration.from_pretrained(
         model_id,
+        revision=revision,
         quantization_config=quant_config,
         device_map="auto" if device != "cpu" else None,
         attn_implementation=attn_implementation,
@@ -54,6 +56,12 @@ def find_language_decoder_layers(model):
     """
     Introspectively traverses model modules to locate the 32 decoder layers of Vicuna.
     """
+    for path in ("model.language_model.layers", "language_model.model.layers", "language_model.layers"):
+        node = model
+        for part in path.split('.'):
+            node = getattr(node, part, None)
+        if node is not None:
+            return node
     if hasattr(model, "language_model") and hasattr(model.language_model, "model"):
         if hasattr(model.language_model.model, "layers"):
             return model.language_model.model.layers

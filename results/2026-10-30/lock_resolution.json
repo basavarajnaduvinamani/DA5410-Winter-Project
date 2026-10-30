@@ -1,0 +1,6 @@
+{
+  "command": "uv pip compile requirements-colab.txt --python-version 3.11 --python-platform x86_64-manylinux_2_28 --generate-hashes -o requirements-colab.lock",
+  "resolver": "uv 0.9.7",
+  "lock_sha256": "33782035481f6cefc7533065254bfb5f4e683fa7a534f0a5528ccfb4629c7395",
+  "clean_gpu_install_executed": false
+}

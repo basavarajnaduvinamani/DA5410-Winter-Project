@@ -36,6 +36,7 @@ class ScoringTests(unittest.TestCase):
         self.assertEqual(adjudicate('Yes.',{'category':'positive_control'})['label'],'correct')
 
     def test_legacy_cannot_accept_contradiction(self):
+        self.assertTrue(evaluate_response_truth('no mouse', ['no mouse','empty'], ['next to the laptop']))
         self.assertFalse(evaluate_response_truth('The mouse is next to the laptop; the desk is empty.', ['no mouse','empty'], ['next to the laptop']))
         self.assertFalse(evaluate_response_truth('not green', ['green'], ['yellow']))
 
