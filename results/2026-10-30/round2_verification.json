@@ -1,0 +1,221 @@
+{
+  "scope": "CPU tests and data checks only; synthetic fixtures are not research model results",
+  "verified_commit": "95219196f6f65ec50135ec87c81de1e31aa5e0f6",
+  "runs": [
+    {
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "start": "2026-10-30T15:52:32.967829+00:00",
+      "end": "2026-10-30T15:53:44.630142+00:00",
+      "exit_status": 0,
+      "label": "snapshot",
+      "hardware": {
+        "cpu": "12th Gen Intel(R) Core(TM) i5-12450H",
+        "gpu": "NVIDIA GeForce GTX 1650",
+        "gpu_vram_mib": 4096
+      },
+      "log_sha256": "49f75e7a4c1ae3a8ac37f0b428bdd3ed29e5aa48201e2017937e129bb1ee02eb",
+      "tests_run": 11,
+      "duration_seconds": "45.197",
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "scripts.audit_dataset"
+      ],
+      "start": "2026-10-30T15:53:44.695336+00:00",
+      "end": "2026-10-30T15:53:45.857808+00:00",
+      "exit_status": 0,
+      "label": "snapshot",
+      "hardware": {
+        "cpu": "12th Gen Intel(R) Core(TM) i5-12450H",
+        "gpu": "NVIDIA GeForce GTX 1650",
+        "gpu_vram_mib": 4096
+      },
+      "log_sha256": "6f8a8d7b0cfa6f978e15d385e8676e960936e53cf3536db8efd8cb1ee230c0fc"
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "start": "2026-10-30T15:55:29.631784+00:00",
+      "end": "2026-10-30T15:56:11.790005+00:00",
+      "exit_status": 1,
+      "label": "pr",
+      "hardware": {
+        "cpu": "12th Gen Intel(R) Core(TM) i5-12450H",
+        "gpu": "NVIDIA GeForce GTX 1650",
+        "gpu_vram_mib": 4096
+      },
+      "log_sha256": "c4a03f0bcb78799f77c5cb3eda6d0351a37fd4f7c93eedf2127d4737da80e1c3",
+      "tests_run": 34,
+      "duration_seconds": "13.240",
+      "failures": 2,
+      "errors": 0
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "scripts.audit_dataset"
+      ],
+      "start": "2026-10-30T15:56:11.860010+00:00",
+      "end": "2026-10-30T15:56:13.063925+00:00",
+      "exit_status": 0,
+      "label": "pr",
+      "hardware": {
+        "cpu": "12th Gen Intel(R) Core(TM) i5-12450H",
+        "gpu": "NVIDIA GeForce GTX 1650",
+        "gpu_vram_mib": 4096
+      },
+      "log_sha256": "726413f562d48cfa9c2cdfdd56dcd9792ec02998a08692fddeab4682b625786f"
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "start": "2026-10-30T15:57:53.903828+00:00",
+      "end": "2026-10-30T15:58:35.129300+00:00",
+      "exit_status": 0,
+      "label": "pr_fixed",
+      "hardware": {
+        "cpu": "12th Gen Intel(R) Core(TM) i5-12450H",
+        "gpu": "NVIDIA GeForce GTX 1650",
+        "gpu_vram_mib": 4096
+      },
+      "log_sha256": "ada0e6fe27c53b6586ac529778fd76ace3fc597c159a7576efdfcfb829218a2a",
+      "tests_run": 34,
+      "duration_seconds": "11.380",
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "scripts.audit_dataset"
+      ],
+      "start": "2026-10-30T15:58:35.196455+00:00",
+      "end": "2026-10-30T15:58:36.991893+00:00",
+      "exit_status": 0,
+      "label": "pr_fixed",
+      "hardware": {
+        "cpu": "12th Gen Intel(R) Core(TM) i5-12450H",
+        "gpu": "NVIDIA GeForce GTX 1650",
+        "gpu_vram_mib": 4096
+      },
+      "log_sha256": "726413f562d48cfa9c2cdfdd56dcd9792ec02998a08692fddeab4682b625786f"
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "start": "2026-10-30T15:59:26.679276+00:00",
+      "end": "2026-10-30T16:00:08.285999+00:00",
+      "exit_status": 0,
+      "label": "pr_committed",
+      "hardware": {
+        "cpu": "12th Gen Intel(R) Core(TM) i5-12450H",
+        "gpu": "NVIDIA GeForce GTX 1650",
+        "gpu_vram_mib": 4096
+      },
+      "log_sha256": "8727c56504a7f9afcf4576cad00ce699b9b956012a3144362cfc74cdcf64af4d",
+      "tests_run": 34,
+      "duration_seconds": "10.436",
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "scripts.audit_dataset"
+      ],
+      "start": "2026-10-30T16:00:08.363644+00:00",
+      "end": "2026-10-30T16:00:09.547775+00:00",
+      "exit_status": 0,
+      "label": "pr_committed",
+      "hardware": {
+        "cpu": "12th Gen Intel(R) Core(TM) i5-12450H",
+        "gpu": "NVIDIA GeForce GTX 1650",
+        "gpu_vram_mib": 4096
+      },
+      "log_sha256": "894922fb9a620e362df1ce3e5c478879a95d64bfda300b22d5fb3d7952b0f40b"
+    }
+  ],
+  "notebook_check": {
+    "path": "notebooks/CounterPrior_Mechanistic_Steering.ipynb",
+    "sha256": "2c99a6c4506d2aa4f709d941e67d57bee6d5d940e0521922c75394e3ccdefd10",
+    "code_cells": [
+      {
+        "index": 1,
+        "first_line": "# Cell 1: settings. PROFILE='quick' uses 160 images (~2,900 baseline questions); 'full' uses all 500 (9,000)."
+      },
+      {
+        "index": 2,
+        "first_line": "# Cell 2: clone (or update) the repository and print the GPU."
+      },
+      {
+        "index": 3,
+        "first_line": "# Cell 3: environment, CPU tests and COCO images (about 5-10 minutes the first time)."
+      },
+      {
+        "index": 4,
+        "first_line": "# Cell 4: 20-question timing probe. Prints seconds/question and estimated hours per stage (saved to RUN/timing.json)."
+      },
+      {
+        "index": 5,
+        "first_line": "# Cell 5: the full pipeline: baseline -> calibrate -> validation sweep -> test steering -> run report."
+      },
+      {
+        "index": 6,
+        "first_line": "# Cell 6: write results/REPORT.md, results/figures/*.png and the README results block; show the report."
+      },
+      {
+        "index": 7,
+        "first_line": "# Cell 7: bundle what to send back (everything except the large hidden-state shards)."
+      }
+    ],
+    "syntax": "passed",
+    "cell_order": "passed",
+    "execution": "NOT EXECUTED: unsuitable GPU"
+  },
+  "gpu_inference_executed": false,
+  "proposed_relabels_applied": false,
+  "source_hashes": {
+    ".gitattributes": "012a43b4da6d6975f34063b8a17b98496a23f575a916f21c66032d8f20f64ea0",
+    "tests\\test_pope_pipeline.py": "d2cf097a412b5e2adbbc7505f395fe0d16c02d2a4c707cdac642dc5016cf5f63",
+    "dataset\\counterprior_corrected.json": "51b4f2090b600367169eb93659117e71333e67b2827a59a55f23d8a9ba67e6de",
+    "dataset\\pope\\coco_pope_adversarial.json": "420b3407db1fa9f1187a805dca41cb7b97fd91504e6c2179706188c107fb8ef8",
+    "dataset\\pope\\coco_pope_popular.json": "72c1a8ad45d0c13514f5f22598261df41d3b533854d29682e924db50ed8aa753",
+    "dataset\\pope\\coco_pope_random.json": "ac25245170b975a5bdf9080b23fd431dfe6be458bc038259c1f4f09a6bef7994"
+  }
+}
