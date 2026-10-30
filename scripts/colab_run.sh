@@ -14,16 +14,18 @@ py=.venv-colab/bin/python
 mkdir -p "$run"
 
 setup() {
-  if [ ! -x .venv-bootstrap/bin/uv ]; then
-    python -m venv .venv-bootstrap
-    .venv-bootstrap/bin/python -m pip install uv==0.9.7 2>&1 | tee -a "$run/bootstrap.log"
+  # Colab's Python 3.13 strips ensurepip, so 'python -m venv' fails.
+  # Install uv directly into the system pip environment instead.
+  if ! command -v uv &>/dev/null && [ ! -f .venv-bootstrap-done ]; then
+    pip install --quiet "uv==0.9.7" 2>&1 | tee -a "$run/bootstrap.log"
+    touch .venv-bootstrap-done
   fi
   if [ ! -x "$py" ]; then
-    .venv-bootstrap/bin/uv venv --python 3.11.9 .venv-colab 2>&1 | tee -a "$run/python-setup.log"
+    uv venv --python 3.11.9 .venv-colab 2>&1 | tee -a "$run/python-setup.log"
   fi
-  .venv-bootstrap/bin/uv pip sync --python "$py" --require-hashes --only-binary :all: requirements-colab.lock 2>&1 | tee -a "$run/install.log"
-  .venv-bootstrap/bin/uv pip check --python "$py" 2>&1 | tee -a "$run/pip-check.log"
-  .venv-bootstrap/bin/uv pip freeze --python "$py" > "$run/environment-freeze.txt"
+  uv pip sync --python "$py" --require-hashes --only-binary :all: requirements-colab.lock 2>&1 | tee -a "$run/install.log"
+  uv pip check --python "$py" 2>&1 | tee -a "$run/pip-check.log"
+  uv pip freeze --python "$py" > "$run/environment-freeze.txt"
   "$py" -m unittest discover -s tests -v 2>&1 | tee -a "$run/tests.log"
   "$py" -m scripts.fetch_pope --coco-dir "$coco" 2>&1 | tee -a "$run/fetch.log"
 }

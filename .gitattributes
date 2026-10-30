@@ -1,2 +1,3 @@
 # Preserve byte-exact upstream question files for SHA-256 verification.
 dataset/pope/coco_pope_*.json -text
+*.sh text eol=lf
