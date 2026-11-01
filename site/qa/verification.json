@@ -1,9 +1,9 @@
 {
   "scope": "Software QA, not pretrained-model evaluation",
-  "recordedAt": "2026-11-01T18:14:18.799Z",
+  "recordedAt": "2026-11-01T18:32:24.065Z",
   "playwright": {
-    "startTime": "2026-11-01T18:02:26.362Z",
-    "duration": 148925.449,
+    "startTime": "2026-11-01T18:29:27.466Z",
+    "duration": 117580.80399999999,
     "expected": 44,
     "skipped": 0,
     "unexpected": 0,

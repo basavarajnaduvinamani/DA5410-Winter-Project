@@ -2,12 +2,12 @@
   "scope": "Software CPU checks; not pretrained-model inference",
   "command": "python -m unittest discover -s tests -v",
   "tests": 41,
-  "test_runner_seconds": 40.098,
+  "test_runner_seconds": 17.688,
   "result": "passed",
   "python": "3.11.9",
   "os": "Windows",
   "machine": "AMD64",
-  "log_sha256": "0f8b444dd2a155c71fdad62abfd795fde3fe4f0dd73ff7c26c3adc9f6cbab13e",
+  "log_sha256": "b40f217c007b0f5262838fe0234f9eab232dbd354922bd64937d5033ac7acdc2",
   "input_sha256": {
     "src/__init__.py": "5380b65f5f00d929432c58e1e33ffd04ec9442c1ada40e355108385f05f7cad7",
     "src/adapters.py": "d7105d3ba21bd5d66c3ac0f99ebb034e5102209ef1acc3969d8076ea25edab7a",
@@ -31,7 +31,7 @@
     "scripts/fetch_pope.py": "178e14ddc08df69ac4efebc2a5d164b0edfb80775628d068721cbbacae137d51",
     "scripts/generate_dataset.py": "5209649dd0e206d794fcc9b9f0fee54b3014291a90ff0ad8693fb9714ccde950",
     "scripts/ingest_run.py": "4611f785e7c69f8893e1f33dcd0eeb654a7faf75c96f7a7618cd132ec727f0f5",
-    "scripts/make_report.py": "d8acf0cace8a52753b3948fecbaae0e680a73226bf410a082801b1c6ff055049",
+    "scripts/make_report.py": "46a2bd7471502a6a90abd1759ae902dfb9ba8c4f097bef9f8792d166ba79165d",
     "scripts/prepare_site_examples.py": "ae5790f3d34376640e4261feb7eafb3dc4191c760652b72263be68226be2c632",
     "scripts/run_experiment.py": "38b850cf03431455cb6ea1a2f79232ee20c9b6f4c8dbdf6d3561591c6b6900cb",
     "scripts/run_pope.py": "06e5410929a1d0de7cacb59fc34c41e42b2efbf75e58aec30af39336d071d342",
@@ -49,7 +49,10 @@
     "tests/test_report_backend.py": "97dd8b33e22a4482e1ebb388f691d934f8261ebc3632f9614dd1f950c0ce8c23",
     "configs/llava.json": "d7756cbd700eca171953ac038972f02a015752e830b42eebd1b11f34e9ac4b61",
     "configs/pope_llava.json": "fb2ed270bb461b6e1f3b347f3925d01c3f67a99465ddb474881a9bf68985c2ef",
-    "configs/pope_qwen_replication.json": "724831d561e61b21f2ef7341800fcc9819d0703bb7d8a284ccc1a05d040f7a7c"
+    "configs/pope_qwen_replication.json": "724831d561e61b21f2ef7341800fcc9819d0703bb7d8a284ccc1a05d040f7a7c",
+    "notebooks/CounterPrior_Mechanistic_Steering.ipynb": "16c36af8afc32201c6e0cc00f1e8915f7654e90c8337a097fb9ebb9437eadcce",
+    "notebooks/CounterPrior_Modern_Replication.ipynb": "d70a27443de54a51e966082a091b5abb5b6210ed5f2216cf5ea707856a4ab43b",
+    "notebooks/legacy_experiments.ipynb": "39e0b00fab9c959b5baad6045733a193fbb5debf0f98ea79a63af601f4999b2e"
   },
   "dataset_audit": {
     "command": "python -m scripts.audit_dataset",
