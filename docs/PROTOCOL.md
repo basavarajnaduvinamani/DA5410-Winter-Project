@@ -54,3 +54,19 @@ statistics: 95% percentile image-cluster bootstrap (1,000); paired deltas resamp
 report: scripts/make_report.py reads only saved run files and writes results/REPORT.md, results/REPORT_metrics.json, results/figures/*.png and the README block between RESULTS markers. [scripts/make_report.py]
 manual review: POPE is scored automatically; the blinded manual review pause applies only to the custom set. [scripts/run_experiment.py]
 cross-model: --adapter qwen2_5_vl | internvl selects chat-template adapters (stub-tested only; revision unpinned until verified). [src/adapters.py]
+
+
+## Analysis declarations for the research site
+Declared 2026-11-01 before inspecting pretrained-model outcomes. The owner's first attempt stopped in setup before inference. These declarations do not retroactively turn historical experiments into preregistered runs.
+
+- Endpoint: the current `configs/pope_llava.json` detector target is `error` (any wrong baseline answer), not exclusively a hallucinated yes. Preserve it for the active run and label it on every result. False-yes rate on absent objects is the steering endpoint.
+- Detection: compare the frozen probe with answer-token negative log-probability using a paired image-cluster bootstrap of the AUROC difference. Supported improvement requires a wholly positive interval; wholly negative is not supported; an interval including zero or insufficient class support is inconclusive. Report entropy and all projection baselines alongside it. Do not select a layer from the descriptive test-layer curve.
+- Geometry: an oriented PCA projection is associated with the configured error target only if its held-out AUROC interval is wholly above chance. Below chance is not supported; a crossing/undefined interval is inconclusive. This does not establish a universal truth direction or a causal truth variable.
+- Steering: a reduction requires the paired false-yes delta interval for SLERP minus baseline to be wholly below zero. Report recall and paired retention alongside it, with no post-hoc utility cutoff. A reduction with recall loss is a qualified trade-off, never an unqualified safety improvement. Compare both random-direction and shuffled-label controls using paired differences; if they perform comparably, the geometric mechanism remains inconclusive.
+- A quick-profile result is exploratory and labelled with its actual held-out image count next to every table and chart. Report all executed profiles/runs and never choose the better test result as the headline.
+
+## Optional modern-model replication: registered before execution
+Model: `Qwen/Qwen2.5-VL-7B-Instruct`, revision `cc594898137f460bfe9f0759e9844b3ce807cfb5`; official model metadata reports Apache-2.0. Source: https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct . Configuration: `configs/pope_qwen_replication.json`.
+Protocol: baseline and detection only, same POPE files, official scorer, frozen image splits and seed; group-CV layer choice on calibration; use `--stages baseline,calibrate,report`. No validation strength sweep or test steering. Use a separate Drive run folder. Begin only after the main LLaVA run and only on spare GPU time. T4 suitability is to be verified, not claimed from stub tests. GPU status: not executed.
+Command: `.venv-colab/bin/python -m scripts.run_pope --config configs/pope_qwen_replication.json --profile quick --stages baseline,calibrate,report --output /content/drive/MyDrive/counterprior/qwen-quick --coco-dir /content/drive/MyDrive/counterprior/coco_val2014`.
+The adapter remains CPU/stub-verified only until this command succeeds on the actual checkpoint. A separate generated report must identify the model; never pool its questions or headline with LLaVA.
