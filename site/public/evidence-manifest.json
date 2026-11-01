@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "exportSha256": "1b3a64287bff592fd7b136fda710cdc70186ad243146c28259fb36df66f0fb0a",
+  "sources": {
+    "configs/pope_llava.json": "fb2ed270bb461b6e1f3b347f3925d01c3f67a99465ddb474881a9bf68985c2ef",
+    "configs/pope_qwen_replication.json": "724831d561e61b21f2ef7341800fcc9819d0703bb7d8a284ccc1a05d040f7a7c",
+    "dataset/pope/splits_seed20261030.json": "c191d0c4431db3e5fb36a8a9294c99f21514bbf01492bd1b160531ef9afdce4e",
+    "dataset/pope/sources.json": "c07c5c80a2f90b58194a0487df347c0da815b85e050579bc333c36b16889b0b4",
+    "dataset/audit_2026-10-30.json": "2fc73e5cd45342493762b0fb89d517cdfe25e40ab8615be535a311672820ee6f",
+    "dataset/counterprior_corrected.json": "51b4f2090b600367169eb93659117e71333e67b2827a59a55f23d8a9ba67e6de",
+    "results/REPORT_metrics.json": "0c9928d999455ed62735a01031602e918c06a40a300ff030e17d2551b529f5f2",
+    "results/published_run.json": "03c12341943808ac99c3b423c1c515af7b19a5f675e940f2923eb38d17b007ee",
+    "results/examples_manifest.json": "5cfabab496e7627ab5d95112858e24fa145e2c636ae83794f55c8c45e72b50a0"
+  },
+  "scope": "Hashes identify the inputs used for this public export; they do not verify unseen model weights or image bytes."
+}
