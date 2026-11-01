@@ -13,3 +13,23 @@ data/
 results/**/states/
 .vercel
 .env*
+
+# Static research site build and test working files
+site/node_modules/
+site/.next/
+site/out/
+site/test-results/
+site/playwright-report/
+site/.lighthouseci/
+incoming/
+send_back*.zip
+site/public/examples/
+.venv-bootstrap-done
+site/qa/pdf/
+site/qa/playwright-results.json
+site/qa/lighthouse/
+site/qa/screenshots/
+site/*.tsbuildinfo
+site/.tools-*
+site/AGENTS.md
+site/*lighthouse.*/

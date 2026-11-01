@@ -1,0 +1,338 @@
+{
+  "scope": "Software QA, not pretrained-model evaluation",
+  "recordedAt": "2026-11-01T18:14:18.799Z",
+  "playwright": {
+    "startTime": "2026-11-01T18:02:26.362Z",
+    "duration": 148925.449,
+    "expected": 44,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0,
+    "checks": [
+      {
+        "name": "QA home 1440 light",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "QA home 1440 dark",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "QA home 390 light",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "QA home 390 dark",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "QA explorer 1440 light",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "QA explorer 1440 dark",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "QA explorer 390 light",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "QA explorer 390 dark",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "QA ablations 1440 light",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "QA ablations 1440 dark",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "QA ablations 390 light",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "QA ablations 390 dark",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "QA about 1440 light",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "QA about 1440 dark",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "QA about 390 light",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "QA about 390 dark",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "OG image is an actual page screenshot",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "/ loads without console errors",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "/explorer/ loads without console errors",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "/ablations/ loads without console errors",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "/about/ loads without console errors",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "explorer filters and resets without fabricating examples",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "theme toggle works with keyboard and persists locally",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "reproducibility assets are real files",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "missing pages have a designed recovery",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "internal navigation works on a plain static host",
+        "browser": "chromium",
+        "status": "expected"
+      },
+      {
+        "name": "/ loads without console errors",
+        "browser": "firefox",
+        "status": "expected"
+      },
+      {
+        "name": "/explorer/ loads without console errors",
+        "browser": "firefox",
+        "status": "expected"
+      },
+      {
+        "name": "/ablations/ loads without console errors",
+        "browser": "firefox",
+        "status": "expected"
+      },
+      {
+        "name": "/about/ loads without console errors",
+        "browser": "firefox",
+        "status": "expected"
+      },
+      {
+        "name": "explorer filters and resets without fabricating examples",
+        "browser": "firefox",
+        "status": "expected"
+      },
+      {
+        "name": "theme toggle works with keyboard and persists locally",
+        "browser": "firefox",
+        "status": "expected"
+      },
+      {
+        "name": "reproducibility assets are real files",
+        "browser": "firefox",
+        "status": "expected"
+      },
+      {
+        "name": "missing pages have a designed recovery",
+        "browser": "firefox",
+        "status": "expected"
+      },
+      {
+        "name": "internal navigation works on a plain static host",
+        "browser": "firefox",
+        "status": "expected"
+      },
+      {
+        "name": "/ loads without console errors",
+        "browser": "webkit",
+        "status": "expected"
+      },
+      {
+        "name": "/explorer/ loads without console errors",
+        "browser": "webkit",
+        "status": "expected"
+      },
+      {
+        "name": "/ablations/ loads without console errors",
+        "browser": "webkit",
+        "status": "expected"
+      },
+      {
+        "name": "/about/ loads without console errors",
+        "browser": "webkit",
+        "status": "expected"
+      },
+      {
+        "name": "explorer filters and resets without fabricating examples",
+        "browser": "webkit",
+        "status": "expected"
+      },
+      {
+        "name": "theme toggle works with keyboard and persists locally",
+        "browser": "webkit",
+        "status": "expected"
+      },
+      {
+        "name": "reproducibility assets are real files",
+        "browser": "webkit",
+        "status": "expected"
+      },
+      {
+        "name": "missing pages have a designed recovery",
+        "browser": "webkit",
+        "status": "expected"
+      },
+      {
+        "name": "internal navigation works on a plain static host",
+        "browser": "webkit",
+        "status": "expected"
+      }
+    ]
+  },
+  "accessibility": {
+    "scans": 16,
+    "violations": 0,
+    "assertion": "Every axe violation is a test failure"
+  },
+  "lighthouse": [
+    {
+      "page": "/",
+      "url": "http://127.0.0.1:4176/",
+      "scores": {
+        "accessibility": 100,
+        "best-practices": 100
+      }
+    },
+    {
+      "page": "/explorer/",
+      "url": "http://127.0.0.1:4176/explorer/",
+      "scores": {
+        "accessibility": 100,
+        "best-practices": 100
+      }
+    },
+    {
+      "page": "/ablations/",
+      "url": "http://127.0.0.1:4176/ablations/",
+      "scores": {
+        "accessibility": 100,
+        "best-practices": 100
+      }
+    },
+    {
+      "page": "/about/",
+      "url": "http://127.0.0.1:4176/about/",
+      "scores": {
+        "accessibility": 100,
+        "best-practices": 100
+      }
+    }
+  ],
+  "screenshots": {
+    "ablations-1440-dark.png": "9733439a25d90c3c42b8a962cad820f1c67e63b67f12e5c37f47d391d74455b5",
+    "ablations-1440-light.png": "c67c252f8e38dba5b522b39d2c7fbd7777061245baef7b4e54fa6ac1614cf51f",
+    "ablations-390-dark.png": "defc93d53150fb580a79ed09f2499a517a4e31aeb815b73ee2c3c09fadf4117f",
+    "ablations-390-light.png": "f8ec0e21c8ab669b2f788619a0ded875424694991f9c8e025d4557369d7ae1d8",
+    "about-1440-dark.png": "24cd1b56a011db2c3ec40962455dab77e9874f46e73ffd9df35a630bb3cf8641",
+    "about-1440-light.png": "0723706c069dd0ca7e82c2bf39afa6e9b6e7d27f0485a2225131e95dc9997fbb",
+    "about-390-dark.png": "c29b10e4a3ff7fe788fdab95e185d3b23ce2c606f0631472fde16c67facc8c79",
+    "about-390-light.png": "01c8ddd7be59cf841eecd151224ccf85496560b5e8ada5203c1a9efbccc8e559",
+    "explorer-1440-dark.png": "23f93d5437e78cf598378f7d46cf34e74cbda60199e92e2f3cc0abecf0c0bc87",
+    "explorer-1440-light.png": "cf6194381618c25ccc7f681a19bc90c3c90620625fde8a2bbaf0fc663c01f367",
+    "explorer-390-dark.png": "8b641664c93a17ea6e20fb065d48b3a4ddd6481485e79ccaad1385315f7dabf9",
+    "explorer-390-light.png": "6181743740763d07ef42ab777631292774fa4537e45143934e2830522f4cdfbb",
+    "home-1440-dark.png": "2e079b0f8e56b9773a73162bf8bcae340149f7d1ea7c303d6c690dc5f6ce33cb",
+    "home-1440-light.png": "8dcb4fc786e547cd7fc43b5cd6aa5f1f1e488b8a55b97e32b00f47b48699ef48",
+    "home-390-dark.png": "6c20cd6725d333b267afb0b15312ccf672fe5ebddec54850dce1de77ccb1c05f",
+    "home-390-light.png": "b6230d2105f2d97651470f52f0e1c9fe767d9c3981ddbc5e03c15d346856a7e4"
+  },
+  "dependencies": {
+    "name": "counterprior-research-site",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "engines": {
+      "node": "24.x"
+    },
+    "scripts": {
+      "dev": "next dev --hostname 127.0.0.1",
+      "export:data": "node scripts/export-data.mjs",
+      "prepare:examples": "node scripts/prepare-examples.mjs",
+      "prebuild": "npm run prepare:examples && npm run export:data",
+      "build": "next build",
+      "start": "node scripts/serve.mjs",
+      "typecheck": "tsc --noEmit",
+      "lint": "eslint . --max-warnings 0",
+      "test": "vitest run",
+      "test:e2e": "playwright test",
+      "qa:screenshots": "playwright test qa.spec.ts --project=chromium",
+      "qa:lighthouse": "node scripts/lighthouse.mjs",
+      "runtime": "node -p process.version",
+      "postbuild": "node scripts/static-aliases.mjs"
+    },
+    "dependencies": {
+      "geist": "1.9.0",
+      "next": "16.4.3",
+      "react": "19.3.1",
+      "react-dom": "19.3.1"
+    },
+    "devDependencies": {
+      "@axe-core/playwright": "4.14.0",
+      "@playwright/test": "1.64.1",
+      "@tailwindcss/postcss": "4.3.3",
+      "@types/node": "26.6.6",
+      "@types/react": "19.3.0",
+      "@types/react-dom": "19.3.0",
+      "eslint": "9.39.5",
+      "eslint-config-next": "16.4.3",
+      "lighthouse": "13.6.0",
+      "node": "24.22.2",
+      "prettier": "3.9.10",
+      "tailwindcss": "4.3.3",
+      "typescript": "6.0.3",
+      "vitest": "5.0.5"
+    }
+  }
+}

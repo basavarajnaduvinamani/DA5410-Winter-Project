@@ -1,0 +1,13 @@
+.env*
+.vercel
+node_modules
+.next
+out
+qa
+public/examples
+test-results
+playwright-report
+*.tsbuildinfo
+*lighthouse.*
+.tools-*
+AGENTS.md

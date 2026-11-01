@@ -1,0 +1,34 @@
+[
+  {
+    "page": "/",
+    "url": "http://127.0.0.1:4176/",
+    "scores": {
+      "accessibility": 100,
+      "best-practices": 100
+    }
+  },
+  {
+    "page": "/explorer/",
+    "url": "http://127.0.0.1:4176/explorer/",
+    "scores": {
+      "accessibility": 100,
+      "best-practices": 100
+    }
+  },
+  {
+    "page": "/ablations/",
+    "url": "http://127.0.0.1:4176/ablations/",
+    "scores": {
+      "accessibility": 100,
+      "best-practices": 100
+    }
+  },
+  {
+    "page": "/about/",
+    "url": "http://127.0.0.1:4176/about/",
+    "scores": {
+      "accessibility": 100,
+      "best-practices": 100
+    }
+  }
+]
