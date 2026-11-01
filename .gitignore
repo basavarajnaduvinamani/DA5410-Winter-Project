@@ -11,3 +11,5 @@ __pycache__/
 # POPE runs: COCO images and hidden-state shards stay out of git
 data/
 results/**/states/
+.vercel
+.env*

@@ -1,0 +1,29 @@
+{
+  "files": [
+    {
+      "alias": "original-report.pdf",
+      "sha256": "fb3602386b2b368d7802dc1891eb3416d63409dae6043164f3e8a626a0254aeb",
+      "modified": "2026-09-02T23:13:43.795348+00:00",
+      "status": "kept private outside Git"
+    },
+    {
+      "alias": "colab-notes.md",
+      "sha256": "f3a577706a409314f9c1f1ae8eccaff5af84aac6999945ed964365586d3e2120",
+      "modified": "2026-10-30T15:57:03.459322+00:00",
+      "status": "kept private outside Git"
+    },
+    {
+      "alias": "finish-notes.md",
+      "sha256": "6377c6ee29c7080c2c8988caa6a4cafa86ae97fa3f50474edeed63f4887c2863",
+      "modified": "2026-10-30T20:23:07.257527+00:00",
+      "status": "kept private outside Git"
+    },
+    {
+      "alias": "vercel-link-notes.md",
+      "sha256": "a2ed1604c5e3779bd4bc0e6396e04987a03d88abf66e56be1d8fbda5607e1ae6",
+      "modified": "2026-11-01T12:31:48.420466+00:00",
+      "status": "kept private outside Git"
+    }
+  ],
+  "preserved_change": "gitignore rules for local Vercel metadata and credentials"
+}
