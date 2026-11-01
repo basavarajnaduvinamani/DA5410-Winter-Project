@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# Colab exports an inline backend unavailable inside the isolated test venv.
+export MPLBACKEND=Agg
 # One-command Colab/GPU runner. Usage: bash scripts/colab_run.sh [setup|timing|run|report|all] [extra run_pope args]
 #   COUNTERPRIOR_RUN      run directory (put it on Google Drive so a disconnect can resume)
 #   COUNTERPRIOR_PROFILE  quick (160 images) | full (500 images); default quick
