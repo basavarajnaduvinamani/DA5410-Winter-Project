@@ -114,6 +114,8 @@ class VLMAdapter:
                       entropy_first=float(-(p * logp).nan_to_num().sum()),
                       p_yes=float(p[self.yes_ids].sum()) if self.yes_ids else None,
                       p_no=float(p[self.no_ids].sum()) if self.no_ids else None)
+        if steering is not None and getattr(steering[1], 'trace', None):
+            result['gate_trace'] = steering[1].trace
         if capture_layers:
             result['states'] = torch.stack([states[i] for i in capture_layers]).numpy().astype(np.float16)
         return result

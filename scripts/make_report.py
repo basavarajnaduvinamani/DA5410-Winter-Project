@@ -111,6 +111,13 @@ class Run:
                 ys = y[idx]; gs = [groups[j] for j in idx]
                 arrays = {k: np.array([rows[j]['scores'][k] for j in idx]) for k in ('probe', 'neg_logprob')}
                 result['per_split'][split] = {k: self.boot(gs, lambda i, a=a: auroc(ys[i], a[i])) for k, a in arrays.items()}
+        # Paired detector difference on exactly the same image resamples.
+        probe = np.array([r['scores']['probe'] for r in rows])
+        confidence = np.array([r['scores']['neg_logprob'] for r in rows])
+        def difference(idx):
+            a, b = auroc(y[idx], probe[idx]), auroc(y[idx], confidence[idx])
+            return None if a is None or b is None else a - b
+        result['comparisons'] = {'probe_minus_neg_logprob': self.boot(groups, difference)}
         return result
 
     def steering(self):
@@ -138,15 +145,30 @@ class Run:
             entry['delta_accuracy'] = self.boot(groups, lambda i: mc[i].mean() - bc[i].mean())
             neg = lab == 'no'
             entry['delta_false_yes_rate'] = self.boot(groups, lambda i: (mp[i][neg[i]] == 'yes').mean() - (bp[i][neg[i]] == 'yes').mean() if neg[i].any() else None)
+            pos = lab == 'yes'
+            entry['delta_recall'] = self.boot(groups, lambda i: (mp[i][pos[i]] == 'yes').mean() - (bp[i][pos[i]] == 'yes').mean() if pos[i].any() else None)
             # Utility: of questions the baseline already got right, how many stay right.
             entry['retention'] = self.boot(groups, lambda i: mc[i][bc[i]].mean() if bc[i].any() else None)
             entry['per_split_delta_accuracy'] = {}
+            entry['per_split_metrics'] = {}
             for split in POPE_SPLITS:
                 sel = np.array([r['pope_split'] == split for r in b])
                 if sel.any():
                     gs = [g for g, s in zip(groups, sel) if s]; mcs, bcs = mc[sel], bc[sel]
                     entry['per_split_delta_accuracy'][split] = self.boot(gs, lambda i: mcs[i].mean() - bcs[i].mean())
+                    sl, sm = lab[sel], mp[sel]
+                    entry['per_split_metrics'][split] = {key: self.boot(gs, lambda i, k=key: pope_metrics(sl[i], sm[i])[k]) for key in ('false_yes_rate', 'recall')}
             result[method] = entry
+        if 'slerp_pca' in result and 'incomplete' not in result['slerp_pca']:
+            b = [base[u] for u in test_uids]; groups = [r['image'] for r in b]
+            lab = np.array([r['label'] for r in b]); neg = lab == 'no'
+            sp = np.array([self.rows['slerp_pca'][u]['pred'] for u in test_uids])
+            comparisons = {}
+            for control in ('random_direction', 'shuffled_labels'):
+                if control in result and 'incomplete' not in result[control]:
+                    cp = np.array([self.rows[control][u]['pred'] for u in test_uids])
+                    comparisons[control] = self.boot(groups, lambda i, cp=cp: (sp[i][neg[i]] == 'yes').mean() - (cp[i][neg[i]] == 'yes').mean() if neg[i].any() else None)
+            result['slerp_pca']['versus_controls_false_yes'] = comparisons
         return result
 
 
@@ -224,7 +246,7 @@ def sections(run, base, det, steer, selection):
         dt = table(['Detector', 'Layer', 'Test AUROC', 'Test AUPRC'],
                    [[n, layer.get(k, 'n/a (no fit)'), fmt(det['detectors'][k]['auroc']), fmt(det['detectors'][k]['auprc'])]
                     for k, n in DETECTORS])
-        dt += f"\n\nTest questions: {det['n']}; hallucinated (positive class): {det['positives']} (base rate {det['base_rate']:.3f}, the AUPRC of a random detector)."
+        dt += f"\n\nTest questions: {det['n']}; endpoint-positive: {det['positives']} (base rate {det['base_rate']:.3f}, the AUPRC of a random detector)."
     else:
         dt = placeholder_sections()[1]
     if steer:
@@ -318,10 +340,42 @@ def build_report(run_dir, out, fig_dir, readme=None, placeholder=False):
              f"- POPE question-file sha256: `{json.dumps(run.identity.get('pope_sha256'))}`",
              '- Raw files: predictions.jsonl, detection_scores.jsonl, layer_scores_test.npz, selection.json, steering_plan.json, validation_sweep.json']
     out.write_text('\n'.join(body) + '\n', encoding='utf8')
-    metrics = dict(run_id=run.identity['run_id'], baseline=base, detection=det, steering=steer)
+    metrics = dict(run_id=run.identity['run_id'], baseline=base, detection=det, steering=steer,
+                   provenance=dict(config=cfg, used_counts=used, selected_layers=(selection or {}).get('model_layers', {}),
+                                   calibration_curve=[dict(layer=(selection or {}).get('state_layers', [])[r['layer']], probe=r.get('calibration_cv_auroc_probe'), meanDifference=r.get('calibration_cv_auroc_mean_difference'), pca=r.get('calibration_cv_auroc_pca')) for r in (selection or {}).get('sweep', [])]))
+    def judgement(m, direction):
+        ci = (m or {}).get('ci95')
+        if not ci: return 'inconclusive'
+        if direction == 'positive': return 'supported' if ci[0] > 0 else 'not supported' if ci[1] < 0 else 'inconclusive'
+        return 'supported' if ci[1] < 0 else 'not supported' if ci[0] > 0 else 'inconclusive'
+    comparison = (det or {}).get('comparisons', {}).get('probe_minus_neg_logprob')
+    pca = (det or {}).get('detectors', {}).get('pca', {}).get('auroc')
+    pcaci = (pca or {}).get('ci95')
+    geometry_status = 'inconclusive' if not pcaci else 'supported' if pcaci[0] > .5 else 'not supported' if pcaci[1] < .5 else 'inconclusive'
+    sl = steer.get('slerp_pca', {})
+    controls = sl.get('versus_controls_false_yes', {})
+    mechanism_supported = len(controls) == 2 and all(judgement(v, 'negative') == 'supported' for v in controls.values())
+    reduction_status = judgement(sl.get('delta_false_yes_rate'), 'negative')
+    recall_delta = (sl.get('delta_recall') or {}).get('estimate')
+    tradeoff = 'A measured reduction comes with lower recall.' if reduction_status == 'supported' and recall_delta is not None and recall_delta < 0 else 'Interpret the false-yes and recall intervals together.'
+    metrics['hypotheses'] = [
+        dict(id='detection', status=judgement(comparison, 'positive'), finding=f"For the configured {cfg['detection']['target']} target, the paired probe-minus-confidence AUROC difference is {fmt(comparison)}.", source='results/REPORT_metrics.json'),
+        dict(id='geometry', status=geometry_status, finding=f"Held-out PCA-projection AUROC is {fmt(pca)}; this does not establish a universal truth direction.", source='results/REPORT_metrics.json'),
+        dict(id='steering', status=reduction_status if mechanism_supported else 'inconclusive', reduction_status=reduction_status, finding=(f"SLERP false-yes delta is {fmt(sl.get('delta_false_yes_rate'))}; recall delta is {fmt(sl.get('delta_recall'))} (recall {fmt(sl.get('recall'))}). {tradeoff} Geometric superiority to both matched controls is {'supported' if mechanism_supported else 'inconclusive'}. No unqualified safety improvement is established." if sl else 'Steering was not executed for this run.'), source='results/REPORT_metrics.json')]
+    metrics['summary'] = [
+        f"The layer {(selection or {}).get('model_layers', {}).get('probe', DASH)} {cfg['detection']['target']}-detection probe reached AUROC {fmt((det or {}).get('detectors', {}).get('probe', {}).get('auroc'))}; its paired improvement over answer-token confidence is {judgement(comparison, 'positive')}.",
+        (f"SLERP changed false-yes rate by {fmt(sl.get('delta_false_yes_rate'))} and recall by {fmt(sl.get('delta_recall'))}; superiority to both matched controls is {'supported' if mechanism_supported else 'inconclusive'}." if sl else 'Steering was not executed for this model.')]
+    body += ['', '## Registered hypothesis interpretation', '',
+             table(['Question', 'Status', 'Finding'], [[h['id'], h['status'], h['finding']] for h in metrics['hypotheses']]), '',
+             'Paired false-yes differences (SLERP minus control; negative favours SLERP):', '',
+             table(['Control', 'Paired difference [95% CI]'], [[name, fmt(m)] for name, m in controls.items()]), '']
+    out.write_text('\n'.join(body) + '\n', encoding='utf8')
+
     (out.parent / (out.stem + '_metrics.json')).write_text(json.dumps(metrics, indent=2, default=lambda o: None) + '\n')
     if readme:
-        summary = '\n\n'.join([f"_Auto-filled from run `{run.identity['run_id']}` by `scripts/make_report.py`; full report: [{out.as_posix()}]({out.as_posix()})._",
+        report_ref = Path(os.path.relpath(out.resolve(), Path(readme).resolve().parent)).as_posix()
+        summary = '\n\n'.join([f"_Auto-filled from run `{run.identity['run_id']}` by `scripts/make_report.py`; full report: [{report_ref}]({report_ref})._",
+                               ' '.join(metrics['summary']),
                                '**POPE baseline (test images)**', b, '**Detection (test AUROC/AUPRC)**', d, '**Steering (test)**', s])
         update_readme(readme, summary, out)
     return metrics

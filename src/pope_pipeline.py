@@ -91,7 +91,7 @@ class Pipeline:
                     answer=result['answer'], pred=pred, correct=pred == item['label'],
                     first_token_id=result['first_token_id'], logprob_first=result['logprob_first'],
                     entropy_first=result['entropy_first'], p_yes=result['p_yes'], p_no=result['p_no'],
-                    intervention=intervention, seed=self.seed, run_id=self.run_id)
+                    intervention=intervention, seed=self.seed, run_id=self.run_id, gate_trace=result.get('gate_trace'))
 
     def _generate(self, items, method, strength=None, steering=None, intervention=None, budget=None):
         todo = [i for i in items if f'{method}|{i["uid"]}' not in self.rows]
@@ -228,7 +228,7 @@ class Pipeline:
         intervention = dict(p, operation=spec[1], strength=strength, alpha=alpha)
         threshold = p['threshold'] if p['threshold'] is not None else 0.0
         return (lambda: RotationalSteeringHook(vec, alpha=alpha, threshold=threshold, mode=p['mode'],
-                                               operation=spec[1])), intervention
+                                               operation=spec[1], record_trace=True)), intervention
 
     def _load_plan(self):
         plan = json.loads((self.out / 'steering_plan.json').read_text())

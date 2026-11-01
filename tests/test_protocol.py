@@ -56,6 +56,15 @@ class ProtocolTests(unittest.TestCase):
                 raise RuntimeError('test')
         self.assertEqual(len(module._forward_hooks),0)
 
+    def test_gate_trace_records_actual_per_sample_decisions(self):
+        h=torch.tensor([[[1.,0.]],[[0.,1.]]])
+        hook=RotationalSteeringHook(torch.tensor([1.,0.]),threshold=.5,record_trace=True)
+        out=hook(None,None,h)
+        self.assertEqual(hook.trace[0]['steered'],[False,True])
+        self.assertEqual(hook.trace[0]['alignment'],[1.,0.])
+        self.assertTrue(torch.equal(out[0],h[0]))
+        self.assertFalse(torch.equal(out[1],h[1]))
+
     def test_slerp_edge_norms(self):
         torch.manual_seed(20261030)
         h=torch.randn(3,4,16);v=torch.randn(16)
