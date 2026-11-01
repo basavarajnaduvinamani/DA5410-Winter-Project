@@ -2,15 +2,15 @@
   "schemaVersion": 1,
   "exportSha256": "1b3a64287bff592fd7b136fda710cdc70186ad243146c28259fb36df66f0fb0a",
   "sources": {
-    "configs/pope_llava.json": "fb2ed270bb461b6e1f3b347f3925d01c3f67a99465ddb474881a9bf68985c2ef",
-    "configs/pope_qwen_replication.json": "724831d561e61b21f2ef7341800fcc9819d0703bb7d8a284ccc1a05d040f7a7c",
-    "dataset/pope/splits_seed20261030.json": "c191d0c4431db3e5fb36a8a9294c99f21514bbf01492bd1b160531ef9afdce4e",
-    "dataset/pope/sources.json": "c07c5c80a2f90b58194a0487df347c0da815b85e050579bc333c36b16889b0b4",
-    "dataset/audit_2026-10-30.json": "2fc73e5cd45342493762b0fb89d517cdfe25e40ab8615be535a311672820ee6f",
-    "dataset/counterprior_corrected.json": "51b4f2090b600367169eb93659117e71333e67b2827a59a55f23d8a9ba67e6de",
-    "results/REPORT_metrics.json": "0c9928d999455ed62735a01031602e918c06a40a300ff030e17d2551b529f5f2",
-    "results/published_run.json": "03c12341943808ac99c3b423c1c515af7b19a5f675e940f2923eb38d17b007ee",
-    "results/examples_manifest.json": "5cfabab496e7627ab5d95112858e24fa145e2c636ae83794f55c8c45e72b50a0"
+    "configs/pope_llava.json": "68ad00a3b62fd3f61ac5eb47f31ae7152fb3b65e41cdb068bf0e8a5e3a15f935",
+    "configs/pope_qwen_replication.json": "1ecbef8601fc7533127b7ccf1abddf90178bea84691a08c57f599dc061de2e66",
+    "dataset/pope/splits_seed20261030.json": "1285a9120ab9c2321ba76da6ccf5f8b35d056dc25dd17e7ae93e2605a2ed493b",
+    "dataset/pope/sources.json": "1335d5d4533bc89a49b0b7ccff64bd2de632ce0905722f718569583add8b294a",
+    "dataset/audit_2026-10-30.json": "a363bc7711390522b8427f104e729d74316495525bfe65da7ad737970761451d",
+    "dataset/counterprior_corrected.json": "f2c8de33ce31e175102d6fb10fe0a7e3d689e6cb8aa8e4c1da2be21b60dfe159",
+    "results/REPORT_metrics.json": "61f7ef1a64c0966f4f3decf9841b24911b28dd82c25812d4dd009097550ba1ef",
+    "results/published_run.json": "035740712496a4f7b3804ef4f99a9d35ec104198e23caf711571f957788add08",
+    "results/examples_manifest.json": "b9fd6864586bae3d8a1de3f375236cfcd81a3db725b233f6256ab615ee15a45c"
   },
-  "scope": "Hashes identify the inputs used for this public export; they do not verify unseen model weights or image bytes."
+  "scope": "Source hashes use UTF-8 text with CRLF normalized to LF; exportSha256 is byte-exact. They identify inputs, not unseen model weights or source-run image bytes."
 }

@@ -9,6 +9,11 @@ const defaultRoot = path.resolve(
 const json = (p) => JSON.parse(readFileSync(p, "utf8"));
 export const sha = (p) =>
   crypto.createHash("sha256").update(readFileSync(p)).digest("hex");
+export const sourceSha = (p) =>
+  crypto
+    .createHash("sha256")
+    .update(readFileSync(p, "utf8").replace(/\r\n/g, "\n"), "utf8")
+    .digest("hex");
 export function validateExample(e) {
   if (
     !e ||
@@ -248,10 +253,10 @@ export function exportResearch(root = defaultRoot) {
         schemaVersion: 1,
         exportSha256: sha(pub),
         sources: Object.fromEntries(
-          data.builtFrom.map((p) => [p, sha(path.join(root, p))]),
+          data.builtFrom.map((p) => [p, sourceSha(path.join(root, p))]),
         ),
         scope:
-          "Hashes identify the inputs used for this public export; they do not verify unseen model weights or image bytes.",
+          "Source hashes use UTF-8 text with CRLF normalized to LF; exportSha256 is byte-exact. They identify inputs, not unseen model weights or source-run image bytes.",
       },
       null,
       2,

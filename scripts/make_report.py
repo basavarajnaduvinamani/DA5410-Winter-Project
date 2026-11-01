@@ -371,7 +371,7 @@ def build_report(run_dir, out, fig_dir, readme=None, placeholder=False):
              table(['Control', 'Paired difference [95% CI]'], [[name, fmt(m)] for name, m in controls.items()]), '']
     out.write_text('\n'.join(body) + '\n', encoding='utf8')
 
-    (out.parent / (out.stem + '_metrics.json')).write_text(json.dumps(metrics, indent=2, default=lambda o: None) + '\n')
+    (out.parent / (out.stem + '_metrics.json')).write_text(json.dumps(metrics, indent=2, default=lambda o: None) + '\n', encoding='utf8', newline='\n')
     if readme:
         report_ref = Path(os.path.relpath(out.resolve(), Path(readme).resolve().parent)).as_posix()
         summary = '\n\n'.join([f"_Auto-filled from run `{run.identity['run_id']}` by `scripts/make_report.py`; full report: [{report_ref}]({report_ref})._",

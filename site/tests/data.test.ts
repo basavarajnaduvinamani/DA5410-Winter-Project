@@ -12,6 +12,8 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import {
   buildResearch,
+  sha,
+  sourceSha,
   validateData,
   validateExample,
 } from "../scripts/export-data.mjs";
@@ -47,6 +49,21 @@ const base: Example = {
   },
 };
 describe("standalone deployment evidence", () => {
+  it("preserves raw hashes while normalizing source-text line endings", () => {
+    const temp = mkdtempSync(path.join(tmpdir(), "counterprior-newlines-"));
+    try {
+      const a = path.join(temp, "lf.json"),
+        b = path.join(temp, "crlf.json");
+      writeFileSync(a, '{\n  "seed": 7\n}\n');
+      writeFileSync(b, '{\r\n  "seed": 7\r\n}\r\n');
+      expect(sourceSha(a)).toBe(sourceSha(b));
+      expect(sha(a)).not.toBe(sha(b));
+    } finally {
+      if (!path.resolve(temp).startsWith(path.resolve(tmpdir()) + path.sep))
+        throw new Error("Unexpected cleanup target");
+      rmSync(temp, { recursive: true, force: true });
+    }
+  });
   function packaged(tamper: boolean) {
     const temp = mkdtempSync(path.join(tmpdir(), "counterprior-export-"));
     try {
