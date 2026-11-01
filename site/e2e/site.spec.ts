@@ -1,4 +1,8 @@
 import { test, expect } from "@playwright/test";
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
+import { authenticatePreview, previewRequestOptions } from "./preview-auth";
+test.beforeEach(async ({ context }) => authenticatePreview(context));
 const routes = [
   ["/", "CounterPrior: Detecting"],
   ["/explorer/", "An answer is not the whole story."],
@@ -68,12 +72,21 @@ test("reproducibility assets are real files", async ({ request }) => {
     "/robots.txt",
     "/favicon.svg",
   ]) {
-    const response = await request.get(path);
+    const response = await request.get(path, previewRequestOptions(path));
     expect(response.status(), path).toBe(200);
     const bytes = await response.body();
     expect(bytes.length, path).toBeGreaterThan(0);
   }
-  const response = await request.get("/research.json");
+  const response = await request.get(
+    "/research.json",
+    previewRequestOptions("/research.json"),
+  );
+  const remoteBytes = await response.body();
+  const digest = (bytes: Buffer) =>
+    createHash("sha256").update(bytes).digest("hex");
+  expect(digest(remoteBytes)).toBe(
+    digest(readFileSync("public/research.json")),
+  );
   const data = await response.json();
   if (data.status === "pending") {
     expect(data.examples).toEqual([]);

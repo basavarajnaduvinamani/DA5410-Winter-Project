@@ -1,4 +1,6 @@
 import { test, expect } from "@playwright/test";
+import { authenticatePreview } from "./preview-auth";
+test.beforeEach(async ({ context }) => authenticatePreview(context));
 import AxeBuilder from "@axe-core/playwright";
 import { mkdir } from "node:fs/promises";
 const pages = [

@@ -12,5 +12,7 @@ For images use `python -m scripts.export_site_examples --run RUN --annotations C
 
 The site exporter accepts measured metrics only when their hash matches `results/published_run.json`. No public demonstration answers or placeholder charts are generated. Synthetic fixtures live in tests only.
 
+For a protected preview, set `BASE_URL` to its exact origin and run Playwright under `vercel env run` (`vercel.cmd` in PowerShell). The test helper attaches the short-lived development OIDC header only to that origin; authenticated traces are disabled so headers are not persisted. Local and CI failure traces remain enabled. Keep deployment protection on. Browser checks also compare the served evidence JSON byte-for-byte with the reviewed local export.
+
 ## Publication gate
 The owner resumed the workflow after the preview checkpoint request. Complete local QA, deploy and test a preview, then publish production under the original approval. See the local task reports for actual verification and deployment status. A missing GPU run leaves the site in its explicit pending state.

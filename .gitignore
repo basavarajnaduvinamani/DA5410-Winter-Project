@@ -27,6 +27,8 @@ site/public/examples/
 .venv-bootstrap-done
 site/qa/pdf/
 site/qa/playwright-results.json
+site/qa/preview-results.json
+site/qa/production-results.json
 site/qa/lighthouse/
 site/qa/screenshots/
 site/*.tsbuildinfo

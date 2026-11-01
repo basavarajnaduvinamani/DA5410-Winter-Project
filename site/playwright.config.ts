@@ -7,12 +7,21 @@ export default defineConfig({
   workers: process.env.CI ? 2 : 1,
   reporter: [
     ["list"],
-    ["json", { outputFile: "qa/playwright-results.json" }],
+    [
+      "json",
+      {
+        outputFile: process.env.QA_REPORT_PATH || "qa/playwright-results.json",
+      },
+    ],
     ["html", { open: "never" }],
   ],
   use: {
     baseURL: process.env.BASE_URL || "http://127.0.0.1:4173",
-    trace: "retain-on-failure",
+    // Authenticated traces can contain credential-bearing network headers.
+    trace:
+      process.env.BASE_URL && process.env.VERCEL_OIDC_TOKEN
+        ? "off"
+        : "retain-on-failure",
     reducedMotion: "reduce",
   },
   projects: [
