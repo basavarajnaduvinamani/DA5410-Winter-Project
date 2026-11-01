@@ -152,6 +152,8 @@ class Run:
 
 # ---------------------------------------------------------------- figures
 def figures(run, fig_dir, selection, sweep):
+    # Reports are files, never inline notebook displays; set before importing.
+    os.environ["MPLBACKEND"] = "Agg"
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
