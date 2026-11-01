@@ -1,23 +1,23 @@
 # CounterPrior: Detecting and Steering Object Hallucination from LLaVA's Hidden States
 
 [![CPU tests](https://github.com/basavarajnaduvinamani/DA5410-Winter-Project/actions/workflows/cpu.yml/badge.svg)](.github/workflows/cpu.yml)
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/basavarajnaduvinamani/DA5410-Winter-Project/blob/main/notebooks/CounterPrior_Mechanistic_Steering.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/basavarajnaduvinamani/DA5410-Winter-Project/blob/claude/site-2026-11/notebooks/CounterPrior_Mechanistic_Steering.ipynb)
 [![Model: LLaVA-1.5-7B](https://img.shields.io/badge/Model-LLaVA--1.5--7B-green.svg)](https://huggingface.co/llava-hf/llava-1.5-7b-hf)
 [![Benchmark: POPE](https://img.shields.io/badge/Benchmark-POPE-blue.svg)](https://github.com/AoiDragon/POPE)
-[![Technical Report PDF](https://img.shields.io/badge/Technical_Report-PDF-b31b1b.svg?logo=adobeacrobatreader)](docs/DA5410_Winter_Project_Report.pdf)
+[![Technical Report PDF](https://img.shields.io/badge/Technical_Report-PDF-b31b1b.svg?logo=adobeacrobatreader)](site/public/technical-report.pdf)
 
-> **DA5410 Winter Project, IIT Madras (AI4Bharat Lab).** Author: Basavaraj A. Naduvinamani (`DA25C005`) · Supervisor: Prof. Mitesh M. Khapra · Mentor: Mohammed Safi Ur Rahman Khan
+> **Research at AI4Bharat Lab, IIT Madras.** Author: Basavaraj A. Naduvinamani · Supervisor: Prof. Mitesh M. Khapra · Mentor: Mohammed Safi Ur Rahman Khan
 
 **What this is.** A research codebase that asks whether a multimodal LLM's internal states reveal, before it answers, that it is about to describe an object that is not in the image, and whether rotating those states along a learned "truth axis" reduces such hallucinations without making the model blind. **Who it is for:** researchers and reviewers who want a reproducible, held-out evaluation of probing and activation steering on a standard benchmark.
 
-> **Evidence status (2026-10-31).** No pretrained-model result in this README has been measured yet: the tables below are placeholders that `scripts/make_report.py` fills from a saved GPU run. A 2026-10-30 pixel audit cut the original 50-image set to 16 rows, and every earlier headline number (100% probe accuracy at layer 17, an 18% hallucination reduction, 12/14 controls retained) is **withdrawn until rerun**; it is kept, clearly marked as unverified, in the collapsed historical section at the end. See [build log](07_build_counterprior.md), [protocol](docs/PROTOCOL.md) and [adjudication policy](docs/ADJUDICATION.md).
+> **Evidence status.** The findings and tables below are generated from a verified saved POPE run, with image-clustered confidence intervals. See the [complete findings and provenance](results/REPORT.md) for paired baseline comparisons, recognition trade-offs and controls. Earlier headline numbers remain withdrawn; a new run does not validate the historical claims. The [pixel audit](dataset/audit_2026-10-30.json), [protocol](docs/PROTOCOL.md) and [adjudication policy](docs/ADJUDICATION.md) document the corrections.
 
 ## Research question
 
 On POPE ("Is there a *&lt;object&gt;* in the image?"), LLaVA-1.5-7B sometimes says *yes* about absent objects, and more so when the absent object is frequent (popular split) or co-occurs with what is present (adversarial split). We test three hypotheses on **held-out images**:
 
 1. **Detection.** A linear probe on one decoder layer's hidden state at the last prompt token predicts whether the coming answer is wrong, better than the answer token's own log-probability or entropy.
-2. **Geometry.** The signal lies mostly along one direction (PCA truth axis or class-mean difference), not spread across many.
+2. **Geometry.** An oriented PCA projection carries held-out answer-error information above chance. This association does not establish a universal truth axis or show that the signal is confined to one dimension.
 3. **Steering.** Norm-preserving rotation (SLERP) of that state toward the truth axis cuts the false-*yes* rate on absent objects more than plain vector addition, while random-direction and shuffled-label rotations at the same strength do not, and recall on present objects is mostly kept.
 
 ## Method
@@ -27,7 +27,7 @@ flowchart LR
     A["COCO image + POPE question"] --> B["LLaVA-1.5-7B<br/>(4-bit on a T4)"]
     B --> C["Hidden state h_l at the last prompt token,<br/>every decoder layer (saved)"]
     B --> D["Greedy answer -> official POPE yes/no parser"]
-    D --> E["Label: answer wrong = hallucination"]
+    D --> E["Detector label: any wrong answer"]
     C --> F["Calibration images only:<br/>layer sweep, probe, truth axis v, gate tau"]
     E --> F
     F --> G["Detectors on test images:<br/>probe, mean-diff, PCA axis vs logprob, entropy"]
@@ -55,34 +55,39 @@ SLERP keeps the norm: with $\hat h = h/\lVert h\rVert$ and $\theta=\arccos(\hat 
 ## Results
 
 <!-- RESULTS:START -->
-_No GPU run yet: placeholders. Filled automatically by `scripts/make_report.py`._
+_Auto-filled from run `a57da9f4810959cc` by `scripts/make_report.py`; full report: [results/REPORT.md](results/REPORT.md)._
+
+The layer 13 error-detection probe reached AUROC 0.719 [0.667, 0.769]; its paired improvement over answer-token confidence is inconclusive. SLERP changed false-yes rate by -0.007 [-0.016, -0.001] and recall by -0.020 [-0.037, -0.007]; superiority to both matched controls is inconclusive.
 
 **POPE baseline (test images)**
 
-| POPE split | Questions | Accuracy | Precision | Recall | F1 | Yes-ratio |
+| POPE split | Questions (images) | Accuracy | Precision | Recall | F1 | Yes-ratio |
 |:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| random | — | — | — | — | — | — |
-| popular | — | — | — | — | — | — |
-| adversarial | — | — | — | — | — | — |
+| random | 600 (100) | 0.882 [0.860, 0.905] | 0.971 [0.950, 0.988] | 0.787 [0.743, 0.827] | 0.869 [0.842, 0.897] | 0.405 [0.382, 0.428] |
+| popular | 600 (100) | 0.865 [0.840, 0.890] | 0.933 [0.900, 0.963] | 0.787 [0.743, 0.827] | 0.854 [0.823, 0.882] | 0.422 [0.397, 0.447] |
+| adversarial | 600 (100) | 0.843 [0.815, 0.872] | 0.887 [0.852, 0.922] | 0.787 [0.743, 0.827] | 0.834 [0.803, 0.865] | 0.443 [0.418, 0.470] |
+| pooled | 1800 (100) | 0.863 [0.840, 0.888] | 0.929 [0.905, 0.951] | 0.787 [0.743, 0.827] | 0.852 [0.824, 0.880] | 0.423 [0.400, 0.447] |
 
 **Detection (test AUROC/AUPRC)**
 
 | Detector | Layer | Test AUROC | Test AUPRC |
 |:---|:---:|:---:|:---:|
-| Linear probe (hidden state) | — | — | — |
-| Mean-difference projection | — | — | — |
-| PCA truth-axis projection | — | — | — |
-| Answer-token −log p | — | — | — |
-| Answer-token entropy | — | — | — |
+| Linear probe (hidden state) | 13 | 0.719 [0.667, 0.769] | 0.268 [0.208, 0.349] |
+| Mean-difference projection | 15 | 0.783 [0.745, 0.823] | 0.320 [0.250, 0.411] |
+| PCA truth-axis projection | 0 | 0.584 [0.522, 0.641] | 0.175 [0.133, 0.227] |
+| Answer-token −log p | n/a (no fit) | 0.745 [0.683, 0.804] | 0.350 [0.266, 0.448] |
+| Answer-token entropy | n/a (no fit) | 0.745 [0.683, 0.804] | 0.347 [0.264, 0.447] |
+
+Test questions: 1800; endpoint-positive: 246 (base rate 0.137, the AUPRC of a random detector).
 
 **Steering (test)**
 
 | Method | Strength | Accuracy | Δ accuracy | False-yes rate | Δ false-yes | Recall (utility) | Retention |
 |:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| SLERP → PCA truth axis | — | — | — | — | — | — | — |
-| Add mean-difference | — | — | — | — | — | — | — |
-| Control: random direction (SLERP) | — | — | — | — | — | — | — |
-| Control: shuffled-label axis (SLERP) | — | — | — | — | — | — | — |
+| SLERP → PCA truth axis | 0.05 | 0.857 [0.832, 0.883] | -0.007 [-0.016, 0.002] | 0.053 [0.034, 0.074] | -0.007 [-0.016, -0.001] | 0.767 [0.723, 0.810] | 0.988 [0.979, 0.996] |
+| Add mean-difference | 0.05 | 0.866 [0.842, 0.889] | 0.002 [-0.002, 0.008] | 0.062 [0.043, 0.084] | 0.002 [0.000, 0.006] | 0.793 [0.750, 0.833] | 0.999 [0.997, 1.000] |
+| Control: random direction (SLERP) | 0.05 | 0.864 [0.841, 0.888] | 0.001 [0.000, 0.002] | 0.059 [0.040, 0.081] | -0.001 [-0.003, 0.000] | 0.787 [0.743, 0.827] | 1.000 [1.000, 1.000] |
+| Control: shuffled-label axis (SLERP) | 0.05 | 0.859 [0.833, 0.884] | -0.004 [-0.012, 0.003] | 0.056 [0.037, 0.077] | -0.004 [-0.013, 0.000] | 0.773 [0.727, 0.817] | 0.992 [0.984, 0.998] |
 <!-- RESULTS:END -->
 
 The full report, with per-split breakdowns, the layer-sweep figure and the validation trade-off curve, is written to [results/REPORT.md](results/REPORT.md).
@@ -305,7 +310,7 @@ DA5410-Winter-Project/
 ├── requirements.txt                    <-- Python dependency specifications
 ├── .gitignore                          <-- Git exclusion rules
 ├── docs/                               <-- Academic reports & research documentation
-│   ├── DA5410_Winter_Project_Report.pdf        <-- Formal 15-page IIT Madras project report
+│   ├── DA5410_Winter_Project_Report.pdf        <-- Historical report; old claims withdrawn
 │   ├── main.tex                                <-- Full publication LaTeX source
 │   ├── reference.bib                           <-- Complete IEEEtran bibliography
 │   ├── Research_Proposal_Literature_Survey.pdf  <-- Initial proposal & survey (Dec 2025)

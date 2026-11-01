@@ -1,0 +1,31 @@
+{
+  "status": "verified",
+  "run_id": "a57da9f4810959cc",
+  "profile": "quick",
+  "test_images": 100,
+  "model_id": "llava-hf/llava-1.5-7b-hf",
+  "revision": "b234b804b114d9e37bb655e11cbbb5f5e971b7a9",
+  "target": "error",
+  "hardware": "Tesla T4",
+  "runtime": null,
+  "verification_scope": "Question bytes, registered configuration, image partition IDs, official scoring and saved output coverage; source COCO image bytes and model weights are not independently rehashed by this bundle check",
+  "config_sha256": "3fc02d7d82fb7f3061996772c8f7f341e6c56d8b1868c0c14cc911c610090743",
+  "artifacts": {
+    "detection_scores.jsonl": "a5543f9c0b83b587dcf122b82249378527f2f8dd5b63a15ff2e7680d820d9dee",
+    "directions.npz": "f66c0eb9a7731b5ec4d43b1efd943c2059b3ae5d2d222130cb5c0c469253133a",
+    "environment-freeze.txt": "d5dd88d2e5df84101620d29c48298bd77a0c65cd3846cccd5a5edb9901d8aa94",
+    "environment.json": "6b708b9ec2e6fe2c3b10d896531fed80c0786d8e45883207cb35d383b26320c6",
+    "identity.json": "680f246353a1cff2e0b4e23947c890148b3b815fd4a9c2c7cf8e3149e16afc7e",
+    "layer_scores_test.npz": "ed567d23aa2ab2b9a918e73a8c8bb6ba58834f0c8d6e76b7fbe7e23539c83cac",
+    "predictions.jsonl": "e7216ca73d79c10ef77f4a8ec28d0bf7c3d0e4b5f55f419f720afa205637a7ed",
+    "selection.json": "bbf81bbea742837eb3d6675d9142fc486a4126b72d72db8a9fe3213f15a4b71f",
+    "sessions.jsonl": "79333d6378843c65466a980397601c83dbef0b96d0969f22f578f3c4094ceb1f",
+    "splits.json": "d885bc5b1ff4a9c4d225e57d7d9281ae6d9bb79371a425ec34854900334036c0",
+    "status.json": "23d769c5cb6b53384a90ac658cc16a1618140c7b595ffc8ead6e38b135bdfbcc",
+    "steering_plan.json": "dcf1b6cd48c27f64bfcbc81d29dd6505fad4d7f940973c4dcbb701feedce9dcb",
+    "test_plan.json": "26ba5426d58611c3e53845ffab1a5be465c393b2edbc474b6e8a35c136a577e3",
+    "timing.json": "84bcd08f1f2646fb0837210507eb2411f8393e494ed6f644a54c27b4cc9b124b",
+    "validation_sweep.json": "342cf60eb0788f2b79b0c5d17e6f8c5d2116ea9a3039dd99d2f41211be6261ed"
+  },
+  "metrics_sha256": "0c9928d999455ed62735a01031602e918c06a40a300ff030e17d2551b529f5f2"
+}

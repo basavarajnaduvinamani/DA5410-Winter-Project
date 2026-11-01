@@ -1,7 +1,15 @@
 {
-  "status": "setup_failed_before_inference",
-  "source": "owner-provided Colab setup log, 2026-11-01",
-  "reason": "ValueError: Key backend: 'module://matplotlib_inline.backend_inline' is not a valid value for backend",
-  "fix": "Set MPLBACKEND=Agg before the isolated test process and before importing matplotlib",
-  "verified_inference": false
+  "status": "verified_saved_run",
+  "run_id": "a57da9f4810959cc",
+  "profile": "quick",
+  "test_images": 100,
+  "hardware": "Tesla T4",
+  "source": "results/published_run.json",
+  "initial_attempt": {
+    "status": "setup_failed_before_inference",
+    "source": "owner-provided Colab setup log, 2026-11-01",
+    "reason": "ValueError: Key backend: 'module://matplotlib_inline.backend_inline' is not a valid value for backend",
+    "fix": "Set MPLBACKEND=Agg before the isolated test process and before importing matplotlib",
+    "verified_inference": false
+  }
 }

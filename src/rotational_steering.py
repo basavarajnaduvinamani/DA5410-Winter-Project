@@ -32,7 +32,7 @@ class RotationalSteeringHook:
     """
     PyTorch forward hook for conditional rotational steering (Smart Switch).
     """
-    def __init__(self, steering_tensor, alpha=0.25, threshold=0.0, mode="adaptive", operation="slerp"):
+    def __init__(self, steering_tensor, alpha=0.25, threshold=0.0, mode="adaptive", operation="slerp", record_trace=False):
         """
         Args:
             steering_tensor: The PCA Truth Axis tensor.
@@ -50,6 +50,8 @@ class RotationalSteeringHook:
             raise ValueError(operation)
         if not -1 <= threshold <= 1:
             raise ValueError("Gate is cosine alignment in [-1, 1]")
+        self.record_trace = record_trace
+        self.trace = []
         self.operation = operation
         self.steering_vector = steering_tensor / torch.norm(steering_tensor)
         self.alpha = alpha
@@ -67,6 +69,8 @@ class RotationalSteeringHook:
         mask = alignment.lt(self.threshold).unsqueeze(-1)
         if self.mode != "adaptive":
             mask = torch.ones_like(mask)
+        if self.record_trace:
+            self.trace.append(dict(alignment=alignment.detach().float().cpu().flatten().tolist(), steered=mask.detach().cpu().flatten().tolist()))
         target_alpha = -self.alpha if self.mode == "inception" else self.alpha
         changed = (slerp_rotate(terminal, vec, target_alpha) if self.operation == "slerp"
                    else terminal + target_alpha * vec)
