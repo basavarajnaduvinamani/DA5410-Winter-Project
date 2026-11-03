@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-03",
+  "kind": "software_validation_not_research_results",
+  "command": ".venv-cpu/Scripts/python.exe -m pytest -q tests --basetemp=.tools/avh-pytest-candidate --junitxml=.tools/avh-candidate-junit.xml",
+  "test_count": 55,
+  "passed": 55,
+  "new_avh_tests": 14,
+  "failures": 0,
+  "errors": 0,
+  "ci": "not applicable: deterministic software checks, no sampled model measurements",
+  "notebooks": "schema validated, code cells compile, execution counts null, outputs empty",
+  "gpu_smoke": "not run; owner GO pending",
+  "dataset_inventory": "not run; owner GO pending",
+  "dataset_terms_and_lineage": "not established; explicit runtime stop gates",
+  "research_metrics": "not generated",
+  "source_hashes": {
+    "notebooks/avh_common.py": "ab8508e65f8feca45ac2ec96c0b886b85d2c5789dde53875f2bd32c358a80b68",
+    "notebooks/avh_gemma.ipynb": "e33e173cd87e5cb0ece004f3a5d16ab922c9f7149dac76317b7d23fc2e505385",
+    "notebooks/avh_qwen.ipynb": "39ef04465029e919fa0d2a5ddc51b10ad3d529ff35aa2b6e3e852bcb2900e2d0",
+    "scripts/build_avh_notebooks.py": "239d6560e57c5dd2032d0c2ae208477bbcc866f3ceacd7f373169431da28dba0",
+    "tests/test_avh.py": "82b5d0d058b625ca7637bbcf2b7f266f7fd0973bc6dfa33c810da74675c5fc61",
+    "docs/PREREGISTRATION.md": "51e37eb5dab80cfa0fc509948f964dd5cf60d6a6a660d3301aaf807529f25303"
+  },
+  "environment_notes": [
+    "Initial targeted tests hit sandbox temp-directory atomic-replace restrictions; successful run used a project-contained pytest base directory.",
+    "Unscoped pytest collection encountered existing site Lighthouse profile filesystem entries. Final collection explicitly covered tests/.",
+    "The passing process returned exit code 0, with a pyreadline console destructor warning during interpreter shutdown."
+  ]
+}
