@@ -14,6 +14,45 @@ sys.modules["avh_common"] = avh
 spec.loader.exec_module(avh)
 
 
+@pytest.mark.parametrize("bundled", [True, False])
+def test_license_resolution_uses_repo_file_or_verified_publisher_link(tmp_path, monkeypatch, bundled):
+    import types
+    import urllib.request
+    card = "---\nlicense: apache-2.0\nlicense_link: https://ai.google.dev/gemma/docs/gemma_4_license\n---\n"
+    (tmp_path / "README.md").write_text(card, encoding="utf-8")
+    (tmp_path / "LICENSE.txt").write_text("Synthetic bundled research license", encoding="utf-8")
+    fake = types.ModuleType("huggingface_hub")
+    fake.HfApi = lambda: types.SimpleNamespace(model_info=lambda repo: types.SimpleNamespace(
+        sha="a"*40, siblings=[types.SimpleNamespace(rfilename="LICENSE.txt" if bundled else "README.md")]))
+    downloads = []
+    def download(repo, name, revision):
+        downloads.append(name)
+        assert revision == "a"*40
+        return str(tmp_path / name)
+    fake.hf_hub_download = download
+    monkeypatch.setitem(sys.modules, "huggingface_hub", fake)
+    class Response:
+        def __enter__(self):
+            return self
+        def __exit__(self, *args):
+            pass
+        def geturl(self):
+            return "https://ai.google.dev/gemma/apache_2"
+        def read(self):
+            return b"<html>Navigation<pre><code>Apache License\nVersion 2.0\nGrant of Copyright License</code></pre></html>"
+    monkeypatch.setattr(urllib.request, "urlopen", lambda *a, **kw: Response())
+    result = avh.resolve_model("gemma")
+    assert result["revision"] == "a"*40
+    assert result["license_sha256"] == avh.hashlib.sha256(result["license_text"].encode()).hexdigest()
+    assert downloads == (["LICENSE.txt"] if bundled else ["README.md"])
+    assert ("model_card_sha256" in result) == (not bundled)
+    if not bundled:
+        assert "Navigation" not in result["license_text"]
+        (tmp_path / "README.md").write_text(card.replace("apache-2.0", "unverified"))
+        with pytest.raises(RuntimeError, match="verified publisher"):
+            avh.resolve_model("gemma")
+
+
 def release_fixture():
     lineage, qa = [], []
     for i in range(60):
@@ -38,6 +77,86 @@ def test_go_gate_and_model_constraints(tmp_path):
         avh.Config(str(tmp_path), "gemma", "main")
     with pytest.raises(ValueError):
         avh.Config(str(tmp_path), "gemma", "a"*40, frames=4)
+
+
+def test_attention_backend_keeps_gemma_audio_eager_and_qwen_unchanged():
+    gemma = avh.attention_backend("gemma")
+    assert gemma["audio_config"] == "eager"
+    assert gemma["text_config"] == gemma["vision_config"] == gemma[""] == "sdpa"
+    assert avh.attention_backend("qwen") == "sdpa"
+
+
+def failed_prefix_fixture(root):
+    avh.atomic_json(root / "gemma" / "cache_diagnostic_v3.json", {
+        "status": "comparison_complete", "logits_max_abs_diff": .0625,
+        "hidden_max_abs_diff": .125, "answers": [1, 1]})
+
+
+def test_full_forward_dispatch_never_reuses_prefix_or_reloads_weights(tmp_path):
+    import types
+    failed_prefix_fixture(tmp_path)
+    scorer = object.__new__(avh.OmniScorer)
+    cfg = avh.Config(str(tmp_path), "gemma", "a"*40)
+    scorer.cfg, scorer.env, scorer.model = cfg, {}, object()
+    weights = scorer.model
+    scorer.prefix, scorer.prefix_key = object(), "previous"
+    updated = avh.use_full_forward(scorer, cfg)
+    assert scorer.model is weights
+    assert scorer.prefix is None and scorer.prefix_key is None
+    assert updated.scoring_mode == "full_forward"
+    assert avh.read_json(tmp_path / "gemma" / "scoring_amendment.json")["prefix_cache_status"] == "failed_gate_disabled"
+    scorer.inputs = lambda *args: ({"test_input": 1}, 1, "key")
+    calls = []
+    def forward(inputs, **kwargs):
+        calls.append(kwargs)
+        assert inputs == {"test_input": 1}
+        return object()
+    scorer._forward = forward
+    scorer.extract = lambda output: ({"answer": 1, "margin": 1.}, np.ones((2, 3)), np.ones(4))
+    scorer.torch = types.SimpleNamespace(cuda=types.SimpleNamespace(synchronize=lambda: None, max_memory_allocated=lambda: 1))
+    result, _, _ = scorer.score({}, "full", {})
+    assert calls == [{"use_cache": False}] and result["scoring_mode"] == "full_forward"
+    with pytest.raises(RuntimeError, match="Prefix reuse is disabled"):
+        scorer.score({}, "full", {}, cached=True)
+
+
+def test_retained_full_forward_smoke_labels_repeatability_and_keeps_formal_gate_closed(tmp_path, monkeypatch):
+    qa, _ = release_fixture()
+    failed_prefix_fixture(tmp_path)
+    original = avh.Config(str(tmp_path), "gemma", "a"*40)
+    cfg = avh.dataclasses.replace(original, scoring_mode="full_forward")
+    class Retained:
+        env, tokens = {"kind": "synthetic"}, {"yes": [1], "no": [0]}
+        def __init__(self):
+            self.cfg, self.calls, self.generations = original, 0, 0
+        def score(self, row, stage, index, cached=None):
+            assert cached is False
+            self.calls += 1
+            return {"answer": 1, "peak_vram_bytes": 1, "seconds": 1.}, np.ones((2, 3)), np.ones(4)
+        def generation_check(self, row, index):
+            self.generations += 1
+            return {"generated_answer": 1}
+    retained = Retained()
+    def forbidden_load(*args):
+        raise AssertionError("Must reuse the existing model")
+    monkeypatch.setattr(avh, "OmniScorer", forbidden_load)
+    monkeypatch.setattr(avh, "prepare_media", lambda *args: {})
+    monkeypatch.setattr(avh, "verify_media", lambda *args: None)
+    returned, result = avh.pre_smoke(cfg, qa, tmp_path, scorer=retained)
+    assert returned is retained and retained.calls == 40 and retained.generations == 10
+    assert result["comparison_kind"] == "full_forward_repeatability"
+    assert result["prefix_cache_verified"] is False and result["reused_loaded_model"] is True
+    assert result["observed_full_pass_seconds"]["n"] == 20
+    assert all("repeat_answer" in r and "cached_answer" not in r for r in result["checks"])
+    assert not (tmp_path / "gemma" / "smoke_f8.json").exists()
+
+
+def test_bulk_rejects_scorer_with_different_execution_mode(tmp_path):
+    import types
+    cfg = avh.Config(str(tmp_path), "gemma", "a"*40, scoring_mode="full_forward")
+    scorer = types.SimpleNamespace(cfg=avh.dataclasses.replace(cfg, scoring_mode="verified_prefix"))
+    with pytest.raises(RuntimeError, match="mode differs"):
+        avh.run_stage(scorer, cfg, {}, {}, "GO")
 
 
 def test_terms_need_real_unchanged_evidence_and_applicable_passage(tmp_path):

@@ -19,7 +19,8 @@ Resolve each to an immutable Hub SHA before loading. Gemma is Apache-2.0;
 the Qwen 3B checkpoint has a Qwen Research license, requiring documented applicable
 research-use terms. Do not substitute models. Qwen load plus smoke has a hard
 30-minute timebox; a failure permits Gemma-only results with Qwen marked unfinished.
-Free T4, fp16 parameters and inputs, SDPA, no bf16, offload or quantization.
+Free T4, fp16 parameters and inputs; SDPA for text/vision, Gemma audio eager
+(its chunked audio attention does not implement SDPA). No bf16, offload or quantization.
 Fit, finiteness and parity are gates, not assumptions. Log actual memory/time.
 
 ## Data gates and lineage
@@ -117,6 +118,27 @@ must produce an actual Yes/No variant agreeing with the class decision. Non-Yes/
 outputs fail the gate. This one-token diagnostic is the only generation exception.
 Print peak allocated VRAM, finite-output checks, timing, package versions, model SHA.
 Passing these checks is required; none has yet been run.
+
+### November 4 engineering amendment: explicit full-forward fallback
+
+Owner-provided early diagnostics failed the prefix gate on one Gemma QA item.
+Do not relax the registered tolerance or claim that prefix caching was verified.
+`verified_prefix` mode remains subject to the original cache gate. An explicit
+`full_forward` fallback uses the original fresh full pass for every question, with
+no prefix reuse or encode-once claim. Save the actual failed diagnostic and a
+per-model `scoring_amendment.json` before bulk/test inference. Its hash and mode
+enter run identity. This companion amendment also applies to the saved Drive copy
+of the preregistration; it must not silently overwrite an already frozen analysis.
+
+In fallback mode, the same <=0.02 numerical and answer-agreement checks compare
+two genuine full passes; label them repeatability, never prefix parity. Keep the
+ten generation checks, finiteness, VRAM, the independent formal manifest smoke,
+and pre-test analysis freeze. Measure observed latency over the complete early
+smoke, report n/CI, and assess time before launching bulk work. Timing includes
+processor preparation, forward pass and feature extraction, but not source media
+preprocessing or model loading. No population result follows from these diagnostics.
+All research/statistical choices and media evidence remain unchanged. The fallback
+is a computation/speed trade-off, not a successful fix of the cache discrepancy.
 
 Passes: full; four queried-modality swaps; queried-modality black frames/silence;
 question only. AV Matching is secondary and uses full + no-media only because it

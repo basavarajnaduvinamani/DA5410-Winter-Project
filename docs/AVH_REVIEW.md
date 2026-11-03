@@ -153,3 +153,59 @@ Options: A) keep blocking provenance gate; B) requested early smoke plus disclos
 Key views: Research/Data Science: clip grouping cannot establish source-disjointness. Platform: audit edits must not invalidate journals. Privacy: owner no-license decision means private evaluation only.
 Call: B as requested; preserve overlap limitation and media prohibition. Reversible? yes, before results.
 Resume impact: PRE-DOC / SDE: distinguish verified provenance from practical fallback.
+
+## November 4 runtime repair — model-license lookup
+
+The owner ran Gemma setup and reported successful selection/import verification of
+Transformers 5.22.1 / `Gemma4ForConditionalGeneration`. Metadata resolution then
+failed because `resolve_model()` assumed a repository file named `LICENSE`.
+The actual pinned revision `4adf15748de9e1a0097b6274cee9c15836c41c37` links its
+license from `README.md` instead. This was an authoring bug, not a model-fit failure.
+
+The corrected runtime inspects repository file names before downloading a bundled
+license. For Gemma without one, it verifies the pinned model card's explicit
+Apache-2.0 declaration and Google license link, fetches that publisher page, checks
+the expected license text and saves its provenance/hash plus pinned card evidence.
+Unverified cards, empty licenses and unexpected redirects still stop. The live
+metadata/license check succeeded on the exact revision above. No model weights
+were downloaded by that check. Statistical choices and inference code are unchanged.
+
+Owner recovery: replace only `reviewed/avh_common.py` in the shared Drive folder,
+reload it through the existing notebook `spec.loader.exec_module(avh)`, and finish
+the metadata/license/config assignments. Do not rerun installation or reset the
+runtime merely for this repair. Continue to section 4 inventory afterward.
+
+## November 4 runtime repair — Gemma audio attention backend
+
+The owner's early smoke downloaded weights and stopped during model construction:
+`Gemma4AudioModel` rejects an explicitly global SDPA backend in Transformers 5.22.1.
+The [versioned implementation](https://github.com/huggingface/transformers/blob/v5.22.1/src/transformers/models/gemma4/modeling_gemma4.py)
+declares its chunked audio attention eager-only. The corrected loader uses a
+per-component map: SDPA for text/vision, eager for audio, and records the map in the
+environment. Qwen's SDPA setting is unchanged. fp16 and all formal smoke checks remain.
+The preregistration now states this explicit implementation constraint. It changes
+the audio backend, not the model, data or statistical plan; cache parity and fp16
+finiteness still have to be measured. No successful Gemma forward pass or T4 fit is
+claimed from a completed download or this source-level repair.
+
+## November 4 prefix-cache diagnostics and full-forward fallback
+
+The owner supplied one-item diagnostics: default prefix vs full errors were
+0.046875 logits / 0.125 hidden; text-only math gave 0.0703125 / 0.125; disabling
+reduced FP16 GEMM accumulation gave 0.0625 / 0.125. Yes/No answers agreed; this
+does not pass the <=0.02 gate. The latter diagnostic's reported margins matched,
+but that does not establish hidden-feature parity. Global math attention OOMed
+in the vision encoder. These are single-item engineering observations, not
+research metrics, accuracy estimates or a validated runtime guarantee.
+
+PANEL: use the full forward pass as a fallback
+Options: A) continue debugging prefix reuse; B) fresh full pass per question.
+Key views: Research/Data Science: B uses the reference computation and preserves statistics. ML/Platform: measure speed before bulk.
+Call: B explicitly, caching disabled and failed gate recorded. Reversible? yes, via configuration.
+Resume impact: PRE-DOC / SDE: disclose failed optimization and independently validate fallback.
+
+Implementation and consequences are in ADR 0012. The retained scorer can switch
+dispatch without reloading weights, retaining original model/media configuration.
+The fallback early smoke checks 20 full-pass repeats plus ten generated tokens,
+reports observed latency and marks prefix_cache_verified=false. It does not replace
+formal manifest smoke. Performance/success on actual T4 fallback is pending.

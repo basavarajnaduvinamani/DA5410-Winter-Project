@@ -1,24 +1,28 @@
 # CounterPrior v2 — facts at the notebook review halt
 
-Date: 2026-11-03, Round 1 notebook review revision. Independent continuation, November 2026. The internship period
+Date: 2026-11-04, Gemma runtime repairs and explicit full-forward fallback. Independent continuation, November 2026. The internship period
 November 2025–February 2026 covers earlier LLaVA work only.
 
 ## Measured facts
 
 Software checks are deterministic artifact counts, so sampling CIs do not apply.
-No v2 model sample, effect size, CI, latency, or VRAM measurement exists yet.
+No complete v2 research result exists. The owner supplied single-item engineering observations and a release inventory; these do not establish population performance.
 
 | Fact | Number / status | Source file |
 |---|---|---|
 | Requested model notebooks saved, unexecuted and schema-valid | 2 | `notebooks/avh_gemma.ipynb`, `notebooks/avh_qwen.ipynb`, `docs/AVH_VALIDATION.json` |
-| Shared review-gated runtime authored | Present; GPU behavior unrun | `notebooks/avh_common.py` |
-| Python tests in final suite | 63 passed, 0 failures, 0 errors; n=63 checks, CI not applicable | `docs/AVH_VALIDATION.json` |
-| New AVH contract tests included in that suite | 22 passed; n=22 checks, CI not applicable | `tests/test_avh.py`, `docs/AVH_VALIDATION.json` |
+| Gemma license lookup repaired and live-checked at owner-reported revision | Succeeded; metadata/license only, no weights | `docs/AVH_VALIDATION.json`, `notebooks/avh_common.py` |
+| Shared review-gated runtime authored | Present; prefix gate failed on an owner-run engineering item; fallback validation pending | `notebooks/avh_common.py` |
+| Python tests in final suite | 69 passed, 0 failures, 0 errors; n=69 checks, CI not applicable | `docs/AVH_VALIDATION.json` |
+| New AVH contract tests included in that suite | 28 passed; n=28 checks, CI not applicable | `tests/test_avh.py`, `docs/AVH_VALIDATION.json` |
 | Protocol with recovered-source grouping, disclosed clip fallback and validation freeze | Authored before v2 inference | `docs/PREREGISTRATION.md` |
-| Dataset item count, terms decision and original-source lineage | Not established; early diagnostic precedes manual gates; fallback disclosed | `docs/AVH_REVIEW.md` |
-| Round 1 requested fixes | Authored, engineering smoke still unrun | `docs/AVH_REVIEW.md`, `notebooks/avh_common.py` |
-| fp16 T4 fit, cache parity, generation agreement, model performance | Not run; pending GO | `docs/AVH_VALIDATION.json` |
+| Dataset item count, terms decision and original-source lineage | Inventory completed; terms decision/lineage recovery pending | `docs/AVH_REVIEW.md` |
+| Round 1 requested fixes | Authored; owner cached early smoke stopped on parity | `docs/AVH_REVIEW.md`, `notebooks/avh_common.py` |
+| fp16 T4 fit, cache parity, generation agreement, model performance | Model loaded on T4; cache errors exceed gate on n=1; full 20-item smoke incomplete | `docs/AVH_VALIDATION.json` |
 | Incremental probe AUROC, false-yes/recall effects, replication | In progress; no measured number | `docs/AVH_VALIDATION.json` |
+
+| Failed Gemma prefix-cache engineering gate | n=1 item; max hidden difference 0.125 versus <=0.02 limit; no population CI | `docs/AVH_CACHE_STATUS.json` |
+| Explicit full-forward fallback | Authored; actual GPU repeatability/timing pending | `docs/adr/0012-explicit-full-forward-fallback.md` |
 
 ## Candidate lines — ongoing work only
 
@@ -30,7 +34,7 @@ No v2 model sample, effect size, CI, latency, or VRAM measurement exists yet.
   or an explicitly limited released-clip fallback, and an internal
   probe comparison against AVCD-style contrast; evaluation is pending.
 - SDE: **(Continued independently, Nov 2026)** Authored two review-gated Colab
-  notebooks and a shared checkpointing runtime; 22 AVH CPU contract tests pass.
+  notebooks and a shared checkpointing runtime; 28 AVH CPU contract tests pass.
   T4 compatibility and multi-account recovery remain unvalidated.
 
 These are drafting facts, not completed research accomplishment claims. Replace
@@ -47,6 +51,7 @@ ongoing language only after complete runs populate traceable `metrics.json` file
 - Do not claim an exact AVCD reproduction, a first evaluation, production readiness,
   solved hallucination, or safety for blind and low-vision users.
 - Do not convert synthetic unit-test results into research measurements.
+- Do not claim verified prefix reuse or encode-once optimization for full_forward mode; the cached path failed its gate.
 - Do not assume public download links license the data or public example media.
 - Do not claim source-disjointness when lineage is unrecoverable. The owner's
   no-license private-evaluation decision never authorizes public AVHBench media/frames.
@@ -54,7 +59,7 @@ ongoing language only after complete runs populate traceable `metrics.json` file
 ## Interview questions and honest answers
 
 1. **What have you established so far?** The review artifacts and CPU code contracts
-   are complete. Neither model has run in this phase; there are no research results.
+   are complete. Gemma loaded on the owner's T4, but its cached smoke failed numerical parity; there are no complete research results.
 2. **How will you avoid leakage in swapped audiovisual clips?** Require both original
    source identities where recoverable, form connected components before splitting,
    and choose donors inside each split. Unrecoverable lineage uses clip grouping
@@ -65,5 +70,5 @@ ongoing language only after complete runs populate traceable `metrics.json` file
    probe adds useful information remains an empirical question.
 
 Strongest result: reviewable notebooks, preregistered gates and passing CPU contracts.
-Weakest gap: original-source recovery, owner terms decision and actual GPU behavior remain unverified.
-Next upgrade: after review and owner GO, inventory the release and run early T4 smoke.
+Weakest gap: fallback GPU validation, original-source recovery and owner terms decision remain pending.
+Next upgrade: execute the full-forward early smoke on the retained T4 model, then assess measured latency before bulk work.

@@ -69,6 +69,7 @@ def build(model):
         ROOT = Path("/content/drive/MyDrive/CounterPrior_v2/2026-11-03")
         MODEL = "{model}"
         FRAMES = 8  # If OOM: new shared study directory, FRAMES=1 for both models, repeat smoke.
+        SCORING_MODE = "verified_prefix"  # Gemma fallback after saved failure: "full_forward".
         WORKERS, WORKER_INDEX = 1, 0
         ROOT.mkdir(parents=True, exist_ok=True)
         source = ROOT / "reviewed" / "avh_common.py"
@@ -150,7 +151,7 @@ def build(model):
         print(metadata["repo"], metadata["revision"], "license:", license_path)
         print(metadata["license_text"])
         cfg = avh.Config(str(ROOT), MODEL, metadata["revision"], frames=FRAMES,
-                         workers=WORKERS, worker_index=WORKER_INDEX)
+                         workers=WORKERS, worker_index=WORKER_INDEX, scoring_mode=SCORING_MODE)
     '''), md("""
         ## 4. Download, inspect, and inventory the official subset (A only)
         Set PREPARE_DATA on exactly one runtime. Downloads are never inferred to be
@@ -183,7 +184,8 @@ def build(model):
         timeout touched after loading. Keep the returned scorer for the formal smoke.
     """), code('''
         raw_qa = avh.read_json(ROOT / "released_qa.json")
-        scorer, pre_report = avh.pre_smoke(cfg, raw_qa, ROOT / "release" / "unpacked")
+        scorer, pre_report = avh.pre_smoke(cfg, raw_qa, ROOT / "release" / "unpacked",
+                                         scorer=globals().get("scorer"))
         print(json.dumps(pre_report, indent=2))
         print("Engineering diagnostic only:", ROOT / MODEL / "pre_smoke.json")
     '''), md("""
