@@ -75,24 +75,71 @@ class Config:
     worker_index: int = 0
     workers: int = 1
     stage: str = "full"
+    scoring_mode: str = "verified_prefix"
 
     def __post_init__(self):
         if self.model not in MODEL_IDS or self.frames not in (1, 8) or self.k != 4:
             raise ValueError("Only the two approved models, 8/1 frames, and K=4 are permitted")
         if self.stage not in PASSES or not 0 <= self.worker_index < self.workers:
             raise ValueError("Invalid stage or work partition")
+        if self.scoring_mode not in ("verified_prefix", "full_forward"):
+            raise ValueError("Unknown scoring mode")
         if len(self.revision) != 40 or any(c not in "0123456789abcdef" for c in self.revision):
             raise ValueError("Freeze the model to a 40-character Hub commit SHA")
 
 
 def resolve_model(model):
-    """Metadata only. License is saved for review, not inferred from model size."""
+    """Save actual license evidence; some repositories link it instead of shipping LICENSE."""
+    from html.parser import HTMLParser
+    from urllib.request import urlopen
     from huggingface_hub import HfApi, hf_hub_download
-    info = HfApi().model_info(MODEL_IDS[model])
-    license_path = hf_hub_download(MODEL_IDS[model], "LICENSE", revision=info.sha)
-    return {"repo": MODEL_IDS[model], "revision": info.sha,
-            "license_text": Path(license_path).read_text(encoding="utf-8"),
-            "license_sha256": file_hash(license_path)}
+    repo = MODEL_IDS[model]
+    info = HfApi().model_info(repo)
+    files = {s.rfilename for s in info.siblings}
+    candidates = sorted(f for f in files if f.casefold() in ("license", "license.txt", "license.md"))
+    extra = {}
+    if candidates:
+        name = candidates[0]
+        text = Path(hf_hub_download(repo, name, revision=info.sha)).read_text(encoding="utf-8")
+        source_url = f"https://huggingface.co/{repo}/resolve/{info.sha}/{name}"
+    else:
+        card_path = hf_hub_download(repo, "README.md", revision=info.sha)
+        card = Path(card_path).read_text(encoding="utf-8")
+        # This fallback is specific to the publisher's explicit Gemma 4 model-card link.
+        source_url = "https://ai.google.dev/gemma/docs/gemma_4_license"
+        if (model != "gemma" or not re.search(r"(?m)^license:\s*apache-2\.0\s*$", card)
+                or not re.search(r"(?m)^license_link:\s*" + re.escape(source_url) + r"\s*$", card)):
+            raise RuntimeError("No bundled license or verified publisher license link; inspect model card")
+        class LicenseParser(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.depth, self.parts = 0, []
+            def handle_starttag(self, tag, attrs):
+                if tag == "pre":
+                    self.depth += 1
+            def handle_endtag(self, tag):
+                if tag == "pre":
+                    self.depth -= 1
+            def handle_data(self, value):
+                if self.depth > 0:
+                    self.parts.append(value)
+        with urlopen(source_url, timeout=30) as response:
+            resolved = response.geturl()
+            if resolved not in (source_url, "https://ai.google.dev/gemma/apache_2"):
+                raise RuntimeError("Unexpected redirect for publisher license evidence")
+            parser = LicenseParser()
+            parser.feed(response.read().decode("utf-8"))
+        text = "".join(parser.parts).strip()
+        if not all(term in text for term in ("Apache License", "Version 2.0", "Grant of Copyright License")):
+            raise RuntimeError("Publisher page did not contain the expected full license text")
+        extra = {"model_card_text": card, "model_card_sha256": file_hash(card_path),
+                 "model_card_source_url": f"https://huggingface.co/{repo}/resolve/{info.sha}/README.md",
+                 "license_resolved_url": resolved}
+    if not text.strip():
+        raise RuntimeError("License evidence was empty")
+    return {"repo": repo, "revision": info.sha, "license_text": text,
+            "license_sha256": hashlib.sha256(text.encode("utf-8")).hexdigest(),
+            "license_source_url": source_url, **extra}
 
 
 def download_release(root, owner_release):
@@ -593,6 +640,12 @@ class Journal:
         self.lock.unlink(missing_ok=True)
 
 
+def attention_backend(model):
+    # Gemma's chunked audio attention only implements eager in Transformers.
+    return ({"": "sdpa", "text_config": "sdpa", "vision_config": "sdpa", "audio_config": "eager"}
+            if model == "gemma" else "sdpa")
+
+
 class OmniScorer:
     def __init__(self, cfg):
         import torch
@@ -608,7 +661,8 @@ class OmniScorer:
         cls = (transformers.Gemma4ForConditionalGeneration if cfg.model == "gemma"
                else transformers.Qwen2_5OmniThinkerForConditionalGeneration)
         self.model = cls.from_pretrained(MODEL_IDS[cfg.model], revision=cfg.revision,
-                    torch_dtype=torch.float16, device_map={"": 0}, attn_implementation="sdpa").eval()
+                    torch_dtype=torch.float16, device_map={"": 0},
+                    attn_implementation=attention_backend(cfg.model)).eval()
         if any(p.device.type != "cuda" or (p.is_floating_point() and p.dtype != torch.float16)
                for p in self.model.parameters()):
             raise RuntimeError("All parameters must be fp16 on GPU; no silent offload/quantization")
@@ -622,6 +676,8 @@ class OmniScorer:
         self.env = {"python": platform.python_version(), "torch": torch.__version__,
                     "transformers": transformers.__version__, "gpu": torch.cuda.get_device_name(0),
                     "model_revision": cfg.revision, "cuda": torch.version.cuda,
+                    "attention_backend": attention_backend(cfg.model),
+                    "scoring_mode": cfg.scoring_mode,
                     "packages": subprocess.check_output([os.sys.executable, "-m", "pip", "freeze"], text=True).splitlines()}
         print(json.dumps({"environment": self.env, "answer_tokens": self.tokens}, indent=2))
 
@@ -743,7 +799,13 @@ class OmniScorer:
         return {"margin": margin, "answer": int(margin > 0), "yes_logsumexp": float(yes),
                 "no_logsumexp": float(no), "greedy_token": int(logits.argmax())}, array, logits.cpu().numpy()
 
-    def score(self, row, pass_name, index, cached=True):
+    def score(self, row, pass_name, index, cached=None):
+        tick = time.monotonic()
+        mode = getattr(self.cfg, "scoring_mode", "verified_prefix")
+        if cached is None:
+            cached = mode == "verified_prefix"
+        if mode == "full_forward" and cached:
+            raise RuntimeError("Prefix reuse is disabled in full_forward mode")
         full, cut, key = self.inputs(row, pass_name, index)
         if not cached:
             output = self._forward(full, use_cache=False)
@@ -765,6 +827,8 @@ class OmniScorer:
         del output
         self.torch.cuda.synchronize()
         result["peak_vram_bytes"] = self.torch.cuda.max_memory_allocated()
+        result["seconds"] = time.monotonic() - tick
+        result["scoring_mode"] = mode
         return result, hidden, logits
 
     def generation_check(self, row, index):
@@ -784,10 +848,53 @@ class OmniScorer:
                                 self.torch.logsumexp(scores[self.tokens["no"]], 0))}
 
 
+def record_scoring_amendment(cfg):
+    """Explicit pre-test fallback record; never relabel failed prefix parity as passed."""
+    if cfg.scoring_mode != "full_forward":
+        return
+    folder = Path(cfg.root) / cfg.model
+    evidence_path = folder / "cache_diagnostic_v3.json"
+    evidence = read_json(evidence_path)
+    if evidence.get("status") != "comparison_complete" or not (
+            evidence["logits_max_abs_diff"] > .02 or evidence["hidden_max_abs_diff"] > .02
+            or len(set(evidence["answers"])) != 1):
+        raise RuntimeError("Full-forward fallback requires the saved failed prefix diagnostic")
+    payload = {"scoring_mode": "full_forward", "prefix_cache_status": "failed_gate_disabled",
+        "model": MODEL_IDS[cfg.model], "revision": cfg.revision, "frames": cfg.frames,
+        "reason": "Use fresh full forward as reference after prefix parity failed; no tolerance relaxation",
+        "prefix_evidence_file": evidence_path.name, "prefix_evidence_sha256": file_hash(evidence_path),
+        "prefix_evidence": evidence, "code_sha256": file_hash(__file__),
+        "formal_checks": "full-forward repeatability, generation agreement, finiteness and VRAM",
+        "statistics": "unchanged; separate formal smoke and pre-test analysis freeze still required"}
+    target = folder / "scoring_amendment.json"
+    if target.exists() and read_json(target) != payload:
+        raise RuntimeError("Scoring amendment changed; do not reuse an existing run identity")
+    atomic_json(target, payload)
+
+
+def use_full_forward(scorer, cfg):
+    """Upgrade a retained scorer's dispatch without allocating/reloading model weights."""
+    from types import MethodType
+    updated = Config(**{**dataclasses.asdict(cfg), "scoring_mode": "full_forward"})
+    for key in ("model", "revision", "frames", "max_side"):
+        if getattr(scorer.cfg, key) != getattr(updated, key):
+            raise RuntimeError("Retained model/config mismatch: " + key)
+    record_scoring_amendment(updated)
+    scorer.cfg = updated
+    scorer.score = MethodType(OmniScorer.score, scorer)
+    scorer.env = dict(scorer.env, scoring_mode="full_forward")
+    scorer.prefix = None
+    scorer.prefix_key = None
+    return updated
+
+
 def study_signature(cfg, manifest, media_index, root, environment):
     return digest({"model": cfg.model, "revision": cfg.revision, "frames": cfg.frames,
                    "max_side": cfg.max_side, "seed": cfg.seed, "k": cfg.k,
                    "workers": cfg.workers, "manifest": digest(manifest), "media": digest(media_index),
+                   "scoring_mode": cfg.scoring_mode,
+                   "scoring_amendment": file_hash(Path(root) / cfg.model / "scoring_amendment.json")
+                       if cfg.scoring_mode == "full_forward" else None,
                    "terms": file_hash(Path(root) / "terms_review.json"),
                    "preregistration": file_hash(Path(root) / "PREREGISTRATION.md"),
                    "code": file_hash(__file__), "environment": environment})
@@ -795,6 +902,8 @@ def study_signature(cfg, manifest, media_index, root, environment):
 
 def smoke_test(scorer, cfg, manifest, index, owner_release):
     require_go(owner_release)
+    if getattr(getattr(scorer, "cfg", None), "scoring_mode", "verified_prefix") != cfg.scoring_mode:
+        raise RuntimeError("Scorer mode differs from smoke configuration")
     check_terms(cfg.root, cfg.model)
     verify_media(index)
     # Calibration only. Test data remain unseen during all engineering choices.
@@ -804,6 +913,8 @@ def smoke_test(scorer, cfg, manifest, index, owner_release):
         raise RuntimeError("Need 20 calibration questions spanning multiple media items")
     report = parity_checks(scorer, items, index, all_passes=True)
     result = {"passed": True, "configuration": dataclasses.asdict(cfg), "environment": scorer.env,
+              "comparison_kind": "prefix_parity" if cfg.scoring_mode == "verified_prefix" else "full_forward_repeatability",
+              "prefix_cache_verified": cfg.scoring_mode == "verified_prefix",
               "manifest_sha256": digest(manifest), "media_sha256": digest(index),
               "code_sha256": file_hash(__file__), "tokens": scorer.tokens, "checks": report}
     atomic_json(Path(cfg.root) / cfg.model / f"smoke_f{cfg.frames}.json", result)
@@ -813,17 +924,21 @@ def smoke_test(scorer, cfg, manifest, index, owner_release):
 def parity_checks(scorer, items, index, all_passes=False):
     """Shared diagnostics: identical parity, generation, finiteness and VRAM checks."""
     report = []
+    use_prefix = getattr(getattr(scorer, "cfg", None), "scoring_mode", "verified_prefix") == "verified_prefix"
     with Watchdog(600) as dog:
         for i, row in enumerate(items):
             # Every pass can change media length/positioning. Check all pass paths.
             for pass_name in (PASSES if all_passes and i == 0 else ("full",)):
                 fresh, fh, fl = scorer.score(row, pass_name, index, cached=False)
-                cached, ch, cl = scorer.score(row, pass_name, index, cached=True)
+                cached, ch, cl = scorer.score(row, pass_name, index, cached=use_prefix)
                 import numpy as np
                 ld, hd = float(np.max(np.abs(fl-cl))), float(np.max(np.abs(fh-ch)))
                 entry = {"id": row["id"], "pass": pass_name, "logits_max_abs_diff": ld,
                          "hidden_max_abs_diff": hd, "fresh_answer": fresh["answer"],
-                         "cached_answer": cached["answer"], "peak_vram_bytes": cached["peak_vram_bytes"]}
+                         "cached_answer" if use_prefix else "repeat_answer": cached["answer"],
+                         "comparison_kind": "prefix_parity" if use_prefix else "full_forward_repeatability",
+                         "fresh_seconds": fresh.get("seconds"),
+                         "peak_vram_bytes": cached["peak_vram_bytes"]}
                 if i < 10 and pass_name == "full":
                     gen = scorer.generation_check(row, index)
                     entry["generation"] = gen
@@ -831,18 +946,20 @@ def parity_checks(scorer, items, index, all_passes=False):
                         raise RuntimeError("generate/Yes-No scoring disagreement; inspect prompt/token mapping")
                 report.append(entry)
                 if ld > .02 or hd > .02 or fresh["answer"] != cached["answer"]:
-                    raise RuntimeError("Cache parity failed; do not bulk-run or silently use a new protocol")
+                    name = "Cache parity" if use_prefix else "Full-forward repeatability"
+                    raise RuntimeError(name + " failed: " + json.dumps(entry))
                 dog.touch()
     return report
 
 
-def pre_smoke(cfg, raw_qa, media_dir):
+def pre_smoke(cfg, raw_qa, media_dir, scorer=None):
     """Early private engineering diagnostic only; no terms, lineage, manifest or result gate.
 
     Caller notebook still requires owner GO. These raw items can later be in test;
     do not use their answers to tune the research protocol or claim a result.
     """
     import numpy as np
+    record_scoring_amendment(cfg)
     pool = [dict(r) for r in raw_qa if r["task"] in TASKS[:2]]
     videos = sorted({str(r["video_id"]) for r in pool})
     if len(pool) < 20 or len(videos) < 3:
@@ -867,21 +984,42 @@ def pre_smoke(cfg, raw_qa, media_dir):
     started = time.monotonic()
     timeout = 1800 if cfg.model == "qwen" else 3600
     with Watchdog(timeout, deadline=started+1800 if cfg.model == "qwen" else None) as dog:
-        scorer = OmniScorer(cfg)
+        reused_model = scorer is not None
+        if scorer is None:
+            scorer = OmniScorer(cfg)
+        else:
+            for key in ("model", "revision", "frames", "max_side"):
+                if getattr(scorer.cfg, key) != getattr(cfg, key):
+                    raise RuntimeError("Retained model/config mismatch: " + key)
+            scorer.cfg = cfg
+            scorer.env = dict(scorer.env, scoring_mode=cfg.scoring_mode)
+            scorer.prefix = None
+            scorer.prefix_key = None
+            if hasattr(scorer, "torch"):
+                scorer.torch.cuda.reset_peak_memory_stats()
         dog.touch()
         checks = parity_checks(scorer, items, index)
     result = {"kind": "engineering_diagnostic_only_not_a_result", "passed": True,
         "eligible_for_bulk_gate": False, "configuration": dataclasses.asdict(cfg),
+        "reused_loaded_model": reused_model,
+        "comparison_kind": "prefix_parity" if cfg.scoring_mode == "verified_prefix" else "full_forward_repeatability",
+        "prefix_cache_verified": cfg.scoring_mode == "verified_prefix",
         "seconds_load_and_checks": time.monotonic()-started, "n_qa": len(items),
         "n_videos": len({r["video_id"] for r in items}), "selection_seed": cfg.seed,
         "raw_selection_sha256": digest(items), "environment": scorer.env,
         "tokens": scorer.tokens, "checks": checks, "media_sha256": digest(index)}
+    times = [r["fresh_seconds"] for r in checks if r["pass"] == "full" and r["fresh_seconds"] is not None]
+    if len(times) == len(items):
+        result["observed_full_pass_seconds"] = cluster_ci(
+            times, [r["video_id"] for r in items], lambda a: float(a.mean()))
     atomic_json(Path(cfg.root) / cfg.model / "pre_smoke.json", result)
     return scorer, result
 
 
 def run_stage(scorer, cfg, manifest, index, owner_release, splits=("calibration", "validation")):
     require_go(owner_release)
+    if getattr(getattr(scorer, "cfg", None), "scoring_mode", "verified_prefix") != cfg.scoring_mode:
+        raise RuntimeError("Scorer mode differs from run configuration")
     check_terms(cfg.root, cfg.model)
     verify_media(index)
     smoke = read_json(Path(cfg.root) / cfg.model / f"smoke_f{cfg.frames}.json")
@@ -889,7 +1027,7 @@ def run_stage(scorer, cfg, manifest, index, owner_release, splits=("calibration"
             or smoke["media_sha256"] != digest(index) or smoke["code_sha256"] != file_hash(__file__)
             or smoke["environment"] != scorer.env):
         raise RuntimeError("Matching smoke gate missing/stale")
-    for key in ("revision", "frames", "max_side", "seed", "model"):
+    for key in ("revision", "frames", "max_side", "seed", "model", "scoring_mode"):
         if smoke["configuration"][key] != getattr(cfg, key):
             raise RuntimeError("Smoke configuration mismatch")
     if "test" in splits:
@@ -1238,6 +1376,8 @@ def evaluate_test(root, cfg, manifest, index, environment, owner_release):
     test = load_completed(root, cfg, manifest, index, environment, "test")
     terms = check_terms(root, cfg.model)
     metrics = {"study": "CounterPrior v2", "date": "2026-11", "model": MODEL_IDS[cfg.model],
+               "scoring_mode": cfg.scoring_mode,
+               "prefix_cache_verified": cfg.scoring_mode == "verified_prefix",
                "revision": cfg.revision, "signature": freeze["signature"], "tasks": {},
                "method": "AVCD-style queried-modality contrast; not published attentive-mask AVCD",
                "uncertainty": "2000 paired grouping-unit bootstrap draws; conditional on fixed donor pool; see lineage limitations",

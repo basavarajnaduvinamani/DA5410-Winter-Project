@@ -1,0 +1,51 @@
+{
+  "date": "2026-11-04",
+  "kind": "owner_supplied_engineering_observations_not_population_results",
+  "n_qa_cache_diagnostic": 1,
+  "ci": null,
+  "ci_reason": "Single-item diagnostic, no population effect estimate",
+  "original_prefix": {
+    "logits_max_abs_diff": 0.046875,
+    "hidden_max_abs_diff": 0.125,
+    "answers": [
+      1,
+      1
+    ],
+    "peak_vram_bytes": 10872664576
+  },
+  "math_text_only": {
+    "logits_max_abs_diff": 0.0703125,
+    "hidden_max_abs_diff": 0.125,
+    "answers": [
+      1,
+      1
+    ]
+  },
+  "fp16_reduction_disabled": {
+    "logits_max_abs_diff": 0.0625,
+    "hidden_max_abs_diff": 0.125,
+    "worst_hidden_layer_index": 31,
+    "answers": [
+      1,
+      1
+    ],
+    "margins": [
+      3.902339458465576,
+      3.902339458465576
+    ]
+  },
+  "absolute_limit": 0.02,
+  "prefix_gate": "failed",
+  "next": "Explicit full_forward fallback; actual 20-item smoke and timing pending",
+  "inventory": {
+    "media_files": 4654,
+    "raw_records": 6408,
+    "task_counts": {
+      "AV Captioning": 1106,
+      "AV Matching": 1876,
+      "Audio-driven Video Hallucination": 1136,
+      "Video-driven Audio Hallucination": 2290
+    }
+  },
+  "source": "Owner-provided Colab logs and CHECK V2/V3 output in this chat; source attachment 12c129d8-87b3-462f-9705-d0de8917234d/Pasted text.txt contains original environment and failure"
+}

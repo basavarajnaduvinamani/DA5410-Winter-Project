@@ -1,31 +1,50 @@
 {
-  "date": "2026-11-03",
+  "date": "2026-11-04",
   "kind": "software_validation_not_research_results",
-  "command": ".venv-cpu/Scripts/python.exe -m pytest -q tests --basetemp=.tools/avh-round1-pytest --junitxml=.tools/avh-round1-junit.xml",
-  "test_count": 63,
-  "passed": 63,
-  "new_avh_tests": 22,
+  "command": ".venv-cpu/Scripts/python.exe -m pytest -q tests --basetemp=.tools/avh-full-forward-pytest --junitxml=.tools/avh-full-forward-junit.xml",
+  "test_count": 69,
+  "passed": 69,
+  "new_avh_tests": 28,
   "failures": 0,
   "errors": 0,
   "ci": "not applicable: deterministic software checks, no sampled model measurements",
   "notebooks": "schema validated, code cells compile, execution counts null, outputs empty",
-  "gpu_smoke": "not run; owner GO pending",
-  "dataset_inventory": "not run; owner GO pending",
+  "gpu_smoke": "Owner single-item Gemma cached-vs-full check failed original tolerance, including text-only math and FP16-reduction controls. Explicit full-forward fallback authored; 20-item real GPU fallback smoke pending.",
+  "dataset_inventory": "Owner release inventory completed on Account A and visible on B: 4654 media files, 6408 raw QA records; deterministic counts, CI not applicable.",
   "dataset_terms_and_lineage": "Owner terms decision pending; early diagnostics precede it; auto lineage supports explicitly disclosed released-clip fallback",
-  "research_metrics": "not generated; early and formal GPU smoke both unrun",
+  "research_metrics": "No complete research experiment or metrics.json; early cached smoke failed, formal smoke not run.",
   "source_hashes": {
-    "notebooks/avh_common.py": "4c46225e56e42aa73276b553b4637d34961c8d237690f0b8e962e13c798f082e",
-    "notebooks/avh_gemma.ipynb": "8a80f134f01014670fb0cfcd292978a940fbfa642bd2864b668d4950a68c2745",
-    "notebooks/avh_qwen.ipynb": "ac1ff77548c672e3f57e25b6ca54131bf8ae5aaa531ce11eae2cf0a542e63508",
-    "scripts/build_avh_notebooks.py": "d314150dea38df04c91a715fe7a1f5a6eb20f403566d619275e134cd4d33525c",
-    "tests/test_avh.py": "c558bbdff261c0f8b34cb9f6efdf606c8087387099430ddf4595211b8bee5f0f",
-    "docs/PREREGISTRATION.md": "74b74b7f39254fa665c0753603b93885a6257d09dd0796bedfd166ef76a3ce87"
+    "notebooks/avh_common.py": "91d4766f70ff0cbaeab462eaccb489334d91911f3ec1a73a8b8b91afbd8abb1d",
+    "notebooks/avh_gemma.ipynb": "a63484f42c1d335881d737ab58aa6049fdd0aba1e007cafa5e6788d011c49c16",
+    "notebooks/avh_qwen.ipynb": "babd8ce3187e256ad945e86d62b6b935a30df3b966202849071ba46ed4e2d5e3",
+    "scripts/build_avh_notebooks.py": "4ad63f9d10459c6f9c46381692196db3e3f768bf606bd18e9d4fe02c23295bde",
+    "tests/test_avh.py": "b7c073606d563cbf0e58b5e789187c5885fec9bbe1141ee0bc0df6b2acc26013",
+    "docs/PREREGISTRATION.md": "a91473c1595c6726e4e37eebc84735944ac959d1d5d700e2b6123103e76bef2a"
   },
   "environment_notes": [
     "Initial targeted tests hit sandbox temp-directory atomic-replace restrictions; successful run used a project-contained pytest base directory.",
     "Unscoped pytest collection encountered existing site Lighthouse profile filesystem entries. Final collection explicitly covered tests/.",
     "The passing process returned exit code 0, with a pyreadline console destructor warning during interpreter shutdown."
   ],
-  "round": "Round 1 requested fixes",
-  "audit": "analysis-only; completed sheet frozen separately; inference signature independent of edits"
+  "round": "Explicit full-forward fallback",
+  "audit": "analysis-only; completed sheet frozen separately; inference signature independent of edits",
+  "live_license_check": {
+    "repo": "google/gemma-4-E2B-it",
+    "revision": "4adf15748de9e1a0097b6274cee9c15836c41c37",
+    "license_sha256": "4bf96504d6e83ce5c6fc7167f1795d9ceaa68e70ab86bc5d08ab93184262bbbe",
+    "license_source_url": "https://ai.google.dev/gemma/docs/gemma_4_license",
+    "model_card_sha256": "3e0608a6be80e3eb040a5aa6c76707809503deb85be6360184a118fb6156526c",
+    "model_card_source_url": "https://huggingface.co/google/gemma-4-E2B-it/resolve/4adf15748de9e1a0097b6274cee9c15836c41c37/README.md",
+    "license_resolved_url": "https://ai.google.dev/gemma/apache_2"
+  },
+  "attention_backend": {
+    "gemma": {
+      "": "sdpa",
+      "text_config": "sdpa",
+      "vision_config": "sdpa",
+      "audio_config": "eager"
+    },
+    "qwen": "sdpa"
+  },
+  "scoring_fallback": "full_forward: fresh computation for each QA, explicit per-model amendment, prefix_cache_verified=false"
 }
