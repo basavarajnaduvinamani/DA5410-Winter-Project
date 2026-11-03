@@ -1,6 +1,6 @@
 # CounterPrior v2 — facts at the notebook review halt
 
-Date: 2026-11-03. Independent continuation, November 2026. The internship period
+Date: 2026-11-03, Round 1 notebook review revision. Independent continuation, November 2026. The internship period
 November 2025–February 2026 covers earlier LLaVA work only.
 
 ## Measured facts
@@ -12,10 +12,11 @@ No v2 model sample, effect size, CI, latency, or VRAM measurement exists yet.
 |---|---|---|
 | Requested model notebooks saved, unexecuted and schema-valid | 2 | `notebooks/avh_gemma.ipynb`, `notebooks/avh_qwen.ipynb`, `docs/AVH_VALIDATION.json` |
 | Shared review-gated runtime authored | Present; GPU behavior unrun | `notebooks/avh_common.py` |
-| Python tests in final suite | 55 passed, 0 failures, 0 errors; n=55 checks, CI not applicable | `docs/AVH_VALIDATION.json` |
-| New AVH contract tests included in that suite | 14 passed; n=14 checks, CI not applicable | `tests/test_avh.py`, `docs/AVH_VALIDATION.json` |
-| Study protocol with source-connected splits and validation freeze | Authored before v2 inference | `docs/PREREGISTRATION.md` |
-| Dataset item count, usable terms and original-source lineage | Not established; inference gated | `docs/AVH_REVIEW.md` |
+| Python tests in final suite | 63 passed, 0 failures, 0 errors; n=63 checks, CI not applicable | `docs/AVH_VALIDATION.json` |
+| New AVH contract tests included in that suite | 22 passed; n=22 checks, CI not applicable | `tests/test_avh.py`, `docs/AVH_VALIDATION.json` |
+| Protocol with recovered-source grouping, disclosed clip fallback and validation freeze | Authored before v2 inference | `docs/PREREGISTRATION.md` |
+| Dataset item count, terms decision and original-source lineage | Not established; early diagnostic precedes manual gates; fallback disclosed | `docs/AVH_REVIEW.md` |
+| Round 1 requested fixes | Authored, engineering smoke still unrun | `docs/AVH_REVIEW.md`, `notebooks/avh_common.py` |
 | fp16 T4 fit, cache parity, generation agreement, model performance | Not run; pending GO | `docs/AVH_VALIDATION.json` |
 | Incremental probe AUROC, false-yes/recall effects, replication | In progress; no measured number | `docs/AVH_VALIDATION.json` |
 
@@ -25,10 +26,11 @@ No v2 model sample, effect size, CI, latency, or VRAM measurement exists yet.
   defined a validation-selected abstention policy and a false-yes/recall ship rule;
   product effects are not yet measured.
 - Pre-doc: **(Continued independently, Nov 2026)** CounterPrior v2 — in progress:
-  preregistered a source-disjoint audiovisual hallucination study and an internal
+  preregistered an audiovisual hallucination study with recovered-source grouping
+  or an explicitly limited released-clip fallback, and an internal
   probe comparison against AVCD-style contrast; evaluation is pending.
 - SDE: **(Continued independently, Nov 2026)** Authored two review-gated Colab
-  notebooks and a shared checkpointing runtime; 14 new CPU contract tests pass.
+  notebooks and a shared checkpointing runtime; 22 AVH CPU contract tests pass.
   T4 compatibility and multi-account recovery remain unvalidated.
 
 These are drafting facts, not completed research accomplishment claims. Replace
@@ -46,19 +48,22 @@ ongoing language only after complete runs populate traceable `metrics.json` file
   solved hallucination, or safety for blind and low-vision users.
 - Do not convert synthetic unit-test results into research measurements.
 - Do not assume public download links license the data or public example media.
+- Do not claim source-disjointness when lineage is unrecoverable. The owner's
+  no-license private-evaluation decision never authorizes public AVHBench media/frames.
 
 ## Interview questions and honest answers
 
 1. **What have you established so far?** The review artifacts and CPU code contracts
    are complete. Neither model has run in this phase; there are no research results.
 2. **How will you avoid leakage in swapped audiovisual clips?** Require both original
-   source identities, form connected components before splitting, and choose donors
-   inside each split. Without trustworthy provenance, the experiment stops.
+   source identities where recoverable, form connected components before splitting,
+   and choose donors inside each split. Unrecoverable lineage uses clip grouping
+   with a stated possible source-overlap limitation; that fallback cannot rule out leakage.
 3. **What makes this different from AVCD or HALP?** It proposes an incremental-information
    test on cross-sense errors in the selected small checkpoints, against an explicitly
    labeled contrast adaptation. Those published methods are prior work. Whether the
    probe adds useful information remains an empirical question.
 
 Strongest result: reviewable notebooks, preregistered gates and passing CPU contracts.
-Weakest gap: usable data provenance/terms and actual GPU behavior remain unverified.
-Next upgrade: after owner GO, establish those data gates and execute the T4 smoke.
+Weakest gap: original-source recovery, owner terms decision and actual GPU behavior remain unverified.
+Next upgrade: after review and owner GO, inventory the release and run early T4 smoke.

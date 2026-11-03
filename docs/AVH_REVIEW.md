@@ -9,10 +9,11 @@
 - `notebooks/avh_common.py`: shared gates, preprocessing, inference, recovery, CPU analysis.
 - `docs/PREREGISTRATION.md`: protocol to copy unchanged into the shared private study folder.
 
-The notebooks contain operating instructions and deliberately invalid templates for
-terms and lineage. Set OWNER_RELEASE only after the owner types GO in chat. Before
-inference, complete documented usable terms, original-source mapping, the blind
-swapped-item audit, and measured smoke gates. Account A prepares data once; Account
+The notebooks contain operating instructions and a pending owner terms template.
+Set OWNER_RELEASE only after the owner types GO in chat. After raw inventory, run
+the early engineering smoke before manual gates. Bulk inference requires the terms
+decision, auto-generated lineage/object keys, manifest/media and formal smoke.
+Audit runs in parallel and gates analysis freeze only. Account A prepares data once; Account
 B reads identical artifacts; spare C takes disjoint stages/partitions. No local model
 weights, dataset download, test inspection, or experimental analysis ran in authoring.
 
@@ -56,8 +57,9 @@ item count and dataset-use permission remain unverified. Neither is fabricated.
 ## Important review limitations
 
 - GPU forward/cache/generation behavior is **unrun**; compatibility is not certified.
-- Pinning uses Gemma Transformers 5.20.2 and Qwen 4.57.1 in separate runtimes;
-  actual package sets, revision SHAs and source hashes are saved and checked.
+- Gemma selects a stable Transformers release at runtime using `pip index versions`,
+  versioned Gemma 4 docs and a real class import. Qwen verifies its Thinker class on
+  4.57.1. Selected versions, package sets, revision SHAs and hashes are saved/checked.
 - A real phone, end-to-end assistive task, and accessibility efficacy are untested.
 - The random-swap CIs condition on the frozen donor collection. Donor reuse induces
   dependence not covered by resampling only target source components.
@@ -68,8 +70,10 @@ item count and dataset-use permission remain unverified. Neither is fabricated.
   gate that approximation; it does not sum probabilities of arbitrary multi-token answers.
 - No exact published AVCD result can be claimed from this implementation. A matching
   attentive-mask implementation would be a separately reviewed extension.
-- Source lineage and terms may be absent from the released package. The notebooks
-  stop in that case; inventing either would undermine the experiment.
+- Unrecoverable lineage uses explicitly limited released-clip grouping; never claim
+  verified source-disjoint test splits in that case. Unknown swap status and donor
+  real-origin uncertainty are also recorded. The no-license owner decision permits
+  private evaluation only, with no public AVHBench media or frames.
 - Test thresholds never retune. "Ship" denotes a research-demo flag only. Recall
   loss <=2 points uses the requested point estimate; its uncertainty is also reported.
 - Secondary geometry is CPU-expensive and can be skipped per the approved cut order.
@@ -93,7 +97,7 @@ Resume impact: APM / PRE-DOC / SDE: ship rule, leakage controls and recovery.
 These blocks were recorded under the initial AGENTS instructions; AGENTS v2 now
 reserves subsequent blocks for major hard-to-undo decisions.
 
-## Final authoring validation
+## Initial authoring validation (before Round 1)
 
 The complete Python `tests/` suite passed: 55 checks, including 14 new AVH tests.
 Both authored notebooks pass schema validation; every code cell compiles, has a
@@ -111,3 +115,41 @@ console-destructor warning appeared at interpreter shutdown. No site code was ch
 Strongest result: reviewable artifacts with frozen protocol and passing CPU contracts.
 Weakest gap: dataset rights/lineage and T4 execution remain unverified.
 Next upgrade: after owner GO, resolve the data gates and execute measured GPU smoke.
+
+## Round 1 — requested diff summary
+
+1. Inference never reads the live audit or excludes its rows. Partial sheets are
+   accepted; completed reviewed exclusions apply in analysis. Completion gates
+   freeze; the completed audit hash is frozen separately and later edits rejected.
+2. `pre_smoke(cfg, raw_qa, media_dir)` selects 20 raw QA from at least three videos,
+   prepares media, loads the model and uses the shared parity/generation/VRAM/fp16
+   checks. Its engineering-only artifact never replaces the formal smoke.
+3. Inventory prints raw records/keys/tasks/counts first; schema differences require
+   an explicit saved mapping. It preserves metadata for lineage recovery.
+4. Lineage/object keys auto-generate. Explicit metadata/tagged filename sources
+   are recovered where available; otherwise the exact released-clip overlap
+   limitation is retained in preregistration, manifest and final metrics. The audit
+   includes up to 50 deterministic object-key checks without per-question hand entry.
+5. Owner no-license private-evaluation decision is accepted for the dataset only.
+   Saved model license text is still required. Metrics record the no-public-media policy.
+6. Cell 3 queries real package releases, checks versioned Gemma docs and the selected
+   class import; Qwen imports its Thinker class on 4.57.1. Nothing was installed locally.
+7. Gemma outer timeout is 3600 seconds, Qwen retains its 1800-second total deadline;
+   the outer watchdog is touched after loading, inner checks touch their stall watchdog.
+8. Prefix/suffix slicing retains token-type and multimodal-type tensors, including
+   `token_type_ids`, for both model paths.
+9. Both notebook headers include the six-line Tonight's order. Account C takes
+   over stopped partitions or distinct stages only. Model-load reuse avoids a second download/load.
+
+Statistics, parity tolerances, journaling, frozen validation choices and power rules
+are retained. No model or dataset run occurred. Final Round 1 software validation
+is recorded in `AVH_VALIDATION.json`; synthetic checks are not research findings.
+The final Python suite passed all 63 checks, including 22 AVH checks. Both revised
+notebooks validate with empty outputs and null execution counts. Early/formal GPU
+smoke, runtime package installation and real dataset inventory remain unrun.
+
+PANEL: allow early diagnostics and qualified lineage fallback
+Options: A) keep blocking provenance gate; B) requested early smoke plus disclosed fallback.
+Key views: Research/Data Science: clip grouping cannot establish source-disjointness. Platform: audit edits must not invalidate journals. Privacy: owner no-license decision means private evaluation only.
+Call: B as requested; preserve overlap limitation and media prohibition. Reversible? yes, before results.
+Resume impact: PRE-DOC / SDE: distinguish verified provenance from practical fallback.

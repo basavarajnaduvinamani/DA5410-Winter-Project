@@ -25,37 +25,59 @@ Fit, finiteness and parity are gates, not assumptions. Log actual memory/time.
 ## Data gates and lineage
 
 Use the official AVHBench released subset, not the full-benchmark leaderboard.
-Download links and the exact released QA schema are in `AVH_REVIEW.md`.
-After GO: inventory downloaded files, count QA rows/tasks/media, save hashes, and
+Download links and the README's example QA schema are in `AVH_REVIEW.md`.
+After GO: print the first three raw records without changing their fields, every
+key/task name, and counts BEFORE filtering; save an explicit field/container/task
+mapping if the real release differs (no guessed aliases). Inventory files, save hashes, and
 inspect archive terms/README plus the paper's dataset-use discussion. Public
 downloadability and the paper's own copyright license are not dataset-use permission.
-`terms_review.json` must cite saved evidence with the applicable passage and reviewer.
-If terms cannot establish usable research access, STOP and report; no fallback data.
+`terms_review.json` accepts dataset decision `research_use_permitted` with saved
+applicable terms, or owner decision `no_licence_stated_private_research_eval` with
+saved inspected evidence/hash, source URL and reviewer. The latter grants no public
+media use: never show AVHBench audio, video or frames on the site, only aggregate
+numbers and our own text. Model entries still require saved license text and the
+applicable passage. Pending/denied decisions block bulk runs, not early diagnostics.
 
 The released `video_id` is insufficient to prove original-source disjointness.
-Require `lineage.json`: video ID, all original audio/video source IDs (both origins
-for swaps), real/swapped status, provenance, and audited object/event keys for each
-question. Missing lineage blocks inference. Union clips sharing either original
-source into connected components, then seed-20261103 permute components into
+Auto-generate `lineage.json`: use explicit source metadata (including clip sidecars)
+and explicitly tagged `audio_<id>__video_<id>` filenames to recover both swap origins.
+Union clips sharing a recovered original source into connected components. Where
+origins cannot be recovered, group by released `video_id`; this does not stop the run.
+The exact stated limitation, carried into manifest and `metrics.json`, is:
+`lineage_unrecoverable: grouping by released clip; swapped clips may share sources across splits`.
+These fallback groups are not certified independent source videos. Seed-20261103 permute groups into
 60% calibration, 20% validation, remainder test (floor first two sizes, minimum one).
 Require ten components and at least four eligible donor clips per split; print exact
 realized counts. A giant connected component or missing task/class is a limitation,
 never a reason to silently switch to row-level splitting.
 
-For each video/task choose four distinct real donor clips from its own split,
+For each video/task choose four distinct clips not marked swapped from its own split,
 excluding its connected source component, with a deterministic hash seed. Same
 donors for all questions sharing video/task; same manifest for both models.
+Where real/swapped status is explicitly available, use it. Where absent, retain a
+separate unknown-status marker and disclose that donor real origin is unverified;
+do not describe such a donor collection as verified real clips.
 Donor audio/video is an intervention input only: original target labels are never
 asserted to be correct for a random donor. CIs for contrast are conditional on the
 fixed donor pool and do not account for sampling a new donor collection.
 
-Audit up to 100 deterministically sampled swapped QA items, without model outputs,
-before bulk scoring. Preserve released labels. Mark valid / exclude / uncertain,
+Derive object keys automatically with saved `object-v1`: casefold/normalize spaces,
+anchored noun-phrase extraction for "Is there a/an", "Is the ... making sound/visible"
+and "Can/Do you hear/see"; unmatched prompts keep an exact normalized question key.
+Spot-check up to 50 deterministic question keys by hand in the audit sheet; flag
+errors without changing the frozen inference manifest mid-run.
+Audit up to 100 deterministically sampled swapped QA items (also sample clips of
+unknown swap status when needed), without model outputs, in parallel with GPUs.
+Preserve released labels. Mark valid / exclude / uncertain,
 reviewer and rationale (including off-screen sound). Exclude invalid and uncertain
 audited questions from the primary analysis; retain them in the audit record.
 Report audited n, error rate with source-cluster bootstrap CI, uncertain count,
 and selection rule. If fewer than 100 exist, report all available; do not imply 100.
-The audit does not certify labels of unaudited items.
+The audit does not certify labels of unaudited items. Partial sheets are accepted
+during inference; inference scores ALL rows and never hashes the live audit sheet.
+Only completed reviewed exclusions apply in `load_completed()`/analysis. Complete
+label and object checks before `freeze_analysis()`; freeze its separate audit hash
+and reject later analysis on an edited sheet. Audit completion never gates model load.
 
 ## Evidence and scoring
 
@@ -80,7 +102,14 @@ consistently. Language-model head sees only the last position to avoid full-sequ
 vocabulary logits. Media-prefix caching uses a deep copy per question, explicit
 model-specific position IDs, and no modality re-encoding in the suffix.
 
-Calibration-only smoke: 20 QA items on the full pass, plus the first item on every
+Early `pre_smoke(cfg, raw_qa, media_dir)` runs before terms/lineage/manifest: fixed-seed
+20 raw QA rows from at least three videos, prepared privately, the same full-pass
+parity/finiteness/VRAM checks and ten one-token generation agreement checks. Save
+`<model>/pre_smoke.json`, engineering-only, never a result or formal bulk gate.
+Raw diagnostic items may later land in test; do not use their responses to tune
+the protocol or statistical choices. Formal smoke still uses calibration only.
+
+Formal calibration-only smoke: 20 QA items on the full pass, plus the first item on every
 other pass; compare fresh full pass and cached
 suffix, all vocabulary logits and all last-token states max absolute diff <=0.02,
 identical answers. On the first ten full items, greedy `generate(max_new_tokens=1)`
@@ -100,7 +129,8 @@ An exact published-AVCD comparison is an explicitly unimplemented limitation.
 
 Per model and task: accuracy, false-yes rate = accepted Yes / ground-truth No,
 recall = accepted Yes / ground-truth Yes. Full and no-media are separate paired
-conditions. Report numerators/denominators, independent source-component n, and
+conditions. Report numerators/denominators, grouping-unit n (source components only
+where recovered; otherwise released clips, with the overlap limitation), and
 95% percentile cluster-bootstrap CIs with 2,000 resamples, fixed seed 20261103.
 Use paired source resampling for differences. Undefined class draws are discarded;
 CI is unavailable unless at least 90% are valid and at least two clusters exist.
@@ -189,13 +219,18 @@ concurrently run the same partition. Fixed partition count across restarts. Per-
 fp16 feature file is durable before its JSONL commit; compact derived fp16 NPZ shards
 every 200 new questions and at stage completion. Preserve recovery files. Only a
 torn final line can be repaired; interior corruption, duplicate IDs, changed code,
-packages, model, manifest, terms, audit or evidence cause a stop/new study directory.
+packages, model, manifest, terms or evidence cause a stop/new study directory.
+Audit edits during inference do not change its signature; analysis freezes the
+completed sheet separately and rejects post-freeze edits.
 Drive is not a transactional store; an exclusive lock is best effort on Drive FUSE.
 After a dead runtime, verify it is stopped before manually removing its stale lock.
 
 Ten minutes without a new durable row dumps all Python stacks and ends that
 runtime kernel (a wedged CUDA call cannot reliably be interrupted by an exception).
-Qwen load+smoke additionally has a 30-minute wall-clock watchdog. Before test
+Qwen load+smoke additionally has a hard 1800-second total deadline. Gemma uses a
+3600-second outer inactivity watchdog. Touch the outer watchdog after model loading;
+Qwen's independent deadline still caps total load/check time. The inner smoke
+watchdog is touched after each completed check. Before test
 inference, serialize calibration models, validation thresholds/layers, hashes, and
 freeze marker. Any incomplete pass blocks metrics export; no partial extrapolation.
 `metrics.json` contains only measured complete test results, with CIs/n. Notebooks

@@ -1,29 +1,31 @@
 {
   "date": "2026-11-03",
   "kind": "software_validation_not_research_results",
-  "command": ".venv-cpu/Scripts/python.exe -m pytest -q tests --basetemp=.tools/avh-pytest-candidate --junitxml=.tools/avh-candidate-junit.xml",
-  "test_count": 55,
-  "passed": 55,
-  "new_avh_tests": 14,
+  "command": ".venv-cpu/Scripts/python.exe -m pytest -q tests --basetemp=.tools/avh-round1-pytest --junitxml=.tools/avh-round1-junit.xml",
+  "test_count": 63,
+  "passed": 63,
+  "new_avh_tests": 22,
   "failures": 0,
   "errors": 0,
   "ci": "not applicable: deterministic software checks, no sampled model measurements",
   "notebooks": "schema validated, code cells compile, execution counts null, outputs empty",
   "gpu_smoke": "not run; owner GO pending",
   "dataset_inventory": "not run; owner GO pending",
-  "dataset_terms_and_lineage": "not established; explicit runtime stop gates",
-  "research_metrics": "not generated",
+  "dataset_terms_and_lineage": "Owner terms decision pending; early diagnostics precede it; auto lineage supports explicitly disclosed released-clip fallback",
+  "research_metrics": "not generated; early and formal GPU smoke both unrun",
   "source_hashes": {
-    "notebooks/avh_common.py": "ab8508e65f8feca45ac2ec96c0b886b85d2c5789dde53875f2bd32c358a80b68",
-    "notebooks/avh_gemma.ipynb": "e33e173cd87e5cb0ece004f3a5d16ab922c9f7149dac76317b7d23fc2e505385",
-    "notebooks/avh_qwen.ipynb": "39ef04465029e919fa0d2a5ddc51b10ad3d529ff35aa2b6e3e852bcb2900e2d0",
-    "scripts/build_avh_notebooks.py": "239d6560e57c5dd2032d0c2ae208477bbcc866f3ceacd7f373169431da28dba0",
-    "tests/test_avh.py": "82b5d0d058b625ca7637bbcf2b7f266f7fd0973bc6dfa33c810da74675c5fc61",
-    "docs/PREREGISTRATION.md": "51e37eb5dab80cfa0fc509948f964dd5cf60d6a6a660d3301aaf807529f25303"
+    "notebooks/avh_common.py": "4c46225e56e42aa73276b553b4637d34961c8d237690f0b8e962e13c798f082e",
+    "notebooks/avh_gemma.ipynb": "8a80f134f01014670fb0cfcd292978a940fbfa642bd2864b668d4950a68c2745",
+    "notebooks/avh_qwen.ipynb": "ac1ff77548c672e3f57e25b6ca54131bf8ae5aaa531ce11eae2cf0a542e63508",
+    "scripts/build_avh_notebooks.py": "d314150dea38df04c91a715fe7a1f5a6eb20f403566d619275e134cd4d33525c",
+    "tests/test_avh.py": "c558bbdff261c0f8b34cb9f6efdf606c8087387099430ddf4595211b8bee5f0f",
+    "docs/PREREGISTRATION.md": "74b74b7f39254fa665c0753603b93885a6257d09dd0796bedfd166ef76a3ce87"
   },
   "environment_notes": [
     "Initial targeted tests hit sandbox temp-directory atomic-replace restrictions; successful run used a project-contained pytest base directory.",
     "Unscoped pytest collection encountered existing site Lighthouse profile filesystem entries. Final collection explicitly covered tests/.",
     "The passing process returned exit code 0, with a pyreadline console destructor warning during interpreter shutdown."
-  ]
+  ],
+  "round": "Round 1 requested fixes",
+  "audit": "analysis-only; completed sheet frozen separately; inference signature independent of edits"
 }
