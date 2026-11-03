@@ -16,15 +16,22 @@ def code(text):
 
 
 def build(model):
-    version = "5.20.2" if model == "gemma" else "4.57.1"
     cells = [md(f"""
         # CounterPrior v2 — {model.title()}
         Independent continuation, November 2026. **REVIEW COPY — NOT RUN.**
 
+        **Tonight's order**
+        A) Account A: cells 1–4 with PREPARE_DATA=True → send inventory printout to owner.
+        B) Accounts A and B in parallel: pre_smoke for Gemma and Qwen.
+        C) Owner fills terms_review.json; lineage/object keys auto-generated; manifest + media.
+        D) Formal smoke → calibration/validation passes (audit filled in parallel).
+        E) Freeze → test passes → metrics.
+        F) Account C only takes over a stalled notebook (same partition after the stale lock is cleared) or distinct stages.
+
         **HALT until the owner types GO in chat.** This file has no measured outcomes.
         One model per Colab T4 runtime; fp16 only. Read `docs/AVH_REVIEW.md` and
-        `docs/PREREGISTRATION.md` before use. Dataset terms and source provenance
-        can block the study; do not fill missing lineage with released numeric IDs.
+        `docs/PREREGISTRATION.md` before use. Terms gate bulk inference; unavailable
+        lineage uses an explicitly disclosed released-clip grouping fallback.
 
         After GO, upload the reviewed `avh_common.py` and `PREREGISTRATION.md` into
         `MyDrive/CounterPrior_v2/2026-11-03/reviewed/`. Both notebooks must use the
@@ -38,28 +45,22 @@ def build(model):
         if OWNER_RELEASE != "GO":
             raise RuntimeError("HALT for owner review; do not run subsequent cells")
     '''), md("""
-        ## 1. Install isolated model environment
-        This cell is idempotent. Start a fresh runtime if a different model environment
-        was previously imported. Colab's installed CUDA PyTorch is preserved and logged;
-        the model class, fp16 tensors, GPU residence, and package set are checked later.
-        No FlashAttention-2 dependency (T4). The shared module is imported only after install.
-    """), code(f'''
+        ## 1. Configure the isolated model environment
+        Start a fresh runtime for this model. Dependency selection and real class-import
+        verification happen in cell 3. Colab's CUDA PyTorch is preserved and logged.
+        No FlashAttention-2 dependency (T4). PREPARE_DATA belongs to Account A only.
+    """), code('''
         import os, subprocess, sys
         assert OWNER_RELEASE == "GO"
         os.environ["MPLBACKEND"] = "Agg"
-        if "transformers" in sys.modules:
-            raise RuntimeError("Fresh runtime required before installing model dependencies")
-        packages = ["transformers=={version}", "accelerate==1.10.1", "numpy==2.2.5",
-                    "scikit-learn==1.7.1", "Pillow==11.3.0", "av==16.0.1",
-                    "soundfile==0.13.1", "librosa==0.11.0", "gdown==5.2.0", "joblib==1.5.2"]
-        subprocess.run([sys.executable, "-m", "pip", "install", "--quiet", *packages], check=True)
+        PREPARE_DATA = False  # Account A sets True after GO; B/C leave False.
         subprocess.run(["ffmpeg", "-version"], check=True, stdout=subprocess.DEVNULL)
     '''), md("""
         ## 2. Mount shared Drive and select a work partition
         One writer per model/stage/partition. Normally A=Gemma, B=Qwen, workers=1.
-        To use C for the same model, assign it different stages, or decide workers=2
-        **before starting that model** and use indices 0/1. Keep workers fixed on resume.
-        Account C cannot append to the same journal as A or B.
+        C runs distinct stages or takes over a stopped runtime's exact partition after
+        its stale lock is cleared. Never run the same partition/stage concurrently.
+        Keep workers fixed on resume. Default is one partition per model.
     """), code(f'''
         from google.colab import drive
         from pathlib import Path
@@ -84,11 +85,60 @@ def build(model):
         target.write_bytes(prereg.read_bytes())
         print("Shared study:", ROOT, "runtime SHA256:", avh.file_hash(source))
     '''), md("""
-        ## 3. Resolve exact model revision and inspect its license
-        Saves an immutable revision and actual license text. The existing revision
-        is reused on restart. Qwen 3B has a research license; do not describe it as
-        Apache-2.0. This cell fetches metadata/license only, not weights.
+        ## 3. Verify package release/class, resolve model revision and save license
+        Print pip's real release list. For Gemma, choose the newest stable release
+        whose versioned official model docs include Gemma4ForConditionalGeneration;
+        then install and verify its real class import. Qwen checks its Thinker class
+        on 4.57.1. Import errors propagate verbatim. Save the selection for restarts.
+        Model metadata/license only at this step, no model weights.
     """), code('''
+        import re, urllib.request, urllib.error
+        from packaging.version import Version
+        if "transformers" in sys.modules:
+            raise RuntimeError("Fresh runtime required before dependency selection/install")
+        indexed = subprocess.run([sys.executable, "-m", "pip", "index", "versions", "transformers"],
+                                 check=True, text=True, stdout=subprocess.PIPE)
+        print(indexed.stdout)
+        selection_path = ROOT / MODEL / "transformers_selection.json"
+        if selection_path.exists():
+            selection = avh.read_json(selection_path)
+            chosen = selection["version"]
+            print("Reusing frozen package selection:", selection)
+        elif MODEL == "gemma":
+            match = re.search(r"Available versions:\\s*(.+)", indexed.stdout)
+            if match is None:
+                raise RuntimeError("Cannot parse pip release list; inspect actual output")
+            versions = sorted({v.strip() for v in match[1].split(",") if not Version(v.strip()).is_prerelease},
+                              key=Version, reverse=True)
+            chosen = None
+            for version in versions:
+                docs_url = f"https://huggingface.co/docs/transformers/v{version}/en/model_doc/gemma4"
+                try:
+                    with urllib.request.urlopen(docs_url, timeout=30) as response:
+                        docs = response.read().decode("utf-8")
+                        resolved = response.geturl()
+                except urllib.error.HTTPError as error:
+                    if error.code == 404:
+                        continue
+                    raise
+                if f"/v{version}/" in resolved and "Gemma4ForConditionalGeneration" in docs:
+                    chosen = version
+                    break
+            if chosen is None:
+                raise RuntimeError("No listed stable release has verified versioned Gemma 4 class docs")
+            selection = {"version": chosen, "docs_url": docs_url, "class": "Gemma4ForConditionalGeneration"}
+        else:
+            chosen = "4.57.1"
+            selection = {"version": chosen, "class": "Qwen2_5OmniThinkerForConditionalGeneration"}
+        packages = [f"transformers=={chosen}", "accelerate==1.10.1", "numpy==2.2.5",
+                    "scikit-learn==1.7.1", "Pillow==11.3.0", "av==16.0.1",
+                    "soundfile==0.13.1", "librosa==0.11.0", "gdown==5.2.0", "joblib==1.5.2"]
+        subprocess.run([sys.executable, "-m", "pip", "install", "--quiet", *packages], check=True)
+        class_name = selection["class"]
+        subprocess.run([sys.executable, "-c", f"import transformers; from transformers import {class_name}; "
+                        f"print('Verified transformers', transformers.__version__, '{class_name}')"], check=True)
+        avh.atomic_json(selection_path, selection)
+        print("CHOSEN TRANSFORMERS:", chosen, "VERIFIED CLASS:", class_name)
         metadata_path = ROOT / MODEL / "model_metadata.json"
         if metadata_path.exists():
             metadata = avh.read_json(metadata_path)
@@ -105,15 +155,18 @@ def build(model):
         ## 4. Download, inspect, and inventory the official subset (A only)
         Set PREPARE_DATA on exactly one runtime. Downloads are never inferred to be
         licensed. The extractor rejects traversal, archive symlinks and device files.
-        Inspect all README/license/terms files. The release must be usable for research;
-        unresolved or unusable terms mean STOP. No model weights have been loaded.
+        Prints first three unfiltered records, every key/task name and counts before
+        normalization. If schema differs, set the explicit mapping from that printout;
+        no field/task aliases are guessed. No model weights have been loaded.
     """), code('''
-        PREPARE_DATA = False  # Account A sets True after GO; B/C leave False.
+        QA_SCHEMA_MAPPING = None  # canonical -> actual field; None means canonical identity only.
+        QA_RECORDS_KEY = None  # Explicit container key if JSON is a dict rather than a list.
+        QA_TASK_MAPPING = None  # Explicit released task name -> canonical task name, if needed.
         if PREPARE_DATA:
             hashes = avh.download_release(ROOT, OWNER_RELEASE)
             avh.atomic_json(ROOT / "release_hashes.json", hashes)
             unpacked = avh.extract_release(ROOT)
-            qa, inventory = avh.inventory_release(unpacked)
+            qa, inventory = avh.inventory_release(unpacked, QA_SCHEMA_MAPPING, QA_RECORDS_KEY, QA_TASK_MAPPING)
             avh.atomic_json(ROOT / "release_inventory.json", inventory)
             avh.atomic_json(ROOT / "released_qa.json", qa)
         elif (ROOT / "release_inventory.json").exists():
@@ -121,18 +174,27 @@ def build(model):
         else:
             print("WAIT: Account A must prepare and inspect the official release")
     '''), md("""
-        ## 5. Terms and lineage gate — deliberate manual review
-        Fill `terms_review.json` from actual saved text, never a guessed license.
-        Each dataset/model entry needs decision=research_use_permitted, evidence_file
-        (relative to ROOT), sha256, exact applicable_passage, source_url, reviewer.
-        Dataset media may have separate upstream terms. If no usable terms can be
-        established, **STOP and report**. Permission to publish example media is separate.
-
-        `lineage.json` is a list: video_id (string), source_ids (all original audio
-        and video origins), is_swapped (boolean), provenance (where mapping came from),
-        object_by_question (exact question -> audited object/event key).
-        Unknown mapping is a stop, not permission to treat clip IDs as independent.
-        The blank templates below are deliberately invalid until reviewed.
+        ## Early diagnostic smoke — before terms, lineage or manifest
+        Run on A and B in parallel after the inventory is available. Select 20 raw
+        QA rows from at least three videos, fixed seed, prepare only their media,
+        load the model and run parity/generation/VRAM/fp16 checks. No analysis result.
+        This diagnostic cannot replace the later formal manifest smoke.
+        Qwen has a hard 1800-second load/check timebox; Gemma a 3600-second inactivity
+        timeout touched after loading. Keep the returned scorer for the formal smoke.
+    """), code('''
+        raw_qa = avh.read_json(ROOT / "released_qa.json")
+        scorer, pre_report = avh.pre_smoke(cfg, raw_qa, ROOT / "release" / "unpacked")
+        print(json.dumps(pre_report, indent=2))
+        print("Engineering diagnostic only:", ROOT / MODEL / "pre_smoke.json")
+    '''), md("""
+        ## 5. Terms gate — owner review while the early diagnostic runs
+        Dataset decision: research_use_permitted OR owner decision
+        no_licence_stated_private_research_eval. The latter authorizes private evaluation
+        only: never public AVHBench audio, video or frames, only aggregate numbers and
+        our own text. Save inspected README/terms evidence, hash, source URL and reviewer.
+        The no-license decision needs no invented applicable license passage.
+        Model entries still require saved license text, exact applicable passage and
+        research_use_permitted. This gates bulk runs, not the early diagnostic.
     """), code('''
         terms_path = ROOT / "terms_review.json"
         if not terms_path.exists():
@@ -140,28 +202,22 @@ def build(model):
                         "applicable_passage": "", "source_url": "", "reviewer": ""}
                         for key in ("dataset", "gemma", "qwen")}
             avh.atomic_json(terms_path, template)
-        if not (ROOT / "lineage.json").exists() and (ROOT / "released_qa.json").exists():
-            qa = avh.read_json(ROOT / "released_qa.json")
-            vids = sorted({str(r["video_id"]) for r in qa})
-            template = [{"video_id": v, "source_ids": [], "is_swapped": None,
-                         "provenance": "", "object_by_question": {r["text"]: "" for r in qa
-                          if str(r["video_id"]) == v and r["task"] in avh.TASKS}} for v in vids]
-            avh.atomic_json(ROOT / "lineage.json", template)
         avh.check_terms(ROOT, MODEL)  # Raises until real evidence is supplied.
         print("Terms gate passed for", MODEL)
     '''), md("""
         ## 6. Freeze manifest; blind swapped-item audit; shared media (A only)
-        Author the lineage record from verified source mapping first. This cell never
-        guesses it. Both models read exactly the same manifest and frame/audio bytes.
-        Audit sheet contains no model outputs. Complete decision/reviewer/note, listening
-        for off-screen sounds and checking the released label. Invalid/uncertain audited
-        QA is excluded and preserved in the report. Error rate is reported with a CI.
+        Auto-recover explicit source IDs/tagged filename origins. Otherwise group by
+        released clip and record possible cross-split source overlap; no lineage STOP.
+        Auto-derive object keys with the saved deterministic rule. Spot-check 50 in
+        audit.csv (object_check=correct/flagged). Audit label decisions and object checks
+        run in parallel with inference; completion is required only at analysis freeze.
     """), code('''
         if PREPARE_DATA:
             qa = avh.read_json(ROOT / "released_qa.json")
-            lineage = avh.read_json(ROOT / "lineage.json")
+            lineage = avh.auto_lineage(ROOT, qa, ROOT / "release" / "unpacked")
             manifest = avh.make_manifest(ROOT, qa, lineage)
             print("Audit worksheet:", avh.create_audit(ROOT, manifest))
+            print("Lineage limitations:", manifest["limitations"])
             print("Splits:", {s: sum(r["split"] == s for r in manifest["rows"])
                               for s in ("calibration", "validation", "test")})
             index_path = ROOT / f"media_index_f{FRAMES}.json"
@@ -169,22 +225,25 @@ def build(model):
                 avh.prepare_media(ROOT, ROOT / "release" / "unpacked", manifest, frames=FRAMES)
         manifest = avh.read_json(ROOT / "manifest.json")
         index = avh.read_json(ROOT / f"media_index_f{FRAMES}.json")
-        print("Audited exclusions:", len(avh.check_audit(ROOT, manifest)))
+        print("Analysis-only exclusions completed so far:", len(avh.check_audit(ROOT, manifest)))
         print(json.dumps(avh.read_json(ROOT / "audit_summary.json"), indent=2))
     '''), md("""
-        ## 7. Load fp16 model and mandatory smoke gates
+        ## 7. Formal manifest-based smoke gate (reuse early-loaded model)
         Nothing below is established by local CPU checks. Model loading may fail T4
         memory, fp16 numerical stability, cache compatibility, or token/generation
         agreement. Stop with the actual failure. Qwen load+smoke is timeboxed to
         30 minutes; a timeout prints stacks and ends the kernel. Gemma also has a load
-        watchdog. Never silently switch precision, offload, library, or evidence size.
+        watchdog is 3600 seconds, touched after any model load. Never silently switch precision, offload, library, or evidence size.
         A validated one-frame fallback is a new study configuration for both models.
     """), code('''
         import numpy as np
         import time
         started = time.monotonic()
-        with avh.Watchdog(1800):
-            scorer = avh.OmniScorer(cfg)
+        timeout = 1800 if MODEL == "qwen" else 3600
+        with avh.Watchdog(timeout, deadline=started+1800 if MODEL == "qwen" else None) as dog:
+            if "scorer" not in globals():
+                scorer = avh.OmniScorer(cfg)
+            dog.touch()
             smoke = avh.smoke_test(scorer, cfg, manifest, index, OWNER_RELEASE)
         seconds = time.monotonic() - started
         print("LOAD + SMOKE seconds:", seconds)
@@ -205,6 +264,7 @@ def build(model):
         Default stages below cover all passes. Spare account C can take distinct stages;
         do not concurrently run the same partition/stage. When a dead runtime leaves a
         lock, confirm it is stopped before manually removing only that stale lock file.
+        Inference scores ALL rows; audit exclusions apply only to CPU analysis.
     """), code('''
         from dataclasses import replace
         STAGES = list(avh.PASSES)  # Assign disjoint subsets if a spare runs this model.
@@ -217,7 +277,8 @@ def build(model):
         Strict completeness checks require every planned calibration/validation pass,
         including work from C. All fits/statistics are CPU from saved logits/features.
         This saves transforms, layers, C, thresholds and hashes. Existing freezes are
-        reused, never overwritten. Underpowered probe cells are recorded honestly.
+        reused, never overwritten. Complete the audit and object spot-check now;
+        its hash is frozen separately from inference journals. Underpowered cells stay explicit.
     """), code('''
         freeze = avh.freeze_analysis(ROOT, cfg, manifest, index, scorer.env, unembedding)
         print(json.dumps(freeze, indent=2))

@@ -189,13 +189,160 @@ def test_prefix_slice_keeps_full_attention_for_suffix_and_removes_media():
     scorer.cfg = avh.Config("unused", "gemma", "a"*40)
     full = {"input_ids": np.arange(8)[None, :], "position_ids": np.arange(8)[None, :],
             "attention_mask": np.ones((1, 8)), "pixel_values": np.ones((2, 3, 4, 4)),
-            "mm_token_type_ids": np.array([[1, 1, 1, 1, 0, 0, 0, 0]])}
+            "mm_token_type_ids": np.array([[1, 1, 1, 1, 0, 0, 0, 0]]),
+            "token_type_ids": np.arange(8)[None, :], "custom_mm_type_ids": np.arange(8)[None, :]}
     prefix = scorer.split_inputs(full, 4)
     suffix = scorer.split_inputs(full, 4, suffix=True)
     assert prefix["input_ids"].shape[-1] == 4 and "pixel_values" in prefix
     assert suffix["input_ids"].tolist() == [[4, 5, 6, 7]]
     assert suffix["attention_mask"].shape[-1] == 8
     assert "pixel_values" not in suffix
+    for key in ("token_type_ids", "custom_mm_type_ids"):
+        assert prefix[key].tolist() == [[0, 1, 2, 3]]
+        assert suffix[key].tolist() == [[4, 5, 6, 7]]
+
+
+def test_inventory_reports_raw_schema_before_requiring_explicit_mapping(tmp_path, capsys):
+    rows = [{"clip": "001", "kind": "audio_task", "prompt": "Is there a dog?", "answer": "No"}]
+    (tmp_path / "qa.json").write_text(json.dumps(rows))
+    with pytest.raises(ValueError, match="explicit schema_mapping"):
+        avh.inventory_release(tmp_path)
+    output = capsys.readouterr().out
+    assert '"clip": "001"' in output and "all_key_names" in output and "raw_record_count" in output
+    qa, info = avh.inventory_release(tmp_path, {"video_id": "clip", "task": "kind", "text": "prompt", "label": "answer"},
+                                     task_mapping={"audio_task": avh.TASKS[0]})
+    assert qa[0]["video_id"] == "001" and qa[0]["task"] == avh.TASKS[0]
+    assert info["all_task_names"] == ["audio_task"]
+    assert info["schema_mapping"]["text"] == "prompt"
+
+
+def test_auto_lineage_recovers_explicit_pairs_and_discloses_clip_fallback(tmp_path):
+    qa, _ = release_fixture()
+    qa[0]["source_ids"] = ["original-a"]
+    qa[0]["is_swapped"] = False
+    qa[3]["audio_source_id"], qa[3]["video_source_id"] = "original-a", "original-b"
+    qa[3]["is_swapped"] = True
+    lineage = avh.auto_lineage(tmp_path, qa, tmp_path)
+    groups = avh.connected_groups(lineage)
+    assert groups["v000"] == groups["v001"]
+    assert groups["v010"] == "v010"
+    assert next(r for r in lineage if r["video_id"] == "v010")["lineage_unrecoverable"]
+    manifest = avh.make_manifest(tmp_path, qa, lineage)
+    assert avh.LINEAGE_LIMITATION in manifest["limitations"]
+    assert avh.read_json(tmp_path / "lineage_rules.json")["object_rule"] == avh.OBJECT_RULE
+    assert avh.object_key("Is the dog making sound in the audio?") == "dog"
+    assert avh.object_key("Is there a cat in the video?") == "cat"
+    assert avh.object_key("Unmatched wording?") == "question:unmatched wording"
+
+
+def test_partial_audit_is_analysis_only_and_completion_gates_freeze(tmp_path, monkeypatch):
+    qa, lineage = release_fixture()
+    manifest = avh.make_manifest(tmp_path, qa, lineage)
+    path = avh.create_audit(tmp_path, manifest)
+    assert avh.check_audit(tmp_path, manifest) == set()
+    cfg = avh.Config(str(tmp_path), "gemma", "a"*40)
+    with pytest.raises(RuntimeError, match="before analysis freeze"):
+        avh.freeze_analysis(tmp_path, cfg, manifest, {}, {}, np.ones(3))
+    import csv
+    with path.open(newline="", encoding="utf-8") as f:
+        sheet = list(csv.DictReader(f))
+    label_row = next(r for r in sheet if r["label_audit"] == "True")
+    label_row.update(decision="exclude", reviewer="synthetic fixture")
+    with path.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=sheet[0].keys())
+        writer.writeheader()
+        writer.writerows(sheet)
+    assert avh.check_audit(tmp_path, manifest) == {label_row["id"]}
+
+
+def test_audit_edit_does_not_change_inference_signature(tmp_path):
+    cfg = avh.Config(str(tmp_path), "gemma", "a"*40)
+    avh.atomic_json(tmp_path / "terms_review.json", {"synthetic": True})
+    (tmp_path / "PREREGISTRATION.md").write_text("Synthetic protocol")
+    before = avh.study_signature(cfg, {}, {}, tmp_path, {})
+    (tmp_path / "audit.csv").write_text("unfinished")
+    assert avh.study_signature(cfg, {}, {}, tmp_path, {}) == before
+    (tmp_path / "audit.csv").write_text("completed")
+    assert avh.study_signature(cfg, {}, {}, tmp_path, {}) == before
+
+
+def test_private_owner_terms_decision_does_not_waive_model_license(tmp_path):
+    evidence = tmp_path / "README.txt"
+    evidence.write_text("Synthetic README without a dataset license")
+    base = {"decision": "no_licence_stated_private_research_eval", "evidence_file": evidence.name,
+            "sha256": avh.file_hash(evidence), "source_url": "https://example.invalid", "reviewer": "owner"}
+    model = dict(base, decision="research_use_permitted", applicable_passage="Synthetic README")
+    avh.atomic_json(tmp_path / "terms_review.json", {"dataset": base, "gemma": model})
+    assert avh.check_terms(tmp_path, "gemma")["dataset"]["decision"] == base["decision"]
+    model["decision"] = base["decision"]
+    avh.atomic_json(tmp_path / "terms_review.json", {"dataset": base, "gemma": model})
+    with pytest.raises(RuntimeError, match="gemma terms"):
+        avh.check_terms(tmp_path, "gemma")
+
+
+@pytest.mark.parametrize("family,timeout", [("gemma", 3600), ("qwen", 1800)])
+def test_early_smoke_needs_no_manual_gates_and_never_writes_formal_gate(tmp_path, monkeypatch, family, timeout):
+    qa, _ = release_fixture()
+    instances = []
+    class FakeScorer:
+        env, tokens = {"kind": "synthetic"}, {"yes": [1], "no": [0]}
+        def __init__(self, cfg):
+            self.generations, self.questions = 0, []
+            instances.append(self)
+        def score(self, row, stage, index, cached=True):
+            self.questions.append(row)
+            return {"answer": 1, "peak_vram_bytes": 1}, np.ones((2, 3)), np.array([0., 1.])
+        def generation_check(self, row, index):
+            self.generations += 1
+            return {"generated_answer": 1}
+    watches = []
+    class FakeWatchdog:
+        def __init__(self, seconds=600, deadline=None):
+            self.seconds, self.deadline, self.touches = seconds, deadline, 0
+            watches.append(self)
+        def __enter__(self):
+            return self
+        def touch(self):
+            self.touches += 1
+        def __exit__(self, *args):
+            pass
+    monkeypatch.setattr(avh, "OmniScorer", FakeScorer)
+    monkeypatch.setattr(avh, "Watchdog", FakeWatchdog)
+    monkeypatch.setattr(avh, "prepare_media", lambda *a, **kw: {})
+    monkeypatch.setattr(avh, "verify_media", lambda *a: None)
+    cfg = avh.Config(str(tmp_path), family, "a"*40)
+    scorer, report = avh.pre_smoke(cfg, qa, tmp_path)
+    assert report["n_qa"] == 20 and report["n_videos"] >= 3
+    assert scorer.generations == 10 and len(scorer.questions) == 40
+    assert watches[0].seconds == timeout and watches[0].touches == 1
+    assert (watches[0].deadline is not None) == (family == "qwen")
+    assert report["eligible_for_bulk_gate"] is False
+    assert (tmp_path / family / "pre_smoke.json").exists()
+    assert not (tmp_path / family / "smoke_f8.json").exists()
+
+
+def test_bulk_inference_scores_all_rows_without_reading_audit(tmp_path, monkeypatch):
+    qa, lineage = release_fixture()
+    manifest = avh.make_manifest(tmp_path, qa, lineage)
+    cfg = avh.Config(str(tmp_path), "gemma", "a"*40, stage="no_media")
+    env, index = {"kind": "synthetic"}, {}
+    avh.atomic_json(tmp_path / "gemma" / "smoke_f8.json", {"passed": True, "manifest_sha256": avh.digest(manifest),
+        "media_sha256": avh.digest(index), "code_sha256": avh.file_hash(SOURCE), "environment": env,
+        "configuration": avh.dataclasses.asdict(cfg)})
+    monkeypatch.setattr(avh, "check_terms", lambda *args: {})
+    monkeypatch.setattr(avh, "verify_media", lambda *args: None)
+    def forbidden(*args, **kwargs):
+        raise AssertionError("Inference must not read the audit")
+    monkeypatch.setattr(avh, "check_audit", forbidden)
+    monkeypatch.setattr(avh, "study_signature", lambda *args: "synthetic-signature")
+    class Scorer:
+        def score(self, row, stage, index):
+            return {"margin": 1., "answer": 1, "peak_vram_bytes": 1}, None, None
+    scorer = Scorer()
+    scorer.env = env
+    result = avh.run_stage(scorer, cfg, manifest, index, "GO")
+    expected = sum(r["split"] in ("calibration", "validation") for r in manifest["rows"])
+    assert result["new_rows"] == result["eligible"] == expected
 
 
 def test_authored_notebooks_are_valid_unexecuted_and_compile():

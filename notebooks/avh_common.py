@@ -1,7 +1,7 @@
 """CounterPrior v2, independent continuation, November 2026.
 
 Import is CPU-only. Model dependencies are imported only at the inference boundary.
-No experiment starts without GO, terms, lineage, audit, and smoke-test gates.
+Bulk inference requires GO, terms, a manifest, and formal smoke. Audit gates analysis.
 """
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ import hashlib
 import json
 import os
 import platform
+import re
 import subprocess
 import threading
 import time
@@ -26,6 +27,8 @@ TASKS = ("Video-driven Audio Hallucination", "Audio-driven Video Hallucination",
 PASSES = ("full", "cf0", "cf1", "cf2", "cf3", "blank", "no_media")
 MODEL_IDS = {"gemma": "google/gemma-4-E2B-it", "qwen": "Qwen/Qwen2.5-Omni-3B"}
 SEED = 20261103
+LINEAGE_LIMITATION = "lineage_unrecoverable: grouping by released clip; swapped clips may share sources across splits"
+OBJECT_RULE = "object-v1: casefold/normalize spaces; extract anchored Is there a/an, Is the ... making sound/visible, Can you hear/see; otherwise exact normalized question"
 
 
 def digest(value):
@@ -146,20 +149,50 @@ def extract_release(root):
     return out
 
 
-def inventory_release(unpacked):
+def inventory_release(unpacked, schema_mapping=None, records_key=None, task_mapping=None):
+    """Print unfiltered records first. Noncanonical schemas require explicit mappings."""
     root = Path(unpacked)
     media = sorted(root.rglob("*.mp4"))
-    qa = []
+    raw, containers = [], {}
     for path in sorted(root.rglob("*.json")):
         value = read_json(path)
+        if isinstance(value, dict):
+            containers[str(path.relative_to(root))] = sorted(value)
+            if records_key is not None:
+                value = value.get(records_key)
+            else:
+                # Show the container verbatim; do not silently choose a list-valued key.
+                raw.append(value)
+                continue
         if isinstance(value, list):
-            qa.extend(x for x in value if isinstance(x, dict) and "video_id" in x and "task" in x)
+            raw.extend(value)
+    print("FIRST THREE RAW RECORDS (unmodified field values):")
+    for record in raw[:3]:
+        print(json.dumps(record, ensure_ascii=False, indent=2))
+    mapping = schema_mapping or {k: k for k in ("video_id", "task", "text", "label")}
+    task_key = mapping.get("task", "task")
+    names = sorted({str(x[task_key]) for x in raw if isinstance(x, dict) and task_key in x})
     terms = [str(p.relative_to(root)) for p in root.rglob("*")
              if p.is_file() and any(s in p.name.lower() for s in ("readme", "licen", "terms"))]
-    result = {"media_files": len(media), "qa_rows": len(qa), "terms_files": terms,
-              "task_counts": {t: sum(x["task"] == t for x in qa) for t in TASKS},
-              "status": "STOP pending documented terms and source lineage"}
+    result = {"media_files": len(media), "raw_record_count": len(raw), "terms_files": terms,
+              "all_key_names": sorted({k for x in raw if isinstance(x, dict) for k in x}),
+              "container_key_names": containers, "all_task_names": names,
+              "raw_task_counts": {t: sum(isinstance(x, dict) and str(x.get(task_key)) == t for x in raw) for t in names},
+              "schema_mapping": mapping, "records_key": records_key, "task_mapping": task_mapping or {}}
     print(json.dumps(result, indent=2))
+    if (set(mapping) != {"video_id", "task", "text", "label"} or not raw or
+            any(not isinstance(x, dict) or any(k not in x for k in mapping.values()) for x in raw)):
+        raise ValueError("QA schema differs: set explicit schema_mapping / records_key from the printed records; no guessing")
+    qa = []
+    for record in raw:
+        row = dict(record)  # preserve release metadata for lineage recovery
+        row.update({canonical: record[actual] for canonical, actual in mapping.items()})
+        row["video_id"] = str(row["video_id"])
+        row["task"] = (task_mapping or {}).get(row["task"], row["task"])
+        qa.append(row)
+    result.update(qa_rows=len(qa), task_counts={t: sum(x["task"] == t for x in qa) for t in sorted({x["task"] for x in qa})})
+    atomic_json(root.parent / "qa_schema_mapping.json", {k: result[k] for k in ("schema_mapping", "records_key", "task_mapping")})
+    print("EXPLICIT QA MAPPING:", json.dumps({k: result[k] for k in ("schema_mapping", "records_key", "task_mapping")}))
     return qa, result
 
 
@@ -168,17 +201,82 @@ def check_terms(root, model):
     review = read_json(Path(root) / "terms_review.json")
     for key in ("dataset", model):
         entry = review[key]
-        if entry.get("decision") != "research_use_permitted":
+        private = key == "dataset" and entry.get("decision") == "no_licence_stated_private_research_eval"
+        if entry.get("decision") != "research_use_permitted" and not private:
             raise RuntimeError(f"STOP: {key} terms not established as usable")
         evidence = Path(root) / entry["evidence_file"]
         if file_hash(evidence) != entry["sha256"]:
             raise RuntimeError("Terms evidence changed")
         quote = entry.get("applicable_passage", "")
-        if not quote.strip() or quote not in evidence.read_text(encoding="utf-8"):
+        if not private and (not quote.strip() or quote not in evidence.read_text(encoding="utf-8")):
             raise RuntimeError("Record an exact applicable terms passage and source URL")
         if not entry.get("source_url") or not entry.get("reviewer"):
             raise RuntimeError("Terms require provenance and a named reviewer")
     return review
+
+
+def object_key(question):
+    text = " ".join(question.casefold().strip().rstrip("?.!").split())
+    patterns = (r"^is there (?:an? |the )?(.+?)(?: (?:in|on) (?:the )?(?:audio|video|image|clip))?$",
+                r"^is (?:the |an? )?(.+?) (?:making (?:a )?sound|visible|audible)(?: .*)?$",
+                r"^(?:can|do) you (?:hear|see) (?:the |an? )?(.+?)(?: (?:in|on) .*)?$")
+    for pattern in patterns:
+        match = re.fullmatch(pattern, text)
+        if match:
+            return match[1].strip()
+    return "question:" + text
+
+
+def auto_lineage(root, qa, media_dir):
+    """Recover only explicit metadata/marked filename origins; otherwise disclose clip fallback."""
+    by_video = defaultdict(list)
+    for row in qa:
+        by_video[str(row["video_id"])].append(row)
+    output = []
+    for vid, rows in sorted(by_video.items()):
+        matches = list(Path(media_dir).rglob(vid + ".mp4"))
+        name = str(matches[0].relative_to(media_dir)) if len(matches) == 1 else vid
+        metadata_rows = list(rows)
+        metadata_rows.extend(r["metadata"] for r in rows if isinstance(r.get("metadata"), dict))
+        for sidecar in Path(media_dir).rglob(vid + ".json"):
+            value = read_json(sidecar)
+            if isinstance(value, dict):
+                metadata_rows.append(value)
+        origins, evidence = set(), []
+        swapped = any(r.get("is_swapped") is True for r in metadata_rows) or bool(re.search(r"(?:^|[/_\-])(swapped|swap|synthetic)(?:[/_\-]|$)", name, re.I))
+        marked = swapped or any(isinstance(r.get("is_swapped"), bool) for r in metadata_rows)
+        for row in metadata_rows:
+            source_ids = row.get("source_ids", [])
+            if isinstance(source_ids, list):
+                origins.update(str(s) for s in source_ids if s is not None and str(s).strip())
+                if source_ids:
+                    evidence.append("metadata:source_ids")
+            for field in ("audio_source_id", "video_source_id", "source_video_id", "valor_id", "audiocaps_id"):
+                if row.get(field) is not None and str(row[field]).strip():
+                    origins.add(str(row[field]))
+                    evidence.append("metadata:" + field)
+        # Explicitly tagged names only, e.g. audio_dog1__video_clip2; never split opaque IDs.
+        tagged = re.fullmatch(r"audio_(.+?)__video_(.+)", vid, re.I)
+        if tagged:
+            origins.update(tagged.groups())
+            evidence.append("filename:audio_<id>__video_<id>")
+            swapped, marked = True, True
+        unrecoverable = not origins or (swapped and len(origins) < 2)
+        output.append({"video_id": vid, "source_ids": sorted(origins) if origins else [vid],
+            "is_swapped": swapped, "swap_status_known": marked,
+            "lineage_unrecoverable": unrecoverable, "grouping_fallback": unrecoverable,
+            "provenance": "; ".join(sorted(set(evidence))) if evidence else "released clip ID fallback",
+            "object_rule": OBJECT_RULE,
+            "object_by_question": {r["text"]: object_key(r["text"]) for r in rows if r["task"] in TASKS}})
+    path = Path(root) / "lineage.json"
+    if path.exists():
+        return read_json(path)  # retain any prior explicit/manual corrections
+    atomic_json(path, output)
+    atomic_json(Path(root) / "lineage_rules.json", {"object_rule": OBJECT_RULE,
+        "source_fields": ["source_ids", "audio_source_id", "video_source_id", "source_video_id", "valor_id", "audiocaps_id"],
+        "filename_pattern": "audio_<id>__video_<id>",
+        "unknown_swap_status": "not marked swapped, not proof of real origin", "limitation": LINEAGE_LIMITATION})
+    return output
 
 
 def connected_groups(lineage):
@@ -193,19 +291,18 @@ def connected_groups(lineage):
         a, b = find(a), find(b)
         parent[max(a, b)] = min(a, b)
     for row in lineage:
-        origins = row["source_ids"]
+        origins = [row["video_id"]] if row.get("grouping_fallback") else row["source_ids"]
         if not origins or any(not str(x).strip() for x in origins):
             raise ValueError("Unknown source lineage: STOP; numeric release IDs are not source IDs")
         for source in origins:
             union(str(origins[0]), str(source))
-    return {r["video_id"]: find(str(r["source_ids"][0])) for r in lineage}
+    return {r["video_id"]: find(str(r["video_id"] if r.get("grouping_fallback") else r["source_ids"][0])) for r in lineage}
 
 
 def make_manifest(root, qa, lineage, seed=SEED):
     """lineage: video_id, source_ids (both origins), is_swapped, provenance, object map.
 
-    object_by_question maps exact question text to a manually checked object/event key.
-    No guessed mapping from an uninformative released ID is allowed.
+    Auto object keys and explicitly disclosed released-clip fallback are supported.
     """
     import numpy as np
     root = Path(root)
@@ -233,11 +330,12 @@ def make_manifest(root, qa, lineage, seed=SEED):
             raise ValueError("Unexpected yes/no label")
         obj = meta["object_by_question"][q["text"]]
         if not obj:
-            raise ValueError("Object/event key must be audited before scoring")
+            raise ValueError("Object/event key must be derived before scoring")
         row = {"id": digest([vid, q["task"], q["text"]])[:24], "video_id": vid,
                "source_group": groups[vid], "source_ids": meta["source_ids"],
                "split": splits[groups[vid]], "task": q["task"], "question": q["text"],
-               "label": int(label == "yes"), "object": obj, "is_swapped": meta["is_swapped"]}
+               "label": int(label == "yes"), "object": obj, "is_swapped": meta["is_swapped"],
+               "swap_status_known": meta.get("swap_status_known", True)}
         rows.append(row)
     if len({r["id"] for r in rows}) != len(rows):
         raise ValueError("Duplicate QA rows; resolve explicitly, do not silently deduplicate")
@@ -250,12 +348,26 @@ def make_manifest(root, qa, lineage, seed=SEED):
         rng = np.random.default_rng(int(digest([seed, row["video_id"], row["task"]])[:16], 16))
         row["donors"] = rng.choice(candidates, 4, replace=False).tolist()
     path = root / "manifest.json"
+    limitations = [LINEAGE_LIMITATION] if any(r.get("lineage_unrecoverable") for r in lineage) else []
+    if any(r.get("swap_status_known") is False for r in lineage):
+        limitations.append("Swap status absent for some clips: donor pool uses clips not marked swapped; real origin is unverified for those clips")
     payload = {"seed": seed, "rows": rows, "lineage_sha256": digest(lineage),
-               "qa_sha256": digest(qa), "split_rule": "connected source components, 60/20/20"}
+               "qa_sha256": digest(qa), "split_rule": "connected recovered origins or disclosed released-clip fallback, 60/20/20",
+               "limitations": limitations, "object_rule": OBJECT_RULE}
     if path.exists() and read_json(path) != payload:
         raise RuntimeError("Manifest already frozen: start a new study directory to change it")
     atomic_json(path, payload)
     return payload
+
+
+def audit_targets(manifest, limit=100):
+    selected = {}
+    label_items = sorted((r for r in manifest["rows"] if r["is_swapped"] or r.get("swap_status_known") is False),
+                         key=lambda r: digest([SEED, "audit", r["id"]]))[:limit]
+    objects = sorted(manifest["rows"], key=lambda r: digest([SEED, "object-check", r["id"]]))[:50]
+    for row in label_items + objects:
+        selected[row["id"]] = dict(row, label_audit=row in label_items, object_spotcheck=row in objects)
+    return list(selected.values())
 
 
 def create_audit(root, manifest, limit=100):
@@ -264,9 +376,9 @@ def create_audit(root, manifest, limit=100):
     path = root / "audit.csv"
     if path.exists():
         return path
-    items = sorted((r for r in manifest["rows"] if r["is_swapped"]),
-                   key=lambda r: digest([SEED, "audit", r["id"]]))[:limit]
-    fields = ["id", "video_id", "task", "question", "label", "decision", "reviewer", "note"]
+    items = audit_targets(manifest, limit)
+    fields = ["id", "video_id", "task", "question", "label", "object", "label_audit", "object_spotcheck",
+              "decision", "object_check", "reviewer", "note"]
     with open(path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fields)
         writer.writeheader()
@@ -274,23 +386,35 @@ def create_audit(root, manifest, limit=100):
     return path
 
 
-def check_audit(root, manifest):
-    with open(Path(root) / "audit.csv", encoding="utf-8", newline="") as f:
+def check_audit(root, manifest, require_complete=False):
+    path = Path(root) / "audit.csv"
+    if not path.exists() and not require_complete:
+        return set()
+    with open(path, encoding="utf-8", newline="") as f:
         rows = list(csv.DictReader(f))
-    expected = sorted((r for r in manifest["rows"] if r["is_swapped"]),
-                      key=lambda r: digest([SEED, "audit", r["id"]]))[:100]
+    expected = audit_targets(manifest)
     if {r["id"] for r in rows} != {r["id"] for r in expected} or len(rows) != len(expected):
         raise RuntimeError("Audit selection changed or incomplete")
-    if not rows or any(r["decision"] not in ("valid", "exclude", "uncertain") or not r["reviewer"] for r in rows):
-        raise RuntimeError("Complete the blind swapped-item audit before bulk inference")
-    excluded = {r["id"] for r in rows if r["decision"] != "valid"}
+    targets = {r["id"]: r for r in expected}
+    complete = [r for r in rows if targets[r["id"]]["label_audit"] and
+                r["decision"] in ("valid", "exclude", "uncertain") and r["reviewer"]]
+    object_complete = [r for r in rows if targets[r["id"]]["object_spotcheck"] and
+                       r.get("object_check") in ("correct", "flagged") and r["reviewer"]]
+    n_labels = sum(r["label_audit"] for r in expected)
+    n_objects = sum(r["object_spotcheck"] for r in expected)
+    if require_complete and (len(complete) != n_labels or len(object_complete) != n_objects):
+        raise RuntimeError("Complete label audit and 50-item object spot-check before analysis freeze")
+    excluded = {r["id"] for r in complete if r["decision"] != "valid"}
     # Audit error CI clusters by source, using the shared bootstrap implementation.
     groups = {r["id"]: r["source_group"] for r in manifest["rows"]}
     import numpy as np
-    error = np.array([r["decision"] == "exclude" for r in rows], dtype=float)
-    result = cluster_ci(error, [groups[r["id"]] for r in rows], lambda a: float(a.mean()))
-    result.update({"n_audited": len(rows), "n_uncertain": sum(r["decision"] == "uncertain" for r in rows),
-                   "excluded_ids": sorted(excluded), "audit_sha256": file_hash(Path(root) / "audit.csv")})
+    error = np.array([r["decision"] == "exclude" for r in complete], dtype=float)
+    result = cluster_ci(error, [groups[r["id"]] for r in complete], lambda a: float(a.mean()))
+    result.update({"n_audited": len(complete), "n_label_pending": n_labels-len(complete),
+                   "n_object_checked": len(object_complete), "n_object_pending": n_objects-len(object_complete),
+                   "n_object_flagged": sum(r["object_check"] == "flagged" for r in object_complete),
+                   "n_uncertain": sum(r["decision"] == "uncertain" for r in complete),
+                   "excluded_ids": sorted(excluded), "audit_sha256": file_hash(path)})
     atomic_json(Path(root) / "audit_summary.json", result)
     return excluded
 
@@ -358,8 +482,9 @@ class Watchdog:
 
     Only active inside an inference stage; no background idle-kernel termination.
     """
-    def __init__(self, seconds=600):
+    def __init__(self, seconds=600, deadline=None):
         self.seconds = seconds
+        self.deadline = deadline
         self.last = time.monotonic()
         self.stop = threading.Event()
 
@@ -369,7 +494,8 @@ class Watchdog:
     def __enter__(self):
         def monitor():
             while not self.stop.wait(5):
-                if time.monotonic() - self.last > self.seconds:
+                now = time.monotonic()
+                if now - self.last > self.seconds or (self.deadline is not None and now > self.deadline):
                     print("STALLED: no durable row within time limit; terminating kernel", flush=True)
                     faulthandler.dump_traceback(all_threads=True)
                     os._exit(124)
@@ -582,14 +708,17 @@ class OmniScorer:
         length = full["input_ids"].shape[-1]
         if not suffix:
             result = dict(full)
-            for k in ("input_ids", "attention_mask", "position_ids", "mm_token_type_ids", "token_type_ids"):
+            for k in result:
+                if k not in ("input_ids", "attention_mask", "position_ids") and "token_type" not in k and "mm_type" not in k:
+                    continue
                 if k in result:
                     result[k] = result[k][..., :cut]
             return result
         result = {"input_ids": full["input_ids"][:, cut:], "attention_mask": full["attention_mask"],
                   "position_ids": full["position_ids"][..., cut:]}
-        if "mm_token_type_ids" in full:
-            result["mm_token_type_ids"] = full["mm_token_type_ids"][:, cut:]
+        for key, value in full.items():
+            if "token_type" in key or "mm_type" in key:
+                result[key] = value[..., cut:]
         if self.cfg.model == "qwen":
             result["cache_position"] = self.torch.arange(cut, length, device="cuda")
         return result
@@ -659,7 +788,6 @@ def study_signature(cfg, manifest, media_index, root, environment):
     return digest({"model": cfg.model, "revision": cfg.revision, "frames": cfg.frames,
                    "max_side": cfg.max_side, "seed": cfg.seed, "k": cfg.k,
                    "workers": cfg.workers, "manifest": digest(manifest), "media": digest(media_index),
-                   "audit": file_hash(Path(root) / "audit.csv"),
                    "terms": file_hash(Path(root) / "terms_review.json"),
                    "preregistration": file_hash(Path(root) / "PREREGISTRATION.md"),
                    "code": file_hash(__file__), "environment": environment})
@@ -674,11 +802,21 @@ def smoke_test(scorer, cfg, manifest, index, owner_release):
                    key=lambda r: digest(["smoke", r["id"]]))[:20]
     if len(items) != 20 or len({r["video_id"] for r in items}) < 2:
         raise RuntimeError("Need 20 calibration questions spanning multiple media items")
+    report = parity_checks(scorer, items, index, all_passes=True)
+    result = {"passed": True, "configuration": dataclasses.asdict(cfg), "environment": scorer.env,
+              "manifest_sha256": digest(manifest), "media_sha256": digest(index),
+              "code_sha256": file_hash(__file__), "tokens": scorer.tokens, "checks": report}
+    atomic_json(Path(cfg.root) / cfg.model / f"smoke_f{cfg.frames}.json", result)
+    return result
+
+
+def parity_checks(scorer, items, index, all_passes=False):
+    """Shared diagnostics: identical parity, generation, finiteness and VRAM checks."""
     report = []
     with Watchdog(600) as dog:
         for i, row in enumerate(items):
             # Every pass can change media length/positioning. Check all pass paths.
-            for pass_name in (PASSES if i == 0 else ("full",)):
+            for pass_name in (PASSES if all_passes and i == 0 else ("full",)):
                 fresh, fh, fl = scorer.score(row, pass_name, index, cached=False)
                 cached, ch, cl = scorer.score(row, pass_name, index, cached=True)
                 import numpy as np
@@ -695,17 +833,56 @@ def smoke_test(scorer, cfg, manifest, index, owner_release):
                 if ld > .02 or hd > .02 or fresh["answer"] != cached["answer"]:
                     raise RuntimeError("Cache parity failed; do not bulk-run or silently use a new protocol")
                 dog.touch()
-    result = {"passed": True, "configuration": dataclasses.asdict(cfg), "environment": scorer.env,
-              "manifest_sha256": digest(manifest), "media_sha256": digest(index),
-              "code_sha256": file_hash(__file__), "tokens": scorer.tokens, "checks": report}
-    atomic_json(Path(cfg.root) / cfg.model / f"smoke_f{cfg.frames}.json", result)
-    return result
+    return report
+
+
+def pre_smoke(cfg, raw_qa, media_dir):
+    """Early private engineering diagnostic only; no terms, lineage, manifest or result gate.
+
+    Caller notebook still requires owner GO. These raw items can later be in test;
+    do not use their answers to tune the research protocol or claim a result.
+    """
+    import numpy as np
+    pool = [dict(r) for r in raw_qa if r["task"] in TASKS[:2]]
+    videos = sorted({str(r["video_id"]) for r in pool})
+    if len(pool) < 20 or len(videos) < 3:
+        raise RuntimeError("Early smoke needs 20 raw QA rows from at least three videos")
+    rng = np.random.default_rng(cfg.seed)
+    order = rng.permutation(len(pool)).tolist()
+    selected, covered = [], set()
+    for i in order:
+        if str(pool[i]["video_id"]) not in covered:
+            selected.append(i)
+            covered.add(str(pool[i]["video_id"]))
+        if len(covered) == 3:
+            break
+    selected.extend(i for i in order if i not in selected)
+    items = [pool[i] for i in selected[:20]]
+    for row in items:
+        row.update(video_id=str(row["video_id"]), question=row["text"],
+                   id=digest(["pre-smoke", row["video_id"], row["task"], row["text"]])[:24])
+    diagnostic_root = Path(cfg.root) / cfg.model / "pre_smoke_media"
+    index = prepare_media(diagnostic_root, media_dir, {"rows": items}, cfg.frames, cfg.max_side)
+    verify_media(index)
+    started = time.monotonic()
+    timeout = 1800 if cfg.model == "qwen" else 3600
+    with Watchdog(timeout, deadline=started+1800 if cfg.model == "qwen" else None) as dog:
+        scorer = OmniScorer(cfg)
+        dog.touch()
+        checks = parity_checks(scorer, items, index)
+    result = {"kind": "engineering_diagnostic_only_not_a_result", "passed": True,
+        "eligible_for_bulk_gate": False, "configuration": dataclasses.asdict(cfg),
+        "seconds_load_and_checks": time.monotonic()-started, "n_qa": len(items),
+        "n_videos": len({r["video_id"] for r in items}), "selection_seed": cfg.seed,
+        "raw_selection_sha256": digest(items), "environment": scorer.env,
+        "tokens": scorer.tokens, "checks": checks, "media_sha256": digest(index)}
+    atomic_json(Path(cfg.root) / cfg.model / "pre_smoke.json", result)
+    return scorer, result
 
 
 def run_stage(scorer, cfg, manifest, index, owner_release, splits=("calibration", "validation")):
     require_go(owner_release)
     check_terms(cfg.root, cfg.model)
-    excluded = check_audit(cfg.root, manifest)
     verify_media(index)
     smoke = read_json(Path(cfg.root) / cfg.model / f"smoke_f{cfg.frames}.json")
     if (not smoke.get("passed") or smoke["manifest_sha256"] != digest(manifest)
@@ -722,7 +899,7 @@ def run_stage(scorer, cfg, manifest, index, owner_release, splits=("calibration"
             raise RuntimeError("Freeze CPU validation choices before opening test inference")
     signature = study_signature(cfg, manifest, index, cfg.root, scorer.env)
     directory = Path(cfg.root) / cfg.model / f"f{cfg.frames}" / cfg.stage
-    items = [r for r in manifest["rows"] if r["split"] in splits and r["id"] not in excluded
+    items = [r for r in manifest["rows"] if r["split"] in splits
              and (r["task"] != TASKS[2] or cfg.stage in ("full", "no_media"))
              and int(digest(r["id"])[:16], 16) % cfg.workers == cfg.worker_index]
     # Group same media/donor prefixes for encode-once reuse across questions.
@@ -794,6 +971,9 @@ def load_completed(root, cfg, manifest, index, environment, split):
     import numpy as np
     signature = study_signature(cfg, manifest, index, root, environment)
     excluded = check_audit(root, manifest)
+    freeze_path = Path(root) / cfg.model / "analysis_freeze.json"
+    if freeze_path.exists() and read_json(freeze_path)["audit_sha256"] != file_hash(Path(root) / "audit.csv"):
+        raise RuntimeError("Audit changed after analysis freeze")
     wanted = {r["id"]: r for r in manifest["rows"] if r["split"] == split and r["id"] not in excluded}
     stores = {}
     for stage in PASSES:
@@ -980,6 +1160,7 @@ def freeze_analysis(root, cfg, manifest, index, environment, unembedding):
     """CPU only. Fits calibration, selects validation, saves immutable choices before test."""
     import numpy as np
     import joblib
+    check_audit(root, manifest, require_complete=True)
     calibration = load_completed(root, cfg, manifest, index, environment, "calibration")
     validation = load_completed(root, cfg, manifest, index, environment, "validation")
     signature = study_signature(cfg, manifest, index, root, environment)
@@ -1013,6 +1194,7 @@ def freeze_analysis(root, cfg, manifest, index, environment, unembedding):
     # Bundle is local trusted analysis state; never load a third-party pickle/joblib file.
     joblib.dump({"bundles": bundles, "calibration": calibration, "thresholds": thresholds}, path)
     freeze = {"status": "frozen_before_test", "signature": signature, "manifest_sha256": digest(manifest),
+              "audit_sha256": file_hash(Path(root) / "audit.csv"),
               "bundle_sha256": file_hash(path), "thresholds": thresholds, "probe_choices": summary,
               "environment": environment, "unembedding_sha256": digest(np.asarray(unembedding).tolist())}
     atomic_json(freeze_path, freeze)
@@ -1054,10 +1236,18 @@ def evaluate_test(root, cfg, manifest, index, environment, owner_release):
         raise RuntimeError("Bundle hash mismatch")
     bundle = joblib.load(path)
     test = load_completed(root, cfg, manifest, index, environment, "test")
+    terms = check_terms(root, cfg.model)
     metrics = {"study": "CounterPrior v2", "date": "2026-11", "model": MODEL_IDS[cfg.model],
                "revision": cfg.revision, "signature": freeze["signature"], "tasks": {},
                "method": "AVCD-style queried-modality contrast; not published attentive-mask AVCD",
-               "uncertainty": "2000 paired source-component bootstrap draws; conditional on fixed donor pool",
+               "uncertainty": "2000 paired grouping-unit bootstrap draws; conditional on fixed donor pool; see lineage limitations",
+               "limitations": manifest.get("limitations", []), "object_rule": manifest.get("object_rule", OBJECT_RULE),
+               "dataset_terms_decision": terms["dataset"]["decision"],
+               "public_avhbench_media_allowed": False,
+               "publication_policy": "Aggregate numbers and our own text only; no AVHBench audio, video or frames" if
+                   terms["dataset"]["decision"] == "no_licence_stated_private_research_eval" else
+                   "No public media authorization granted by this evaluation; separate permission required",
+               "audit_sha256": freeze["audit_sha256"],
                "preregistration_sha256": file_hash(Path(root) / "PREREGISTRATION.md")}
     for task in TASKS:
         rows = [r for r in test if r["task"] == task]
