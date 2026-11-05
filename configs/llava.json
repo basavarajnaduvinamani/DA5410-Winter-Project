@@ -1,0 +1,15 @@
+{
+  "model_id": "llava-hf/llava-1.5-7b-hf",
+  "revision": "b234b804b114d9e37bb655e11cbbb5f5e971b7a9",
+  "dataset": "dataset/counterprior_corrected.json",
+  "seed": 20261030,
+  "bootstrap_iterations": 1000,
+  "alpha": 0.25,
+  "max_new_tokens": 40,
+  "attn_implementation": "eager",
+  "load_in_4bit": true,
+  "direction": "pca",
+  "gate": "calibration_group_loo_cosine",
+  "layer_indexing": "zero_based_raw_decoder_output",
+  "ablation_methods": ["random_direction", "shuffled_labels", "mean_difference", "addition", "constant"]
+}

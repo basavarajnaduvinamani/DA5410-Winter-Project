@@ -1,0 +1,14 @@
+{
+  "status": "approved",
+  "bundle_sha256": "347105db8b34d4949c12ff6e545254321a43d5d24d0790eb44f4f99577d5191b",
+  "code_sha256": "39b089c2906c6581a3f397feb50b10423cb4db1510a75024f28161c56811f71b",
+  "code_git_hash": "cc0c1a45ff0da68949fdc73c466b989e5822f5e9",
+  "code_dirty": true,
+  "identity_sha256": "a225be8b7818bb8cc0be95bd4e1039447d3fc174fa8ff52f2287d688186487ab",
+  "n_workers": 6,
+  "n": 2000,
+  "numerical_smoke_passed": true,
+  "comparison_kind": "serial_full_forward_repeatability",
+  "forecast_wall_hours_planning_only": 1.2637856511932655,
+  "timing_summary_sha256": "37f05b81b3527e3538f53432449cf9c2174290ada712d418ee67092d77dc3eb8"
+}

@@ -1,0 +1,13 @@
+# Preserve byte-exact upstream question files for SHA-256 verification.
+dataset/pope/coco_pope_*.json -text
+*.sh text eol=lf
+# Portable publication hashes and binary PDF cross-reference offsets.
+results/*.json text eol=lf
+site/public/*.json text eol=lf
+site/src/data/*.json text eol=lf
+*.pdf binary
+*.png binary
+
+# Preserve byte hashes for scored snapshots.
+results/v2/scored-runtime/** -text
+results/v2/qwen-*.json -text

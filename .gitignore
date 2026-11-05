@@ -3,3 +3,44 @@ __pycache__/
 *.class
 .ipynb_checkpoints
 *.tmp
+
+.venv*/
+*.private.json
+.tools/
+
+# POPE runs: COCO images and hidden-state shards stay out of git
+data/
+results/**/states/
+.vercel
+.env*
+
+# Static research site build and test working files
+site/node_modules/
+site/.next/
+site/out/
+site/test-results/
+site/playwright-report/
+site/.lighthouseci/
+incoming/
+send_back*.zip
+site/public/examples/
+.venv-bootstrap-done
+site/qa/pdf/
+site/qa/playwright-results.json
+site/qa/preview-results.json
+site/qa/production-results.json
+site/qa/lighthouse/
+site/qa/screenshots/
+site/*.tsbuildinfo
+site/.tools-*
+site/AGENTS.md
+site/*lighthouse.*/
+
+# Private study transfer files and QA captures
+notebooks/*-transfer-private/
+notebooks/*-merge-input.zip
+CounterPrior_Kaggle_Run_Kit.zip
+site/qa/before-desktop.png
+site/qa/after-desktop.png
+site/qa/final-mobile.png
+site/qa/final-browser.json

@@ -1,0 +1,75 @@
+{
+  "soundSwap": {
+    "estimate": 1.7515380857086618,
+    "ci95": [
+      1.510557809165797,
+      2.07750992543664
+    ],
+    "n": 518,
+    "n_clusters": 373,
+    "valid_resamples": 2000,
+    "requested_resamples": 2000,
+    "seed": 20261103
+  },
+  "silence": {
+    "estimate": 2.1466589305391643,
+    "ci95": [
+      1.893427758687741,
+      2.393840912289116
+    ],
+    "n": 518,
+    "n_clusters": 373,
+    "valid_resamples": 2000,
+    "requested_resamples": 2000,
+    "seed": 20261103
+  },
+  "silenceFlips": 13,
+  "audioOnly": {
+    "estimate": 0.07453567937438899,
+    "ci95": [
+      -0.002007107122032294,
+      0.1429947567173057
+    ],
+    "n": 256,
+    "n_clusters": 180,
+    "valid_resamples": 2000,
+    "requested_resamples": 2000,
+    "seed": 20261103
+  },
+  "listenFirst": {
+    "estimate": 0.026637341153470162,
+    "ci95": [
+      -0.05624990629933701,
+      0.10168268462372274
+    ],
+    "n": 256,
+    "n_clusters": 180,
+    "valid_resamples": 2000,
+    "requested_resamples": 2000,
+    "seed": 20261103
+  },
+  "silentContrast": {
+    "estimate": -0.06036168132942321,
+    "ci95": [
+      -0.1403342423308654,
+      0.01722742146542833
+    ],
+    "n": 256,
+    "n_clusters": 180,
+    "valid_resamples": 2000,
+    "requested_resamples": 2000,
+    "seed": 20261103
+  },
+  "swapContrast": {
+    "estimate": -0.08064516129032262,
+    "ci95": [
+      -0.15212619538296251,
+      -0.010258436788269957
+    ],
+    "n": 256,
+    "n_clusters": 180,
+    "valid_resamples": 2000,
+    "requested_resamples": 2000,
+    "seed": 20261103
+  }
+}

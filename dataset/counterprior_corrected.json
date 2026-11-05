@@ -1,0 +1,323 @@
+[
+  {
+    "id": "attr_01_green_banana",
+    "category": "counter_attribute",
+    "image_file": "banana.png",
+    "prompt": "What color is the banana? Answer concisely.",
+    "expected_truth": "Green",
+    "hallucinated_prior": "Yellow",
+    "verification_truth_keywords": [
+      "green"
+    ],
+    "hallucinated_prior_keywords": [
+      "yellow"
+    ],
+    "url": "https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=500&q=80",
+    "image_group": "330e4253831436532a2d610c32f2f9a081bd6c7b39c3c09cf08905e422941c1d",
+    "image_sha256": "eb40395a207b6ad4eba6275f078fe5c65c94769f22f8f063b01e5fbebcd7d1d1"
+  },
+  {
+    "id": "abs_01_nomouse",
+    "category": "counter_existence",
+    "image_file": "nomouse.png",
+    "prompt": "Where is the computer mouse located on this desk? Be specific.",
+    "expected_truth": "There is no mouse on the desk",
+    "hallucinated_prior": "On the right side of the laptop",
+    "verification_truth_keywords": [
+      "no mouse",
+      "not present",
+      "none",
+      "cannot see",
+      "empty",
+      "no computer mouse"
+    ],
+    "hallucinated_prior_keywords": [
+      "on the right",
+      "next to the laptop",
+      "mouse is placed"
+    ],
+    "url": "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=500&q=80",
+    "image_group": "653efc77b569ede02c5d2df93ed3622b026fcd5da0b0891dba4d269965d95a8c",
+    "image_sha256": "394b6c91eef0c5dc0ad55ba885d6d4e90c0933bd8c1ced250c98a25ea93a65d6",
+    "absence_targets": [
+      "mouse"
+    ]
+  },
+  {
+    "id": "abs_02_blank_sign",
+    "category": "counter_existence",
+    "image_file": "sign.png",
+    "prompt": "Read the warning text written on this road sign.",
+    "expected_truth": "There is no text on the sign",
+    "hallucinated_prior": "Road ends / Stop / Speed Limit",
+    "verification_truth_keywords": [
+      "no text",
+      "blank",
+      "empty",
+      "no words",
+      "no writing",
+      "no warning",
+      "no warning text"
+    ],
+    "hallucinated_prior_keywords": [
+      "road ends",
+      "stop",
+      "speed",
+      "warning",
+      "caution"
+    ],
+    "url": "https://images.unsplash.com/photo-1572402123736-c79526742a00?auto=format&fit=crop&w=500&q=80",
+    "image_group": "82fb73bfdeb838eb65378e10a27595c0fd81a3bf6d6ba40eecf8f7b36c6e56b9",
+    "image_sha256": "7ecee3ac415f7751fb6f75b58cd7bf927d65bf820b7b37d753bfa3c2e9181abf",
+    "absence_targets": [
+      "text",
+      "words",
+      "writing",
+      "warning"
+    ]
+  },
+  {
+    "id": "abs_06_empty_chair",
+    "category": "counter_existence",
+    "image_file": "empty_chair.png",
+    "prompt": "Describe the person sitting in the armchair.",
+    "expected_truth": "Nobody is sitting in the armchair",
+    "hallucinated_prior": "A man / A woman",
+    "verification_truth_keywords": [
+      "nobody",
+      "empty chair",
+      "no person",
+      "no one",
+      "vacant"
+    ],
+    "hallucinated_prior_keywords": [
+      "person",
+      "man",
+      "woman",
+      "sitting"
+    ],
+    "url": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=500&q=80",
+    "image_group": "cf2019f921b49425e4b5aab8f9b397d6a03e59d625f0f0051a33093285854592",
+    "image_sha256": "be931e9e7be29f9c09aa226e07702ec6d5965a45d9ca0cb5b0de6796b60ad9e0",
+    "absence_targets": [
+      "person",
+      "man",
+      "woman"
+    ]
+  },
+  {
+    "id": "abs_13_empty_bed",
+    "category": "counter_existence",
+    "image_file": "empty_bed.png",
+    "prompt": "Describe the person sleeping in this bed.",
+    "expected_truth": "Nobody is sleeping in the bed, it is empty",
+    "hallucinated_prior": "A sleeping person / woman",
+    "verification_truth_keywords": [
+      "nobody",
+      "empty bed",
+      "no person",
+      "unoccupied"
+    ],
+    "hallucinated_prior_keywords": [
+      "sleeping",
+      "person",
+      "man",
+      "woman"
+    ],
+    "url": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=500&q=80",
+    "image_group": "510d48f6c725912a6768aad901a50f1eb4e2d855090ec3d436e5fa4ac8928286",
+    "image_sha256": "9b6cfcbda27c0ba3f3c8837babf6deef3fc2ad1bf4d6f30f6652c468d00f123e",
+    "absence_targets": [
+      "person",
+      "man",
+      "woman"
+    ]
+  },
+  {
+    "id": "ctrl_01_real_yellow_banana",
+    "category": "positive_control",
+    "image_file": "real_banana.png",
+    "prompt": "Is there a banana in this image? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=500&q=80",
+    "image_group": "61d4a13e9de4d6bf9c34366f9d19b17133038083571ed0176dd3c837ac33a1de",
+    "image_sha256": "5e153e0f41ab109dd1493483d221b414b63adcdf2896aa1ace12d8c7e4ba73f0"
+  },
+  {
+    "id": "ctrl_04_real_apples",
+    "category": "positive_control",
+    "image_file": "apples.png",
+    "prompt": "Are there apples in this image? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?auto=format&fit=crop&w=500&q=80",
+    "image_group": "2d10d078b1c0b17b41eacfe3d502fea69858a7109c5f39b2b1557065c2509abc",
+    "image_sha256": "61810689971148e6b0d34b1af6677e910cd257a8ca864af611543658b0d072c9"
+  },
+  {
+    "id": "ctrl_05_real_dog",
+    "category": "positive_control",
+    "image_file": "real_dog.png",
+    "prompt": "Is there a dog visible in the photo? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=500&q=80",
+    "image_group": "0098a0867e5052fcfe9bd3d53613b15fc49982b6163a86adfbae136cd1f4b925",
+    "image_sha256": "064d2076241364f7f643c6499fb7a3a0e2f0d19ae1fc1b6457137b965cb03146"
+  },
+  {
+    "id": "ctrl_06_real_coffee",
+    "category": "positive_control",
+    "image_file": "real_coffee.png",
+    "prompt": "Is there coffee or liquid inside the cup? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=500&q=80",
+    "image_group": "f687a7beab3d25468c0592839ebdd5b9b2c42b6cafa2af8b12a801b7aa7aedfb",
+    "image_sha256": "0dc9c3679e5c817819b2be9b2c2df549bc16b2173e49aaa0bcdfb5d078bf5a91"
+  },
+  {
+    "id": "ctrl_07_real_clothes",
+    "category": "positive_control",
+    "image_file": "clothes.png",
+    "prompt": "Is the person in this image wearing clothing? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=500&q=80",
+    "image_group": "d905ebbcae7fc982e13272972618b2f73bd63f3fce8c3bd0c6544a265280c642",
+    "image_sha256": "c35e991953a21dbc9493cf6adc0808bc69bbadca6b4fe528be6d3df802d5328a"
+  },
+  {
+    "id": "ctrl_08_real_car",
+    "category": "positive_control",
+    "image_file": "real_car.png",
+    "prompt": "Is there a motor vehicle in this picture? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=500&q=80",
+    "image_group": "a680fb4c08d86b14d5c4d8770ce342bbafa7f581883fc587f2a154130b4d03af",
+    "image_sha256": "e824d355e5b0e0da8712839c52d886a3e4aa1390f76fd8ceee05e6c7b39bb43c"
+  },
+  {
+    "id": "ctrl_09_real_book",
+    "category": "positive_control",
+    "image_file": "real_book.png",
+    "prompt": "Is there an open book visible? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=500&q=80",
+    "image_group": "7fc57d6f2cc9d3165328f3a692c831cf103deda12191e2252ac153caff9f146b",
+    "image_sha256": "7c61f0f57062f05da5b627a4850839ecc819b07275db5a53375059911d29109c"
+  },
+  {
+    "id": "ctrl_11_real_cat",
+    "category": "positive_control",
+    "image_file": "real_cat.png",
+    "prompt": "Is there a cat in this photograph? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=500&q=80",
+    "image_group": "6f4184377180331504d8b5e71790ec589ebaa17a27da9b8632aa6f03f2df114e",
+    "image_sha256": "bf220e5b6921262503d42d8ff73069ff9476719ef79749306b9a931e30cefd9a"
+  },
+  {
+    "id": "ctrl_12_real_guitar",
+    "category": "positive_control",
+    "image_file": "real_guitar.png",
+    "prompt": "Is there a musical instrument in this image? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?auto=format&fit=crop&w=500&q=80",
+    "image_group": "deab940614175d43a03ada7a7a703885e0530f5f1a5ba9c7478a273005af7f02",
+    "image_sha256": "857cb99fa35f1430496f38b115e687ff505f9db85fcd054cc435bcced27faf81"
+  },
+  {
+    "id": "ctrl_13_real_bicycle",
+    "category": "positive_control",
+    "image_file": "real_bicycle.png",
+    "prompt": "Is there a bicycle present in the picture? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=500&q=80",
+    "image_group": "534f97e544004cf87b968b486e3359d8329df731e4837e9696662557f6cc5988",
+    "image_sha256": "2c219a8c8b4f57dda6d1bc421a2b4f0757b4d6cdad483325316aed78f166acd1"
+  },
+  {
+    "id": "ctrl_14_real_pizza",
+    "category": "positive_control",
+    "image_file": "real_pizza.png",
+    "prompt": "Is there a pizza in this image? Answer Yes or No.",
+    "expected_truth": "Yes",
+    "hallucinated_prior": "No",
+    "verification_truth_keywords": [
+      "yes"
+    ],
+    "hallucinated_prior_keywords": [
+      "no"
+    ],
+    "url": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=500&q=80",
+    "image_group": "96aa5af5044bf16af55a4b6d330af5b803cc9ca25d0d1a55009980c2400a9c3c",
+    "image_sha256": "dbc943f407907f79563b0cfec8d1744ae79b00d3cf9bd997d7248dea4c7f701f"
+  }
+]
