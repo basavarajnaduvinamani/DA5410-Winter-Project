@@ -1,0 +1,62 @@
+{
+  "status": "frozen_before_test_evaluation",
+  "signature": "8559c6323a5bb5a0ef889f3e7fe2e3afb541b00117a70f403d6e68f17a59363c",
+  "manifest_sha256": "4036b97e275cca38196b05faa537bde5caa10973dda7402447000d6eaf3432c7",
+  "audit_sha256": "b8f379b3c5134c160560dd40677f8f674d1c368b4ca218b14ece23440014d1e9",
+  "bundle_sha256": "9126b8a8e114cead46618cee312fe22b4fe91ab584a436f79d3244191d451df8",
+  "thresholds": {
+    "Video-driven Audio Hallucination": {
+      "contrast": -2.3117971420288086,
+      "blank_contrast": -0.328216552734375,
+      "probe_risk": 0.9669140038457789
+    },
+    "Audio-driven Video Hallucination": {
+      "contrast": -0.12238597869873047,
+      "blank_contrast": 0.4061737060546875,
+      "probe_risk": 0.8651282265952099
+    }
+  },
+  "probe_choices": {
+    "Video-driven Audio Hallucination": {
+      "status": "fitted",
+      "counts": {
+        "calibration_yes": 57,
+        "validation_yes": 56,
+        "calibration_false_yes": 18,
+        "validation_false_yes": 17
+      },
+      "selected_layer": 26
+    },
+    "Audio-driven Video Hallucination": {
+      "status": "fitted",
+      "counts": {
+        "calibration_yes": 31,
+        "validation_yes": 30,
+        "calibration_false_yes": 12,
+        "validation_false_yes": 10
+      },
+      "selected_layer": 22
+    }
+  },
+  "environment": {
+    "python": "3.13.16",
+    "torch": "2.11.0+cu130",
+    "transformers": "4.57.1",
+    "gpu": "Tesla T4",
+    "cuda": "13.0",
+    "attention_backend": "sdpa",
+    "packages": {
+      "torch": "2.11.0+cu130",
+      "transformers": "4.57.1",
+      "numpy": "2.2.5",
+      "Pillow": "11.3.0",
+      "av": "16.0.1",
+      "soundfile": "0.13.1",
+      "librosa": "0.11.0",
+      "accelerate": "1.10.1"
+    },
+    "scoring_mode": "full_forward",
+    "fp16_reduced_precision_reduction": true
+  },
+  "unembedding_sha256": "a553bc607cb9f9af370b2d3d5bfb618bcf6dd7851714086953fe89b8de12864c"
+}

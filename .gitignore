@@ -35,3 +35,12 @@ site/*.tsbuildinfo
 site/.tools-*
 site/AGENTS.md
 site/*lighthouse.*/
+
+# Private study transfer files and QA captures
+notebooks/*-transfer-private/
+notebooks/*-merge-input.zip
+CounterPrior_Kaggle_Run_Kit.zip
+site/qa/before-desktop.png
+site/qa/after-desktop.png
+site/qa/final-mobile.png
+site/qa/final-browser.json

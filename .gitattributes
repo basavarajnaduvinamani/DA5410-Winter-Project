@@ -7,3 +7,7 @@ site/public/*.json text eol=lf
 site/src/data/*.json text eol=lf
 *.pdf binary
 *.png binary
+
+# Preserve byte hashes for scored snapshots.
+results/v2/scored-runtime/** -text
+results/v2/qwen-*.json -text

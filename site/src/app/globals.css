@@ -1258,3 +1258,12 @@ select {
     transition: none !important;
   }
 }
+
+/* The study diagrams use the existing paper and chart palette. */
+.swap-demo { display: block; }
+.swap-controls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.swap-controls button { border: 1px solid var(--line); background: var(--surface); padding: 4px 8px; }
+.swap-controls button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.research-article figure svg, .swap-demo svg { display: block; width: 100%; height: auto; }
+.research-article figure { margin-inline: 0; }
+.research-article .mono, .research-article svg { font-variant-numeric: tabular-nums; }

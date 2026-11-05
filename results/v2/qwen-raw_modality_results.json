@@ -1,0 +1,106 @@
+{
+  "label": "replication of a Gemma post-hoc observation",
+  "split": "test",
+  "tasks": {
+    "Video-driven Audio Hallucination": {
+      "accuracy": {
+        "estimate": 0.7786561264822134,
+        "ci95": [
+          0.7265531994047619,
+          0.8287022544741668
+        ],
+        "n": 253,
+        "n_clusters": 227,
+        "valid_resamples": 2000,
+        "requested_resamples": 2000,
+        "seed": 20261103
+      },
+      "recall": {
+        "estimate": 0.9274193548387096,
+        "ci95": [
+          0.8780487804878049,
+          0.967741935483871
+        ],
+        "n": 124,
+        "n_clusters": 121,
+        "valid_resamples": 2000,
+        "requested_resamples": 2000,
+        "seed": 20261103
+      },
+      "yes_rate": {
+        "estimate": 0.6403162055335968,
+        "ci95": [
+          0.58,
+          0.6972203926230561
+        ],
+        "n": 253,
+        "n_clusters": 227,
+        "valid_resamples": 2000,
+        "requested_resamples": 2000,
+        "seed": 20261103
+      },
+      "raw_margin_auroc": {
+        "estimate": 0.8622780695173793,
+        "ci95": [
+          0.8135985906040267,
+          0.904380201683454
+        ],
+        "n": 253,
+        "n_clusters": 227,
+        "valid_resamples": 2000,
+        "requested_resamples": 2000,
+        "seed": 20261103
+      }
+    },
+    "Audio-driven Video Hallucination": {
+      "accuracy": {
+        "estimate": 0.689922480620155,
+        "ci95": [
+          0.6062932474349797,
+          0.7698412698412699
+        ],
+        "n": 129,
+        "n_clusters": 121,
+        "valid_resamples": 2000,
+        "requested_resamples": 2000,
+        "seed": 20261103
+      },
+      "recall": {
+        "estimate": 0.7846153846153846,
+        "ci95": [
+          0.6825396825396826,
+          0.8769230769230769
+        ],
+        "n": 65,
+        "n_clusters": 61,
+        "valid_resamples": 2000,
+        "requested_resamples": 2000,
+        "seed": 20261103
+      },
+      "yes_rate": {
+        "estimate": 0.5968992248062015,
+        "ci95": [
+          0.5158668154761905,
+          0.6746031746031746
+        ],
+        "n": 129,
+        "n_clusters": 121,
+        "valid_resamples": 2000,
+        "requested_resamples": 2000,
+        "seed": 20261103
+      },
+      "raw_margin_auroc": {
+        "estimate": 0.7848557692307692,
+        "ci95": [
+          0.7045301978114478,
+          0.8576527504167588
+        ],
+        "n": 129,
+        "n_clusters": 121,
+        "valid_resamples": 2000,
+        "requested_resamples": 2000,
+        "seed": 20261103
+      }
+    }
+  }
+}

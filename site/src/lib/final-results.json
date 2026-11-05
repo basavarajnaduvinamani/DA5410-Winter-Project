@@ -1,0 +1,331 @@
+{
+  "gemma": [
+    {
+      "task": "Video-driven Audio Hallucination",
+      "n": 772,
+      "positive": 386,
+      "yes": 54,
+      "falseYes": 15,
+      "recall": 0.10103626943005181,
+      "yesRate": 0.06994818652849741,
+      "delta": 0.027,
+      "ci": [
+        -0.231,
+        0.29
+      ]
+    },
+    {
+      "task": "Audio-driven Video Hallucination",
+      "n": 387,
+      "positive": 192,
+      "yes": 171,
+      "falseYes": 24,
+      "recall": 0.765625,
+      "yesRate": 0.4418604651162791,
+      "delta": -0.101,
+      "ci": [
+        -0.217,
+        0.005
+      ]
+    }
+  ],
+  "exploratory": {
+    "soundSwap": {
+      "estimate": 1.7515380857086618,
+      "ci95": [
+        1.510557809165797,
+        2.07750992543664
+      ],
+      "n": 518,
+      "n_clusters": 373,
+      "valid_resamples": 2000,
+      "requested_resamples": 2000,
+      "seed": 20261103
+    },
+    "silence": {
+      "estimate": 2.1466589305391643,
+      "ci95": [
+        1.893427758687741,
+        2.393840912289116
+      ],
+      "n": 518,
+      "n_clusters": 373,
+      "valid_resamples": 2000,
+      "requested_resamples": 2000,
+      "seed": 20261103
+    },
+    "silenceFlips": 13,
+    "audioOnly": {
+      "estimate": 0.07453567937438899,
+      "ci95": [
+        -0.002007107122032294,
+        0.1429947567173057
+      ],
+      "n": 256,
+      "n_clusters": 180,
+      "valid_resamples": 2000,
+      "requested_resamples": 2000,
+      "seed": 20261103
+    },
+    "listenFirst": {
+      "estimate": 0.026637341153470162,
+      "ci95": [
+        -0.05624990629933701,
+        0.10168268462372274
+      ],
+      "n": 256,
+      "n_clusters": 180,
+      "valid_resamples": 2000,
+      "requested_resamples": 2000,
+      "seed": 20261103
+    },
+    "silentContrast": {
+      "estimate": -0.06036168132942321,
+      "ci95": [
+        -0.1403342423308654,
+        0.01722742146542833
+      ],
+      "n": 256,
+      "n_clusters": 180,
+      "valid_resamples": 2000,
+      "requested_resamples": 2000,
+      "seed": 20261103
+    },
+    "swapContrast": {
+      "estimate": -0.08064516129032262,
+      "ci95": [
+        -0.15212619538296251,
+        -0.010258436788269957
+      ],
+      "n": 256,
+      "n_clusters": 180,
+      "valid_resamples": 2000,
+      "requested_resamples": 2000,
+      "seed": 20261103
+    }
+  },
+  "qwen": [
+    {
+      "task": "Video-driven Audio Hallucination",
+      "n": 253,
+      "yes": 162,
+      "falseYes": 47,
+      "delta": 0.10101757631822395,
+      "ci": [
+        0.008343216672633973,
+        0.18824549901852528
+      ],
+      "yesRate": 0.6403162055335968,
+      "recall": 0.9274193548387096,
+      "auc": {
+        "estimate": 0.8622780695173793,
+        "ci95": [
+          0.8135985906040267,
+          0.904380201683454
+        ],
+        "n": 253,
+        "n_clusters": 227,
+        "valid_resamples": 2000,
+        "requested_resamples": 2000,
+        "seed": 20261103
+      },
+      "filters": [
+        {
+          "name": "Contrast",
+          "cut": {
+            "estimate": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "n": 129,
+            "n_clusters": 119,
+            "valid_resamples": 2000,
+            "requested_resamples": 2000,
+            "seed": 20261103
+          },
+          "cost": {
+            "estimate": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "n": 124,
+            "n_clusters": 121,
+            "valid_resamples": 2000,
+            "requested_resamples": 2000,
+            "seed": 20261103
+          },
+          "verdict": "did_not_ship"
+        },
+        {
+          "name": "Blank contrast",
+          "cut": {
+            "estimate": 0.007751937984496124,
+            "ci95": [
+              0.0,
+              0.023442113681102338
+            ],
+            "n": 129,
+            "n_clusters": 119,
+            "valid_resamples": 2000,
+            "requested_resamples": 2000,
+            "seed": 20261103
+          },
+          "cost": {
+            "estimate": 0.008064516129032258,
+            "ci95": [
+              0.0,
+              0.02459016393442623
+            ],
+            "n": 124,
+            "n_clusters": 121,
+            "valid_resamples": 2000,
+            "requested_resamples": 2000,
+            "seed": 20261103
+          },
+          "verdict": "did_not_ship"
+        },
+        {
+          "name": "Probe",
+          "cut": {
+            "estimate": 0.12403100775193798,
+            "ci95": [
+              0.0703125,
+              0.183206106870229
+            ],
+            "n": 129,
+            "n_clusters": 119,
+            "valid_resamples": 2000,
+            "requested_resamples": 2000,
+            "seed": 20261103
+          },
+          "cost": {
+            "estimate": 0.03225806451612903,
+            "ci95": [
+              0.008,
+              0.06451612903225806
+            ],
+            "n": 124,
+            "n_clusters": 121,
+            "valid_resamples": 2000,
+            "requested_resamples": 2000,
+            "seed": 20261103
+          },
+          "verdict": "did_not_ship"
+        }
+      ]
+    },
+    {
+      "task": "Audio-driven Video Hallucination",
+      "n": 129,
+      "yes": 77,
+      "falseYes": 26,
+      "delta": 0.0037707390648566985,
+      "ci": [
+        -0.1266033496732025,
+        0.12973663522012563
+      ],
+      "yesRate": 0.5968992248062015,
+      "recall": 0.7846153846153846,
+      "auc": {
+        "estimate": 0.7848557692307692,
+        "ci95": [
+          0.7045301978114478,
+          0.8576527504167588
+        ],
+        "n": 129,
+        "n_clusters": 121,
+        "valid_resamples": 2000,
+        "requested_resamples": 2000,
+        "seed": 20261103
+      },
+      "filters": [
+        {
+          "name": "Contrast",
+          "cut": {
+            "estimate": 0.140625,
+            "ci95": [
+              0.0625,
+              0.234375
+            ],
+            "n": 64,
+            "n_clusters": 64,
+            "valid_resamples": 2000,
+            "requested_resamples": 2000,
+            "seed": 20261103
+          },
+          "cost": {
+            "estimate": 0.06153846153846154,
+            "ci95": [
+              0.015384615384615385,
+              0.125
+            ],
+            "n": 65,
+            "n_clusters": 61,
+            "valid_resamples": 2000,
+            "requested_resamples": 2000,
+            "seed": 20261103
+          },
+          "verdict": "did_not_ship"
+        },
+        {
+          "name": "Blank contrast",
+          "cut": {
+            "estimate": 0.09375,
+            "ci95": [
+              0.03125,
+              0.171875
+            ],
+            "n": 64,
+            "n_clusters": 64,
+            "valid_resamples": 2000,
+            "requested_resamples": 2000,
+            "seed": 20261103
+          },
+          "cost": {
+            "estimate": 0.13846153846153847,
+            "ci95": [
+              0.06060606060606061,
+              0.2295397225725093
+            ],
+            "n": 65,
+            "n_clusters": 61,
+            "valid_resamples": 2000,
+            "requested_resamples": 2000,
+            "seed": 20261103
+          },
+          "verdict": "did_not_ship"
+        },
+        {
+          "name": "Probe",
+          "cut": {
+            "estimate": 0.125,
+            "ci95": [
+              0.046875,
+              0.203125
+            ],
+            "n": 64,
+            "n_clusters": 64,
+            "valid_resamples": 2000,
+            "requested_resamples": 2000,
+            "seed": 20261103
+          },
+          "cost": {
+            "estimate": 0.015384615384615385,
+            "ci95": [
+              0.0,
+              0.047619047619047616
+            ],
+            "n": 65,
+            "n_clusters": 61,
+            "valid_resamples": 2000,
+            "requested_resamples": 2000,
+            "seed": 20261103
+          },
+          "verdict": "ship_demo_flag"
+        }
+      ]
+    }
+  ]
+}

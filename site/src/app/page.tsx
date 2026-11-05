@@ -1,377 +1,139 @@
-import Link from "next/link";
-import { research, code, colab, sourceUrl, profileLabel } from "@/lib/data";
-import { PipelineFigure, GeometryFigure } from "@/components/method-figures";
-import { ResultsOverview } from "@/components/results";
-import { LayerChart, FalseYesChart } from "@/components/charts";
-import { Source } from "@/components/shell";
-const p = research.protocol;
+import data from "@/lib/final-results.json";
+import { SwapDiagram } from "@/components/swap-diagram";
+
+const repo = "https://github.com/basavarajnaduvinamani/DA5410-Winter-Project";
+const record = (path: string) => `${repo}/blob/v2.0-final/${path}`;
+const signed = (n: number) => `${n < 0 ? "−" : "+"}${Math.abs(n).toFixed(3)}`;
+const interval = (v: number[]) => `[${v.map(signed).join(", ")}]`;
+const percentage = (n: number) => (100 * n).toFixed(1);
+const { gemma, qwen, exploratory: e } = data;
+const labels = ["Sound", "Video"];
+const chapters = ["Seeing things", "Does it listen?", "A second model disagrees", "Fixes I tried", "Rules set before looking", "What I’d test next"];
+
+function Heading({ index }: { index: number }) {
+  return <div className="section-heading"><span className="section-index">0{index + 1}</span><h2>{chapters[index]}</h2></div>;
+}
+
+function Forest() {
+  const rows = [...gemma, ...qwen];
+  const names = ["Gemma sound", "Gemma video", "Qwen sound", "Qwen video"];
+  const x = (v: number) => 150 + v * 450;
+  return <figure>
+    <svg viewBox="0 0 320 192" role="img" aria-label="Forest plot of paired AUROC differences. Only the Qwen sound interval excludes zero.">
+      <path d="M150 6V145" stroke="var(--muted)" strokeDasharray="3 3" />
+      {rows.map((r, i) => {
+        const y = 19 + i * 32;
+        const color = r.falseYes < 40 ? "var(--muted)" : "var(--accent)";
+        return <g key={names[i]} fill={color} stroke={color}>
+          <text x="2" y={y - 7} stroke="none" fontSize="10">{names[i]}{r.falseYes < 40 ? " · underpowered" : ""}</text>
+          <path d={`M${x(r.ci[0])} ${y}H${x(r.ci[1])} M${x(r.ci[0])} ${y-3}v6 M${x(r.ci[1])} ${y-3}v6`} />
+          <circle cx={x(r.delta)} cy={y} r="3" />
+        </g>;
+      })}
+      {[-.25, 0, .25].map(v => <text key={v} x={x(v)} y="163" textAnchor="middle" fontSize="10" fill="currentColor">{v.toFixed(2)}</text>)}
+      <text x="150" y="184" textAnchor="middle" fontSize="11" fill="currentColor">ΔAUROC (probe minus baseline)</text>
+    </svg>
+    <figcaption className="caption">Only Qwen sound clears zero (held-out, n = Yes answers).</figcaption>
+    <ul className="plain-list mono">{rows.map((r,i) => <li key={names[i]}>{names[i]} {signed(r.delta)} {interval(r.ci)} · n={r.yes} · {r.falseYes} false Yes</li>)}</ul>
+  </figure>;
+}
+
+function Tradeoff() {
+  const points = qwen.flatMap((task, i) => task.filters.map(f => ({ ...f, task: labels[i] })));
+  const x = (v: number) => 36 + v * 1780;
+  const y = (v: number) => 128 - v * 470;
+  return <figure>
+    <svg viewBox="0 0 320 176" role="img" aria-label="Qwen policy trade-off. The sound probe is beyond the 2 percentage point recall cap. The video probe falls within the cap and is underpowered.">
+      <rect x={x(.02)} y="12" width={285-x(.02)} height="116" fill="var(--soft)" />
+      <path d={`M36 12V128H285 M${x(.02)} 12V128`} stroke="var(--muted)" fill="none" strokeDasharray="3 2" />
+      {points.map((p, i) => <g key={i} stroke={p.task === "Sound" ? "var(--accent)" : "var(--muted)"}>
+        <path d={`M${x(p.cost.estimate)} ${y(p.cut.ci95[0])}V${y(p.cut.ci95[1])}`} />
+        <circle cx={x(p.cost.estimate)} cy={y(p.cut.estimate)} r="3.5" fill="var(--surface)" />
+      </g>)}
+      <g fontSize="10" fill="currentColor">
+        <text x="36" y="10">False-Yes reduction (pp)</text>
+        <text x="9" y={y(.2)+3}>20</text><text x="9" y={y(.1)+3}>10</text><text x="14" y="131">0</text>
+        <text x={x(.02)+4} y="142">2-pt cap</text>
+        <text x="36" y="142">0</text><text x={x(.1)} y="142">10</text>
+        <text x="155" y="166" textAnchor="middle">Recall drop (percentage points)</text>
+      </g>
+    </svg>
+    <figcaption className="caption">The sound probe exceeded the recall cap (held-out, sound n={qwen[0].n}, video n={qwen[1].n}). Lines show 95% CIs for false-Yes reduction.</figcaption>
+    <ul className="plain-list mono">{points.map(p => <li key={p.task+p.name}>{p.task} {p.name.toLowerCase()} · {percentage(p.cut.estimate)} pp cut · {percentage(p.cost.estimate)} pp recall drop</li>)}</ul>
+  </figure>;
+}
+
+function MirroredRates() {
+  return <figure>
+    <svg viewBox="0 0 320 145" role="img" aria-label="Mirrored Yes-rate and recall bars. Gemma sound recall is 10.1 percent and Qwen sound recall is 92.7 percent.">
+      <path d="M159 23V129" stroke="var(--line)" />
+      <g fill="currentColor" fontSize="10">
+        <text x="8" y="15">Gemma 4 E2B</text><text x="235" y="15">Qwen2.5-Omni</text>
+        {[0,1,2,3].map(i => {
+          const task = Math.floor(i/2), key = i%2 ? "recall" : "yesRate";
+          const a = gemma[task][key], b = qwen[task][key], y = 36 + i*29;
+          return <g key={i}><text x="160" y={y-5} textAnchor="middle">{labels[task]} {i%2 ? "recall" : "Yes rate"}</text>
+            <rect x={159-130*a} y={y} width={130*a} height="8" fill="var(--muted)" />
+            <rect x="160" y={y} width={130*b} height="8" fill="var(--accent)" />
+            <text x={151-130*a} y={y+8} textAnchor="end">{percentage(a)}%</text>
+            <text x={165+130*b} y={y+8}>{percentage(b)}%</text></g>;
+        })}
+      </g>
+    </svg>
+    <figcaption className="caption">Sound recall was lower than video recall for Gemma and higher for Qwen (held-out, task n in the forest plot’s underlying records).</figcaption>
+  </figure>;
+}
+
 export default function Home() {
-  return (
-    <div className="research-layout">
-      <aside className="page-toc" aria-label="On this page">
-        <p className="eyebrow">RESEARCH RECORD</p>
-        <nav aria-label="Research sections">
-          <a href="#question">Question</a>
-          <a href="#method">Method</a>
-          <a href="#protocol">Protocol</a>
-          <a href="#results">Results</a>
-          <a href="#corrections">What did not work</a>
-          <a href="#limitations">Limitations</a>
-          <a href="#reproduce">Reproduce</a>
-        </nav>
-        <span className="page-toc-foot">
-          AI4Bharat Lab
-          <br />
-          IIT Madras
-        </span>
-      </aside>
-      <article className="research-article">
-        <header className="hero">
-          <p className="eyebrow">
-            MULTIMODAL REPRESENTATIONS / RESEARCH AT IIT MADRAS
-          </p>
-          <h1>
-            CounterPrior: Detecting and Steering Object Hallucination from
-            LLaVA&apos;s Hidden States
-          </h1>
-          <p className="author">
-            Basavaraj A Naduvinamani <span>· AI4Bharat Lab, IIT Madras</span>
-          </p>
-          <p className="credits">
-            Supervisor: Prof. Mitesh M. Khapra
-            <br />
-            Mentor: Mohammed Safi Ur Rahman Khan
-          </p>
-          <div className="resource-links">
-            <a className="primary-link" href={code}>
-              Code <span aria-hidden="true">↗</span>
-            </a>
-            <a href={colab}>
-              Colab <span aria-hidden="true">↗</span>
-            </a>
-            <a href="/technical-report.pdf">Technical report PDF</a>
-            <a href="/citation.bib" download>
-              BibTeX
-            </a>
-          </div>
-          <div className="tldr">
-            <span className="eyebrow">THE CURRENT FINDING</span>
-            {research.status === "pending" ? (
-              <p>
-                The protocol now separates calibration, validation and test
-                images, but no pretrained-model result has been verified.
-                Whether a hidden-state probe outperforms answer-token
-                confidence—and whether SLERP reduces false-yes answers without
-                recognition loss—remains inconclusive.
-              </p>
-            ) : (
-              <p>{research.summary.join(" ")}</p>
-            )}
-            <Source
-              path={
-                research.status === "pending"
-                  ? "results/2026-11-01/gpu_status.json"
-                  : "results/REPORT_metrics.json"
-              }
-            />
-          </div>
-        </header>
-        <section id="question" className="paper-section">
-          <div className="section-heading">
-            <span className="section-index">01</span>
-            <h2>Can we see an error forming?</h2>
-          </div>
-          <p className="lead">
-            When visual evidence and a familiar language prior disagree, a
-            vision-language model can answer with the prior. CounterPrior asks
-            whether that error is readable inside the decoder—and whether a
-            small geometric intervention changes the answer.
-          </p>
-          <div className="question-pair">
-            <div>
-              <h3>Detection</h3>
-              <p>
-                Read the terminal prompt state before generation. Compare a
-                linear probe with simple confidence baselines on images the
-                probe never saw.
-              </p>
-            </div>
-            <div>
-              <h3>Intervention</h3>
-              <p>
-                Rotate an activation toward a calibration-learned direction.
-                Measure absent-object false positives alongside recall on
-                objects that are present.
-              </p>
-            </div>
-          </div>
-          <p className="endpoint-note">
-            <strong>A distinction that matters:</strong> the active detector
-            predicts <em>any wrong answer</em>, including false negatives.
-            False-yes hallucination is a narrower steering outcome. Answer-token
-            log-probability and entropy are later, first-token baselines—not
-            early-warning probes.
-          </p>
-          <Source path="configs/pope_llava.json" />
-        </section>
-        <section id="method" className="paper-section">
-          <div className="section-heading">
-            <span className="section-index">02</span>
-            <h2>Read the state. Test the direction.</h2>
-          </div>
-          <PipelineFigure />
-          <div className="method-detail">
-            <div>
-              <h3>One readout, then a causal test</h3>
-              <p>
-                The probe reads the last prompt position, before a completion
-                token can leak its wording into the representation. Each
-                detector chooses its layer using image-grouped calibration
-                folds.
-              </p>
-              <p>
-                For steering, a separate cosine gate decides when to intervene.
-                SLERP changes direction while preserving activation norm;
-                mean-difference addition, random-direction and shuffled-label
-                controls test competing explanations.
-              </p>
-              <p>
-                A “truth axis” is an operational name for an oriented
-                calibration direction. It is not a claim that truth is a
-                universal feature.
-              </p>
-              <Source path="src/pope_pipeline.py" />
-            </div>
-            <GeometryFigure />
-          </div>
-        </section>
-        <section id="protocol" className="paper-section">
-          <div className="section-heading">
-            <span className="section-index">03</span>
-            <h2>Different images for each decision.</h2>
-          </div>
-          <p>
-            POPE is the primary benchmark. All questions about the same COCO
-            image stay in one partition, across random, popular and adversarial
-            question sets.
-          </p>
-          <div
-            className="table-scroll"
-            role="region"
-            aria-label="Frozen image partitions"
-            tabIndex={0}
-          >
-            <table className="protocol-table">
-              <caption>
-                Frozen image partitions · planned protocol, not completed
-                inference
-              </caption>
-              <thead>
-                <tr>
-                  <th scope="col">Partition</th>
-                  <th scope="col">Full profile images</th>
-                  <th scope="col">Quick profile images</th>
-                  <th scope="col">What it decides</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  ["calibration", "Layer, probe, direction and gate"],
-                  ["validation", "Steering strength"],
-                  ["test", "Held-out reporting only"],
-                ].map(([part, role]) => (
-                  <tr key={part}>
-                    <th scope="row">{part}</th>
-                    <td>{p.counts[part]}</td>
-                    <td>{p.quickCounts[part]}</td>
-                    <td>{role}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <Source path={p.source} />
-          <dl className="protocol-details">
-            <div>
-              <dt>Scorer</dt>
-              <dd>Official POPE yes/no parser, pinned question files</dd>
-            </div>
-            <div>
-              <dt>Uncertainty</dt>
-              <dd>
-                {p.bootstrapIterations.toLocaleString("en-US")} paired
-                image-cluster bootstrap resamples
-              </dd>
-            </div>
-            <div>
-              <dt>Seed</dt>
-              <dd className="mono">{p.seed}</dd>
-            </div>
-            <div>
-              <dt>Decision rule</dt>
-              <dd>
-                Intervals crossing the comparison boundary remain inconclusive
-              </dd>
-            </div>
-          </dl>
-          <Source path="configs/pope_llava.json" />
-          <p className="caption">
-            The bootstrap interval is conditional on frozen calibration and
-            validation choices. The quick profile is exploratory. No settings
-            are selected from test outcomes.
-          </p>
-        </section>
-        <section id="results" className="paper-section">
-          <div className="section-heading">
-            <span className="section-index">04</span>
-            <h2>Results, with the denominator visible.</h2>
-          </div>
-          <ResultsOverview />
-          <LayerChart />
-          <FalseYesChart />
-          <div className="findings">
-            {research.hypotheses.map((h) => (
-              <div key={h.id}>
-                <p className="eyebrow">
-                  {h.id} <span className="finding-status">{h.status}</span>
-                </p>
-                <p>{h.finding}</p>
-              </div>
-            ))}
-          </div>
-          <div className="section-links">
-            <Link href="/explorer/">
-              Inspect examples <span aria-hidden="true">→</span>
-            </Link>
-            <Link href="/ablations/">
-              Read every control <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-        </section>
-        <section id="corrections" className="paper-section">
-          <div className="section-heading">
-            <span className="section-index">05</span>
-            <h2>What did not work—and what changed.</h2>
-          </div>
-          <p>
-            The original custom benchmark was not reliable enough to carry the
-            headline. Pixel review retained {p.audit.retained} of{" "}
-            {p.audit.original} rows; the remaining {p.audit.excluded} had label
-            or image-relevance problems. A scorer also accepted an unrelated
-            negation as evidence that an absent object was not present.
-          </p>
-          <Source path="dataset/audit_2026-10-30.json" />
-          <p>
-            Earlier claims of perfect detection, a fixed hallucination reduction
-            and preserved sightedness were withdrawn because complete supporting
-            predictions and a valid held-out scoring record were not recovered.
-            They are not reproduced as current results.
-          </p>
-          <p>
-            The corrected custom set remains secondary. Proposed relabels have
-            not been applied. POPE, matched controls and image-disjoint
-            evaluation now carry the primary protocol.
-          </p>
-          <Source path="07_build_counterprior.md" />
-        </section>
-        <section id="limitations" className="paper-section">
-          <div className="section-heading">
-            <span className="section-index">06</span>
-            <h2>What this study cannot establish.</h2>
-          </div>
-          <ul className="plain-list">
-            <li>
-              A POPE error signal is not a general hallucination detector;
-              binary object questions do not cover long-form, temporal or audio
-              grounding.
-            </li>
-            <li>
-              Norm preservation does not establish a benefit. False-yes
-              reduction must be read with recall loss and matched controls.
-            </li>
-            <li>
-              Confidence intervals do not account for benchmark selection or
-              every calibration uncertainty.
-            </li>
-            <li>
-              The modern-model replication is registered but not GPU-verified.
-              Architecture transfer remains an open question.
-            </li>
-            <li>
-              No external user study, production safety impact or
-              deployment-risk reduction has been measured.
-            </li>
-          </ul>
-          <Source path="docs/PROTOCOL.md" />
-        </section>
-        <section id="reproduce" className="paper-section">
-          <div className="section-heading">
-            <span className="section-index">07</span>
-            <h2>Reproduce the evidence.</h2>
-          </div>
-          <p>
-            Start with the quick profile in Colab. The run directory stays on
-            Drive; interrupted questions resume without choosing a new test
-            configuration.
-          </p>
-          <div className="reproduce-actions">
-            <a className="button-primary" href={colab}>
-              Open the notebook <span aria-hidden="true">↗</span>
-            </a>
-            <a className="button-secondary" href="/research.json" download>
-              Download evidence JSON
-            </a>
-          </div>
-          <pre tabIndex={0} aria-label="Reproduction commands">
-            <code>{`git clone --branch claude/site-2026-11 ${code.replace("/tree/claude/site-2026-11", "")}.git
-cd DA5410-Winter-Project
-bash scripts/colab_run.sh setup
-COUNTERPRIOR_RUN=runs/quick COUNTERPRIOR_PROFILE=quick bash scripts/colab_run.sh timing
-COUNTERPRIOR_RUN=runs/quick COUNTERPRIOR_PROFILE=quick bash scripts/colab_run.sh run
-COUNTERPRIOR_RUN=runs/quick bash scripts/colab_run.sh report`}</code>
-          </pre>
-          <dl className="protocol-details">
-            <div>
-              <dt>Run identity</dt>
-              <dd className="mono">
-                {research.run?.id ?? "Not available — no verified run"}
-              </dd>
-            </div>
-            <div>
-              <dt>Reported profile</dt>
-              <dd>{profileLabel()}</dd>
-            </div>
-            <div>
-              <dt>Hardware</dt>
-              <dd>
-                {research.run?.hardware ?? "Not recorded for a verified run"}
-              </dd>
-            </div>
-            <div>
-              <dt>Runtime</dt>
-              <dd>
-                {research.run?.runtime ?? "Not recorded for a verified run"}
-              </dd>
-            </div>
-            <div>
-              <dt>Model revision</dt>
-              <dd className="mono break-anywhere">
-                {research.run?.revision ?? p.revision}
-              </dd>
-            </div>
-          </dl>
-          <Source path="configs/pope_llava.json" />
-          <p className="caption">
-            Raw model outputs and hidden states remain in the local run folder.
-            Public pages are generated from verified aggregates. The site
-            performs no model inference.
-          </p>
-          <a href={sourceUrl("docs/PROTOCOL.md")}>
-            Read the full protocol and decision rules{" "}
-            <span aria-hidden="true">↗</span>
-          </a>
-        </section>
-      </article>
-    </div>
-  );
+  return <div className="research-layout">
+    <aside className="page-toc" aria-label="On this page"><p className="eyebrow">RESEARCH RECORD</p><nav>
+      {chapters.map((chapter,i) => <a key={chapter} href={`#chapter-${i+1}`}>{chapter}</a>)}
+    </nav></aside>
+    <article className="research-article">
+      <header className="hero">
+        <p className="eyebrow">COUNTERPRIOR / BASAVARAJ A NADUVINAMANI</p>
+        <p className="caption">I take small multimodal models apart by muting, swapping and probing what they’re given, to find out what they actually perceive, and I report what didn’t work as carefully as what did.</p>
+        <h1>Small on-device AI models don’t see and hear equally.</h1>
+        <p className="lead">I measured where they make things up across image, audio and video, and chose not to ship my own detector.</p>
+        <p>A hard-of-hearing user asks a phone assistant, “Is that a siren?” On held-out sound questions, Gemma 4 E2B caught only {percentage(gemma[0].recall)}% of the sounds that were really there.</p>
+        <div className="tldr"><p>On held-out Qwen2.5-Omni-3B sound questions, a hidden-state probe improved false-Yes detection by ΔAUROC* {signed(qwen[0].delta)} (95% CI* {interval(qwen[0].ci)}), test run once. A probe filter cut false Yes by 12.4 points at a 3.2-point recall cost, above our preset 2-point cap, so it did not ship.</p></div>
+      </header>
+      <section id="chapter-1" className="paper-section"><Heading index={0} />
+        <p className="eyebrow">LLAVA-1.5 / AI4BHARAT, NOVEMBER 2025–FEBRUARY 2026</p>
+        <p>I designed CounterPrior-50 during the internship. The September 2026 release has 50 images, with 18 attribute traps, 18 absence traps and 14 positive controls.</p>
+        <p>A later verified POPE* run scored 1,800 held-out questions with accuracy 0.863 [0.840, 0.888]. The hidden-state probe reached 0.719 AUROC versus 0.745 for answer confidence. Steering did not beat the matched controls.</p>
+        <p className="endpoint-note">The probe lost, so I kept going.</p>
+        <a href={record("results/REPORT_metrics.json")}>POPE results</a>
+      </section>
+      <section id="chapter-2" className="paper-section"><Heading index={1} />
+        <p className="eyebrow">GEMMA 4 E2B / INDEPENDENT CONTINUATION, NOVEMBER 2026</p>
+        <p>Silencing audio shifted the Yes–No score by {e.silence.estimate.toFixed(2)} on average and flipped {e.silenceFlips} of {e.silence.n} answers.</p>
+        <SwapDiagram />
+        <p className="caption"><em>Exploratory.</em> Video swaps moved sound-question scores {e.soundSwap.estimate.toFixed(2)}× as much as audio swaps [{e.soundSwap.ci95.map(v => v.toFixed(2)).join(", ")}] (calibration and validation, n={e.soundSwap.n}).</p>
+        <p className="endpoint-note">Gemma had 15 sound and 24 video false-Yes cases, below the 40-case threshold for each task.</p>
+        <a href={record("results/v2/gemma-exploratory-summary.json")}>Gemma exploratory results</a>
+      </section>
+      <section id="chapter-3" className="paper-section"><Heading index={2} />
+        <p className="eyebrow">QWEN2.5-OMNI-3B / INDEPENDENT CONTINUATION, NOVEMBER 2026</p>
+        <p>Qwen’s held-out raw-margin AUROC was {qwen[0].auc.estimate.toFixed(3)} on sound questions and {qwen[1].auc.estimate.toFixed(3)} on video questions.</p>
+        <MirroredRates />
+        <Forest />
+      </section>
+      <section id="chapter-4" className="paper-section"><Heading index={3} />
+        <p>Gemma audio-only gained {signed(e.audioOnly.estimate)} {interval(e.audioOnly.ci95)} and Listen First gained {signed(e.listenFirst.estimate)} {interval(e.listenFirst.ci95)} on validation (n={e.audioOnly.n}). Both intervals included zero. The contrast scores trailed the raw baseline.</p>
+        <Tradeoff />
+        <p className="endpoint-note">I held back the Qwen sound filter because of its recall cost. The video probe met the demo rule with only 26 false-Yes cases, below the power threshold.</p>
+      </section>
+      <section id="chapter-5" className="paper-section"><Heading index={4} />
+        <p>Calibration fit the probes. Validation chose layers and thresholds. Each held-out evaluation ran once after choices were frozen. Each model used a 100-item label audit. The Kaggle setup used three accounts and six T4 GPUs for the Gemma benchmark.</p>
+        <ul className="plain-list"><li>Early pilot figures were withdrawn after a scorer audit.</li><li>The 3.6% flip claim was withdrawn as evidence of sound removal after the donor check found that most donor clips lacked a verified absence label.</li><li>Released clip IDs stand in for source lineage where original sources are unknown. The Gemma swap findings are exploratory.</li></ul>
+      </section>
+      <section id="chapter-6" className="paper-section"><Heading index={5} />
+        <ul className="plain-list"><li>Targeted swaps with independently verified donor labels.</li><li>Attention to audio tokens during sound questions.</li><li>Fine-tuning with audio-swap negatives.</li></ul>
+        <p>AVHBench* access and the AVCD* baseline are described in the preregistration.</p>
+        <div className="resource-links"><a href={`${repo}/tree/v2.0-final`}>Repository</a><a href={record("docs/PREREGISTRATION_KAGGLE.md")}>Preregistration</a></div>
+        <p className="caption">* AUROC, area under the receiver operating characteristic curve. CI, confidence interval. POPE, Polling-based Object Probing Evaluation. AVHBench, Audio-Visual Hallucination Benchmark. AVCD, Audio-Visual Contrastive Decoding.</p>
+      </section>
+    </article>
+  </div>;
 }
