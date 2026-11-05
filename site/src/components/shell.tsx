@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ThemeToggle } from "./theme-toggle";
 import { code, sourceUrl } from "@/lib/data";
 export function Header() {
   return (
@@ -10,12 +9,11 @@ export function Header() {
           <span>CounterPrior</span>
         </Link>
         <nav aria-label="Main navigation">
-          <Link href="/#results">Research</Link>
+          <Link href="/#chapter-3">Research</Link>
           <Link href="/explorer/">Explorer</Link>
           <Link href="/ablations/">Ablations</Link>
           <Link href="/about/">About</Link>
         </nav>
-        <ThemeToggle />
       </div>
     </header>
   );

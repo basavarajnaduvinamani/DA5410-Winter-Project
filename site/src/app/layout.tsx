@@ -7,17 +7,17 @@ const origin =
   process.env.NEXT_PUBLIC_SITE_URL ||
   (process.env.VERCEL_PROJECT_PRODUCTION_URL
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : "http://localhost:4173");
+    : "https://counterprior.vercel.app");
 export const metadata: Metadata = {
   metadataBase: new URL(origin),
   title: {
-    default: "CounterPrior — Evidence before claims",
+    default: "CounterPrior — How small AI models see and hear",
     template: "%s — CounterPrior",
   },
   description:
-    "Research at AI4Bharat Lab, IIT Madras: detecting answer errors and testing norm-preserving steering in LLaVA on image-disjoint POPE.",
+    "Object and sound grounding in LLaVA, Gemma 4 E2B and Qwen2.5-Omni-3B, with held-out results and recorded limitations.",
   openGraph: {
-    title: "CounterPrior — Evidence before claims",
+    title: "CounterPrior — How small AI models see and hear",
     description:
       "Question, frozen protocol, honest results and reproducibility for representation-level hallucination research.",
     type: "website",
@@ -34,7 +34,6 @@ export const metadata: Metadata = {
   icons: { icon: "/favicon.svg" },
   robots: { index: true, follow: true },
 };
-const themeScript = `try { var t = localStorage.getItem('counterprior-theme'); document.documentElement.dataset.theme = t === 'dark' || t === 'light' ? t : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); } catch (_) {}`;
 export default function RootLayout({
   children,
 }: {
@@ -43,12 +42,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      suppressHydrationWarning
       className={`${GeistSans.variable} ${GeistMono.variable}`}
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
       <body>
         <a className="skip-link" href="#main">
           Skip to content

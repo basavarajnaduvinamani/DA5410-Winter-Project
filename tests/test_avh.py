@@ -14,6 +14,35 @@ sys.modules["avh_common"] = avh
 spec.loader.exec_module(avh)
 
 
+@pytest.mark.parametrize("dump_fails", [False, True])
+def test_watchdog_terminates_even_if_notebook_diagnostic_output_fails(monkeypatch, dump_fails):
+    import types
+    captured = {}
+    class Terminated(BaseException):
+        pass
+    def fake_thread(target, daemon):
+        captured["monitor"] = target
+        return types.SimpleNamespace(start=lambda: None, join=lambda **kw: None)
+    def dump(**kwargs):
+        assert kwargs == {"file": 2, "all_threads": True}
+        if dump_fails:
+            raise OSError("notebook diagnostic stream unavailable")
+    def terminate(code):
+        captured["exit_code"] = code
+        raise Terminated()
+    monkeypatch.setattr(avh.threading, "Thread", fake_thread)
+    monkeypatch.setattr(avh.faulthandler, "dump_traceback", dump)
+    monkeypatch.setattr(avh.os, "_exit", terminate)
+    watchdog = avh.Watchdog(seconds=600)
+    watchdog.last = 0
+    monkeypatch.setattr(avh.time, "monotonic", lambda: 601)
+    monkeypatch.setattr(watchdog.stop, "wait", lambda seconds: False)
+    with watchdog:
+        with pytest.raises(Terminated):
+            captured["monitor"]()
+    assert captured["exit_code"] == 124
+
+
 @pytest.mark.parametrize("bundled", [True, False])
 def test_license_resolution_uses_repo_file_or_verified_publisher_link(tmp_path, monkeypatch, bundled):
     import types
@@ -67,6 +96,83 @@ def release_fixture():
         for task, question in zip(avh.TASKS, questions):
             qa.append({"video_id": vid, "task": task, "text": question, "label": "Yes" if i % 2 else "No"})
     return qa, lineage
+
+
+def private_terms_fixture(root):
+    avh.atomic_json(root / "release_inventory.json", {"terms_files": [], "kind": "synthetic fixture"})
+    texts = {
+        "gemma": "Apache License\nVersion 2.0\n2. Grant of Copyright License. Synthetic grant.\n3. Grant of Patent License.",
+        "qwen": "Qwen RESEARCH LICENSE AGREEMENT\nNon-Commercial means research or evaluation purposes only.\n2. Grant of Rights\nFOR NON-COMMERCIAL PURPOSES ONLY\n3. Redistribution"}
+    for model, text in texts.items():
+        avh.atomic_json(root / model / "model_metadata.json", {"repo": avh.MODEL_IDS[model], "revision": "a"*40,
+            "license_text": text, "license_sha256": avh.hashlib.sha256(text.encode()).hexdigest()})
+
+
+def test_private_terms_setup_requires_approval_and_preserves_existing_inference_identity(tmp_path):
+    private_terms_fixture(tmp_path)
+    with pytest.raises(RuntimeError, match="Explicit owner"):
+        avh.save_approved_private_terms(tmp_path)
+    review = avh.save_approved_private_terms(tmp_path, True, "synthetic owner")
+    assert review["dataset"]["decision"] == "no_licence_stated_private_research_eval"
+    assert review["qwen"]["applicable_passage"].startswith("2. Grant of Rights")
+    assert avh.read_json(tmp_path / "publication_policy.json")["public_avhbench_media_allowed"] is False
+    before = (tmp_path / "terms_review.json").read_bytes()
+    ledger = tmp_path / "gemma" / "f8" / "full" / "partition.jsonl"
+    ledger.parent.mkdir(parents=True)
+    ledger.write_text("synthetic ledger")
+    assert avh.save_approved_private_terms(tmp_path, True, "synthetic owner") == review
+    with pytest.raises(RuntimeError, match="Terms changed after inference"):
+        avh.save_approved_private_terms(tmp_path, True, "different reviewer")
+    assert (tmp_path / "terms_review.json").read_bytes() == before
+
+
+def test_single_media_catalog_preserves_opaque_ids_and_finds_duplicate_names(tmp_path, monkeypatch):
+    (tmp_path / "nested").mkdir()
+    (tmp_path / "01162.mp4").write_bytes(b"synthetic")
+    (tmp_path / "nested" / "01162.mp4").write_bytes(b"duplicate")
+    avh.atomic_json(tmp_path / "01162.json", {"source_ids": ["real-origin"], "is_swapped": False})
+    catalog = avh.media_catalog(tmp_path)
+    assert len(catalog["video"]["01162"]) == 2
+    def forbidden(*args):
+        raise AssertionError("Provided catalog must prevent a new full directory scan")
+    monkeypatch.setattr(avh, "media_catalog", forbidden)
+    qa = [{"video_id": "01162", "task": avh.TASKS[0], "text": "Is the dog making sound in the audio?", "label": "Yes"}]
+    lineage = avh.auto_lineage(tmp_path, qa, tmp_path, catalog=catalog)
+    assert lineage[0]["source_ids"] == ["real-origin"]
+    assert lineage[0]["object_by_question"][qa[0]["text"]] == "dog"
+
+
+def test_shared_preparation_does_not_require_completed_audit_or_load_a_model(tmp_path, monkeypatch):
+    private_terms_fixture(tmp_path)
+    qa, _ = release_fixture()
+    avh.atomic_json(tmp_path / "released_qa.json", qa)
+    (tmp_path / "release" / "unpacked").mkdir(parents=True)
+    calls = []
+    def media(root, video_dir, manifest, frames, max_side, catalog=None):
+        calls.append(catalog)
+        return {r["video_id"]: {"kind": "synthetic media fixture"} for r in manifest["rows"]}
+    monkeypatch.setattr(avh, "prepare_media", media)
+    monkeypatch.setattr(avh, "OmniScorer", lambda *args: pytest.fail("Preparation must not load a model"))
+    manifest, index, result = avh.prepare_shared_study(tmp_path, True, "synthetic owner")
+    assert result["status"] == "shared_data_ready" and len(index) == 60
+    assert len(manifest["rows"]) == 180 and len(calls) == 1
+    assert avh.check_audit(tmp_path, manifest) == set()
+    assert avh.read_json(tmp_path / "audit_summary.json")["n_label_pending"] > 0
+
+
+def test_release_duplicate_resolution_excludes_conflicts_without_relabeling(tmp_path):
+    def row(vid, label):
+        return {"video_id": vid, "task": avh.TASKS[0], "text": "Is the dog making sound in the audio?", "label": label}
+    raw = [row("same", "Yes"), row("same", "Yes"), row("conflict", "Yes"), row("conflict", "No"), row("unique", "No")]
+    original = json.loads(json.dumps(raw))
+    resolved, report = avh.resolve_released_qa(tmp_path, raw)
+    assert raw == original
+    assert resolved == [raw[0], raw[4]]
+    assert report["removed_occurrences"] == 3
+    assert report["resolved_binary_questions"] == 2
+    assert report["decisions"][0]["removed_indices"] == [1]
+    assert report["decisions"][1]["removed_indices"] == [2, 3]
+    assert avh.resolve_released_qa(tmp_path, raw)[1] == report
 
 
 def test_go_gate_and_model_constraints(tmp_path):
@@ -157,6 +263,46 @@ def test_bulk_rejects_scorer_with_different_execution_mode(tmp_path):
     scorer = types.SimpleNamespace(cfg=avh.dataclasses.replace(cfg, scoring_mode="verified_prefix"))
     with pytest.raises(RuntimeError, match="mode differs"):
         avh.run_stage(scorer, cfg, {}, {}, "GO")
+
+
+def test_fallback_uses_actual_model_specific_failure_and_preserves_original_code_record(tmp_path):
+    import types
+    cfg = avh.Config(str(tmp_path), "qwen", "a"*40)
+    evidence = {"status": "comparison_complete", "kind": "captured_original_prefix_failure",
+                "logits_max_abs_diff": .1, "hidden_max_abs_diff": .2, "answers": [1, 1]}
+    folder = tmp_path / "qwen"
+    avh.atomic_json(folder / "cache_parity_failure.json", evidence)
+    scorer = types.SimpleNamespace(cfg=cfg, env={}, model=object())
+    cfg = avh.use_full_forward(scorer, cfg, evidence_file="cache_parity_failure.json")
+    path = folder / "scoring_amendment.json"
+    saved = avh.read_json(path)
+    assert saved["prefix_evidence_file"] == "cache_parity_failure.json"
+    assert saved["model"] == avh.MODEL_IDS["qwen"]
+    saved["code_sha256"] = "code_at_original_decision"
+    avh.atomic_json(path, saved)
+    avh.record_scoring_amendment(cfg)
+    assert avh.read_json(path) == saved
+    avh.atomic_json(folder / "cache_parity_failure.json", dict(evidence, hidden_max_abs_diff=.3))
+    with pytest.raises(RuntimeError, match="amendment changed"):
+        avh.record_scoring_amendment(cfg)
+
+
+def test_recovery_reuses_model_from_failed_smoke_without_a_global_scorer(tmp_path, monkeypatch):
+    import types
+    cfg = avh.Config(str(tmp_path), "qwen", "a"*40)
+    retained = types.SimpleNamespace(cfg=cfg, env={}, model=object())
+    # Give this synthetic traceback the same code filename/name as the real boundary.
+    namespace = {"retained": retained}
+    exec(compile('def parity_checks():\n scorer = retained\n entry = {"id":"fixture", "pass":"full", "logits_max_abs_diff":0.1, "hidden_max_abs_diff":0.2, "fresh_answer":1, "cached_answer":1}\n raise RuntimeError("Cache parity failed")\n', str(SOURCE), "exec"), namespace)
+    try:
+        namespace["parity_checks"]()
+    except RuntimeError as error:
+        monkeypatch.setattr(sys, "last_traceback", error.__traceback__, raising=False)
+        recovered, updated = avh.recover_full_forward()
+    assert recovered is retained and updated.scoring_mode == "full_forward"
+    evidence = avh.read_json(tmp_path / "qwen" / "cache_parity_failure.json")
+    assert evidence["kind"] == "captured_original_prefix_failure"
+    assert evidence["failed_check"]["id"] == "fixture"
 
 
 def test_terms_need_real_unchanged_evidence_and_applicable_passage(tmp_path):

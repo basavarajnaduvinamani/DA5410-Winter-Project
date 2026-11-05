@@ -52,6 +52,15 @@ Require ten components and at least four eligible donor clips per split; print e
 realized counts. A giant connected component or missing task/class is a limitation,
 never a reason to silently switch to row-level splitting.
 
+November 4 QA consistency amendment, before manifest freezing/research evaluation:
+group by exact released video ID, task and question text. For repeated groups with
+the same normalized label, keep the first occurrence. For conflicting Yes/No labels,
+exclude every occurrence without guessing the correct answer. Preserve all source
+indices/labels and decisions in `qa_resolution.json`, hash it into the manifest,
+and retain the raw release unchanged. The local public-QA preflight found seven
+repeated groups, two conflicting; actual owner-side counts are recomputed and
+reported. This deterministic rule does not use model predictions or test performance.
+
 For each video/task choose four distinct clips not marked swapped from its own split,
 excluding its connected source component, with a deterministic hash seed. Same
 donors for all questions sharing video/task; same manifest for both models.

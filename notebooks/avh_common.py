@@ -78,10 +78,12 @@ class Config:
     scoring_mode: str = "verified_prefix"
 
     def __post_init__(self):
-        if self.model not in MODEL_IDS or self.frames not in (1, 8) or self.k != 4:
-            raise ValueError("Only the two approved models, 8/1 frames, and K=4 are permitted")
+        if self.model not in MODEL_IDS or self.frames not in (1, 8) or self.k not in (2, 4):
+            raise ValueError("Only the two approved models, 8/1 frames, and preregistered K=2/4 are permitted")
         if self.stage not in PASSES or not 0 <= self.worker_index < self.workers:
             raise ValueError("Invalid stage or work partition")
+        if self.stage.startswith("cf") and int(self.stage[2:]) >= self.k:
+            raise ValueError("Counterfactual stage exceeds registered K")
         if self.scoring_mode not in ("verified_prefix", "full_forward"):
             raise ValueError("Unknown scoring mode")
         if len(self.revision) != 40 or any(c not in "0123456789abcdef" for c in self.revision):
@@ -262,6 +264,72 @@ def check_terms(root, model):
     return review
 
 
+def save_approved_private_terms(root, private_eval_approved=False, reviewer=""):
+    """Record the owner's explicit private-only choice with actual saved evidence."""
+    if private_eval_approved is not True or not reviewer.strip():
+        raise RuntimeError("Explicit owner private-evaluation approval and reviewer required")
+    root = Path(root)
+    inventory_path = root / "release_inventory.json"
+    inventory = read_json(inventory_path)
+    if inventory["terms_files"]:
+        raise RuntimeError("Release terms files were found; inspect them before using the no-license decision")
+    license_files = {}
+    review = {"dataset": {"decision": "no_licence_stated_private_research_eval",
+        "evidence_file": inventory_path.name, "sha256": file_hash(inventory_path),
+        "applicable_passage": "", "source_url": "https://github.com/kaist-ami/AVHBench",
+        "reviewer": reviewer, "terms_files_found": inventory["terms_files"],
+        "note": "Owner-approved private research evaluation; not a claim of publisher permission"}}
+    for model in MODEL_IDS:
+        meta = read_json(root / model / "model_metadata.json")
+        if meta["repo"] != MODEL_IDS[model]:
+            raise RuntimeError("Saved model metadata has the wrong repository")
+        text = meta["license_text"]
+        if model == "gemma":
+            valid = "Apache License" in text and "Version 2.0" in text
+            pattern = r"2\. Grant of Copyright License\..*?(?=\n\s*3\.)"
+        else:
+            valid = ("Qwen RESEARCH LICENSE" in text and "FOR NON-COMMERCIAL PURPOSES ONLY" in text
+                     and "research or evaluation purposes only" in text)
+            pattern = r"2\. Grant of Rights.*?(?=\n\s*3\.)"
+        match = re.search(pattern, text, re.S)
+        if not valid or match is None:
+            raise RuntimeError(f"Inspect actual saved {model} license: expected research-use evidence missing")
+        evidence = root / f"{model}_LICENSE.txt"
+        expected_hash = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if expected_hash != meta["license_sha256"]:
+            raise RuntimeError("Saved model license hash differs from resolved metadata")
+        license_files[evidence] = text
+        source = meta.get("license_source_url") or (
+            f"https://huggingface.co/{meta['repo']}/resolve/{meta['revision']}/LICENSE")
+        review[model] = {"decision": "research_use_permitted", "evidence_file": evidence.name,
+            "sha256": expected_hash, "applicable_passage": match[0], "source_url": source,
+            "reviewer": "Saved-license evidence check; owner authorized private research evaluation",
+            "model_revision": meta["revision"]}
+    target = root / "terms_review.json"
+    if not target.exists() or read_json(target) != review:
+        if any(path for model in MODEL_IDS for path in (root / model).glob("f*/*/*.jsonl")):
+            raise RuntimeError("Terms changed after inference began; preserve existing run identity")
+    for evidence, text in license_files.items():
+        evidence.write_bytes(text.encode("utf-8"))
+    atomic_json(target, review)
+    atomic_json(root / "publication_policy.json", {"dataset_evaluation": "private_only",
+        "public_avhbench_media_allowed": False, "public_content": ["aggregate numbers", "our own text"],
+        "owner_approval": reviewer})
+    for model in MODEL_IDS:
+        check_terms(root, model)
+    return review
+
+
+def media_catalog(media_dir):
+    """Index filenames once; repeated Drive-wide rglob per clip is prohibitively slow."""
+    result = {"video": defaultdict(list), "metadata": defaultdict(list)}
+    for path in Path(media_dir).rglob("*"):
+        kind = "video" if path.suffix.lower() == ".mp4" else "metadata" if path.suffix.lower() == ".json" else None
+        if kind is not None:
+            result[kind][path.stem].append(path)
+    return result
+
+
 def object_key(question):
     text = " ".join(question.casefold().strip().rstrip("?.!").split())
     patterns = (r"^is there (?:an? |the )?(.+?)(?: (?:in|on) (?:the )?(?:audio|video|image|clip))?$",
@@ -274,18 +342,22 @@ def object_key(question):
     return "question:" + text
 
 
-def auto_lineage(root, qa, media_dir):
+def auto_lineage(root, qa, media_dir, catalog=None):
     """Recover only explicit metadata/marked filename origins; otherwise disclose clip fallback."""
+    path = Path(root) / "lineage.json"
+    if path.exists():
+        return read_json(path)
+    catalog = media_catalog(media_dir) if catalog is None else catalog
     by_video = defaultdict(list)
     for row in qa:
         by_video[str(row["video_id"])].append(row)
     output = []
     for vid, rows in sorted(by_video.items()):
-        matches = list(Path(media_dir).rglob(vid + ".mp4"))
+        matches = catalog["video"].get(vid, [])
         name = str(matches[0].relative_to(media_dir)) if len(matches) == 1 else vid
         metadata_rows = list(rows)
         metadata_rows.extend(r["metadata"] for r in rows if isinstance(r.get("metadata"), dict))
-        for sidecar in Path(media_dir).rglob(vid + ".json"):
+        for sidecar in catalog["metadata"].get(vid, []):
             value = read_json(sidecar)
             if isinstance(value, dict):
                 metadata_rows.append(value)
@@ -315,9 +387,6 @@ def auto_lineage(root, qa, media_dir):
             "provenance": "; ".join(sorted(set(evidence))) if evidence else "released clip ID fallback",
             "object_rule": OBJECT_RULE,
             "object_by_question": {r["text"]: object_key(r["text"]) for r in rows if r["task"] in TASKS}})
-    path = Path(root) / "lineage.json"
-    if path.exists():
-        return read_json(path)  # retain any prior explicit/manual corrections
     atomic_json(path, output)
     atomic_json(Path(root) / "lineage_rules.json", {"object_rule": OBJECT_RULE,
         "source_fields": ["source_ids", "audio_source_id", "video_source_id", "source_video_id", "valor_id", "audiocaps_id"],
@@ -346,7 +415,42 @@ def connected_groups(lineage):
     return {r["video_id"]: find(str(r["video_id"] if r.get("grouping_fallback") else r["source_ids"][0])) for r in lineage}
 
 
-def make_manifest(root, qa, lineage, seed=SEED):
+def resolve_released_qa(root, qa):
+    """Keep first identical-label copy; exclude all conflicting-label occurrences.
+
+    Apply before manifest freeze. Original release is never edited, and every
+    affected source-row index plus label is preserved in an explicit resolution log.
+    """
+    groups = defaultdict(list)
+    for i, row in enumerate(qa):
+        if row["task"] in TASKS:
+            groups[(str(row["video_id"]), row["task"], row["text"])].append(i)
+    removed, decisions = set(), []
+    for key, indices in groups.items():
+        if len(indices) == 1:
+            continue
+        labels = {str(qa[i]["label"]).strip().casefold() for i in indices}
+        excluded = indices if len(labels) > 1 else indices[1:]
+        removed.update(excluded)
+        decisions.append({"video_id": key[0], "task": key[1], "question": key[2],
+            "source_indices": indices, "source_labels": [qa[i]["label"] for i in indices],
+            "removed_indices": excluded,
+            "action": "exclude_conflicting_group" if len(labels) > 1 else "keep_first_identical_label_copy"})
+    resolved = [r for i, r in enumerate(qa) if i not in removed]
+    report = {"rule": "qa-dedup-v1: keep first identical-label copy; exclude every conflicting-label occurrence",
+        "raw_qa_sha256": digest(qa), "resolved_qa_sha256": digest(resolved),
+        "raw_records": len(qa), "resolved_records": len(resolved),
+        "raw_binary_questions": sum(r["task"] in TASKS for r in qa),
+        "resolved_binary_questions": sum(r["task"] in TASKS for r in resolved),
+        "removed_occurrences": len(removed), "decisions": decisions}
+    target = Path(root) / "qa_resolution.json"
+    if target.exists() and read_json(target) != report:
+        raise RuntimeError("QA resolution changed; do not replace frozen study records")
+    atomic_json(target, report)
+    return resolved, report
+
+
+def make_manifest(root, qa, lineage, seed=SEED, qa_resolution=None):
     """lineage: video_id, source_ids (both origins), is_swapped, provenance, object map.
 
     Auto object keys and explicitly disclosed released-clip fallback are supported.
@@ -401,6 +505,8 @@ def make_manifest(root, qa, lineage, seed=SEED):
     payload = {"seed": seed, "rows": rows, "lineage_sha256": digest(lineage),
                "qa_sha256": digest(qa), "split_rule": "connected recovered origins or disclosed released-clip fallback, 60/20/20",
                "limitations": limitations, "object_rule": OBJECT_RULE}
+    if qa_resolution is not None:
+        payload["qa_resolution"] = qa_resolution
     if path.exists() and read_json(path) != payload:
         raise RuntimeError("Manifest already frozen: start a new study directory to change it")
     atomic_json(path, payload)
@@ -466,7 +572,7 @@ def check_audit(root, manifest, require_complete=False):
     return excluded
 
 
-def prepare_media(root, video_dir, manifest, frames=8, max_side=224):
+def prepare_media(root, video_dir, manifest, frames=8, max_side=224, catalog=None):
     """Same deterministic frame indices/audio bytes for both models; full track, no truncation."""
     import numpy as np
     from PIL import Image
@@ -474,9 +580,11 @@ def prepare_media(root, video_dir, manifest, frames=8, max_side=224):
     import soundfile as sf
     root = Path(root)
     video_dir = Path(video_dir)
+    catalog = media_catalog(video_dir) if catalog is None else catalog
     index = {}
-    for vid in sorted({r["video_id"] for r in manifest["rows"]}):
-        matches = list(video_dir.rglob(vid + ".mp4"))
+    videos = sorted({r["video_id"] for r in manifest["rows"]})
+    for number, vid in enumerate(videos, 1):
+        matches = catalog["video"].get(vid, [])
         if len(matches) != 1:
             raise ValueError(f"Need exactly one media file for {vid}, found {len(matches)}")
         source = matches[0]
@@ -490,6 +598,8 @@ def prepare_media(root, video_dir, manifest, frames=8, max_side=224):
             if any(file_hash(target / name) != sha for name, sha in saved["file_hashes"].items()):
                 raise RuntimeError("Preprocessed media changed")
             index[vid] = saved
+            if number % 50 == 0 or number == len(videos):
+                print(f"Media ready: {number}/{len(videos)} (verified/reused)", flush=True)
             continue
         with av.open(str(source)) as container:
             count = sum(1 for _ in container.decode(video=0))
@@ -512,8 +622,44 @@ def prepare_media(root, video_dir, manifest, frames=8, max_side=224):
                       "frame_indices": indices, "audio_samples": len(audio),
                       "file_hashes": {p.name: file_hash(p) for p in sorted(target.iterdir()) if p.name != "ready.json"}}
         atomic_json(ready, index[vid])
+        if number % 50 == 0 or number == len(videos):
+            print(f"Media ready: {number}/{len(videos)}", flush=True)
     atomic_json(root / f"media_index_f{frames}.json", index)
     return index
+
+
+def prepare_shared_study(root, private_eval_approved=False, reviewer="", frames=8, max_side=224):
+    """Run on Account A only. Prepare shared evidence without touching either model."""
+    root = Path(root)
+    print("Recording approved private-only terms and model license evidence...", flush=True)
+    save_approved_private_terms(root, private_eval_approved, reviewer)
+    print("Indexing released media filenames once...", flush=True)
+    unpacked = root / "release" / "unpacked"
+    catalog = media_catalog(unpacked)
+    qa = read_json(root / "released_qa.json")
+    lineage = auto_lineage(root, qa, unpacked, catalog=catalog)
+    resolved, resolution = resolve_released_qa(root, qa)
+    print(json.dumps({"raw_binary_questions": resolution["raw_binary_questions"],
+        "resolved_binary_questions": resolution["resolved_binary_questions"],
+        "removed_occurrences": resolution["removed_occurrences"],
+        "resolution_log": str(root / "qa_resolution.json")}, indent=2), flush=True)
+    manifest = make_manifest(root, resolved, lineage, qa_resolution=resolution)
+    audit_path = create_audit(root, manifest)
+    counts = {s: sum(r["split"] == s for r in manifest["rows"])
+              for s in ("calibration", "validation", "test")}
+    print(json.dumps({"manifest_questions": len(manifest["rows"]), "split_counts": counts,
+                      "limitations": manifest["limitations"], "audit_sheet": str(audit_path)}, indent=2), flush=True)
+    print("Preparing shared frames + 16 kHz audio; per-clip checkpoints permit resume...", flush=True)
+    index = prepare_media(root, unpacked, manifest, frames, max_side, catalog=catalog)
+    summary = {"status": "shared_data_ready", "manifest_questions": len(manifest["rows"]),
+        "media_clips": len(index), "split_counts": counts, "frames": frames,
+        "audit_sheet": str(audit_path), "audit_completion": "required at analysis freeze, not inference",
+        "dataset_decision": "no_licence_stated_private_research_eval", "public_avhbench_media_allowed": False,
+        "limitations": manifest["limitations"], "manifest_sha256": digest(manifest)}
+    summary["qa_resolution"] = {k: resolution[k] for k in
+        ("raw_binary_questions", "resolved_binary_questions", "removed_occurrences", "rule")}
+    atomic_json(root / "shared_data_summary.json", summary)
+    return manifest, index, summary
 
 
 def verify_media(index):
@@ -543,9 +689,13 @@ class Watchdog:
             while not self.stop.wait(5):
                 now = time.monotonic()
                 if now - self.last > self.seconds or (self.deadline is not None and now > self.deadline):
-                    print("STALLED: no durable row within time limit; terminating kernel", flush=True)
-                    faulthandler.dump_traceback(all_threads=True)
-                    os._exit(124)
+                    try:
+                        print("STALLED: no durable row within time limit; terminating kernel", flush=True)
+                        # IPython's stderr wrapper may not implement fileno().
+                        # Use the real descriptor; diagnostics must never disable termination.
+                        faulthandler.dump_traceback(file=2, all_threads=True)
+                    finally:
+                        os._exit(124)
         self.thread = threading.Thread(target=monitor, daemon=True)
         self.thread.start()
         return self
@@ -848,12 +998,17 @@ class OmniScorer:
                                 self.torch.logsumexp(scores[self.tokens["no"]], 0))}
 
 
-def record_scoring_amendment(cfg):
+def record_scoring_amendment(cfg, evidence_file=None):
     """Explicit pre-test fallback record; never relabel failed prefix parity as passed."""
     if cfg.scoring_mode != "full_forward":
         return
     folder = Path(cfg.root) / cfg.model
-    evidence_path = folder / "cache_diagnostic_v3.json"
+    target = folder / "scoring_amendment.json"
+    existing = read_json(target) if target.exists() else None
+    name = evidence_file or (existing["prefix_evidence_file"] if existing else "cache_diagnostic_v3.json")
+    if Path(name).name != name:
+        raise ValueError("Failure evidence must be a filename inside the model study folder")
+    evidence_path = folder / name
     evidence = read_json(evidence_path)
     if evidence.get("status") != "comparison_complete" or not (
             evidence["logits_max_abs_diff"] > .02 or evidence["hidden_max_abs_diff"] > .02
@@ -866,26 +1021,66 @@ def record_scoring_amendment(cfg):
         "prefix_evidence": evidence, "code_sha256": file_hash(__file__),
         "formal_checks": "full-forward repeatability, generation agreement, finiteness and VRAM",
         "statistics": "unchanged; separate formal smoke and pre-test analysis freeze still required"}
-    target = folder / "scoring_amendment.json"
-    if target.exists() and read_json(target) != payload:
-        raise RuntimeError("Scoring amendment changed; do not reuse an existing run identity")
+    if existing is not None:
+        # Preserve the code hash at the time of the original mode decision. Current
+        # code is independently hashed in every run identity and smoke artifact.
+        changed = any(existing.get(k) != v for k, v in payload.items() if k != "code_sha256")
+        if changed:
+            raise RuntimeError("Scoring amendment changed; do not reuse an existing run identity")
+        return
     atomic_json(target, payload)
 
 
-def use_full_forward(scorer, cfg):
+def use_full_forward(scorer, cfg, evidence_file=None):
     """Upgrade a retained scorer's dispatch without allocating/reloading model weights."""
     from types import MethodType
     updated = Config(**{**dataclasses.asdict(cfg), "scoring_mode": "full_forward"})
     for key in ("model", "revision", "frames", "max_side"):
         if getattr(scorer.cfg, key) != getattr(updated, key):
             raise RuntimeError("Retained model/config mismatch: " + key)
-    record_scoring_amendment(updated)
+    record_scoring_amendment(updated, evidence_file=evidence_file)
     scorer.cfg = updated
     scorer.score = MethodType(OmniScorer.score, scorer)
     scorer.env = dict(scorer.env, scoring_mode="full_forward")
     scorer.prefix = None
     scorer.prefix_key = None
     return updated
+
+
+def recover_full_forward():
+    """Recover the retained model and actual prefix-failure evidence from IPython."""
+    import sys
+    import gc
+    old_tb = getattr(sys, "last_traceback", None)
+    current, retained, entry = old_tb, None, None
+    while current is not None:
+        frame = current.tb_frame
+        if frame.f_code.co_name == "parity_checks" and Path(frame.f_code.co_filename).name == "avh_common.py":
+            retained = frame.f_locals.get("scorer")
+            observed = frame.f_locals.get("entry")
+            entry = dict(observed) if observed is not None else None
+        current = current.tb_next
+    if retained is None or entry is None:
+        raise RuntimeError("Failed smoke model/evidence unavailable; send this output before reloading any model")
+    if entry.get("comparison_kind", "prefix_parity") != "prefix_parity":
+        raise RuntimeError("Latest failure is not prefix parity; full-forward repeatability must not be bypassed")
+    cfg = retained.cfg
+    evidence = {"status": "comparison_complete", "kind": "captured_original_prefix_failure",
+        "model": MODEL_IDS[cfg.model], "revision": cfg.revision, "n_qa_diagnostic": 1,
+        "logits_max_abs_diff": entry["logits_max_abs_diff"],
+        "hidden_max_abs_diff": entry["hidden_max_abs_diff"],
+        "answers": [entry["fresh_answer"], entry["cached_answer"]], "failed_check": entry}
+    atomic_json(Path(cfg.root) / cfg.model / "cache_parity_failure.json", evidence)
+    cfg = use_full_forward(retained, cfg, evidence_file="cache_parity_failure.json")
+    if old_tb is not None:
+        traceback.clear_frames(old_tb)
+    for name in ("last_traceback", "last_value", "last_exc"):
+        setattr(sys, name, None)
+    del old_tb, current, frame
+    gc.collect()
+    if hasattr(retained, "torch"):
+        retained.torch.cuda.empty_cache()
+    return retained, cfg
 
 
 def study_signature(cfg, manifest, media_index, root, environment):
@@ -1110,11 +1305,21 @@ def load_completed(root, cfg, manifest, index, environment, split):
     signature = study_signature(cfg, manifest, index, root, environment)
     excluded = check_audit(root, manifest)
     freeze_path = Path(root) / cfg.model / "analysis_freeze.json"
+    if (split == "test" and manifest.get("test_scoring_policy") == "sealed_precompute"
+            and not freeze_path.exists()):
+        raise RuntimeError("Sealed test predictions cannot be opened before analysis freeze")
+    if split == "test" and manifest.get("test_scoring_policy") == "sealed_precompute":
+        sealed_freeze = read_json(freeze_path)
+        if (sealed_freeze.get("status") != "frozen_before_test_evaluation"
+                or sealed_freeze.get("signature") != signature
+                or file_hash(Path(root) / cfg.model / "analysis_bundle.joblib") != sealed_freeze.get("bundle_sha256")):
+            raise RuntimeError("Sealed test analysis freeze is missing, invalid or changed")
     if freeze_path.exists() and read_json(freeze_path)["audit_sha256"] != file_hash(Path(root) / "audit.csv"):
         raise RuntimeError("Audit changed after analysis freeze")
     wanted = {r["id"]: r for r in manifest["rows"] if r["split"] == split and r["id"] not in excluded}
     stores = {}
-    for stage in PASSES:
+    stages = ("full", *(f"cf{k}" for k in range(cfg.k)), "blank", "no_media")
+    for stage in stages:
         directory = Path(root) / cfg.model / f"f{cfg.frames}" / stage
         rows = {}
         for path in directory.glob("*.jsonl"):
@@ -1131,20 +1336,26 @@ def load_completed(root, cfg, manifest, index, environment, split):
             raise RuntimeError(f"Incomplete {stage}/{split}: {len(missing)} missing questions; no extrapolation")
         stores[stage] = rows
     ids = sorted(wanted)
-    data = []
+    data, feature_hashes = [], {}
     for key in ids:
         row = dict(wanted[key])
         row["margin"] = stores["full"][key]["margin"]
         row["no_media_margin"] = stores["no_media"][key]["margin"]
-        row["contrast"] = (row["margin"] - np.mean([stores[f"cf{k}"][key]["margin"] for k in range(4)])
+        row["contrast"] = (row["margin"] - np.mean([stores[f"cf{k}"][key]["margin"] for k in range(cfg.k)])
                            if row["task"] != TASKS[2] else None)
         row["blank_contrast"] = (row["margin"] - stores["blank"][key]["margin"] if row["task"] != TASKS[2] else None)
         frow = stores["full"][key]
         directory = Path(root) / cfg.model / f"f{cfg.frames}" / "full"
         feature = directory / frow["feature"]
-        if file_hash(feature) != frow["feature_sha256"]:
+        if feature not in feature_hashes:
+            feature_hashes[feature] = file_hash(feature)
+        if feature_hashes[feature] != frow["feature_sha256"]:
             raise RuntimeError("Feature hash mismatch")
-        row["hidden"] = np.load(feature)["hidden"].astype(np.float32)
+        if "feature_index" in frow:
+            row["hidden"] = np.load(feature, mmap_mode="r", allow_pickle=False)[frow["feature_index"]].astype(np.float32)
+        else:
+            with np.load(feature, allow_pickle=False) as archive:
+                row["hidden"] = archive["hidden"].astype(np.float32)
         data.append(row)
     return data
 
@@ -1310,6 +1521,12 @@ def freeze_analysis(root, cfg, manifest, index, environment, unembedding):
             raise RuntimeError("Frozen analysis signature mismatch")
         if file_hash(out / "analysis_bundle.joblib") != existing["bundle_sha256"]:
             raise RuntimeError("Analysis bundle changed")
+        if manifest.get("test_scoring_policy") == "sealed_precompute":
+            marker = out / "FROZEN.json"
+            if marker.exists() and read_json(marker) != existing:
+                raise RuntimeError("Sealed analysis freeze markers disagree")
+            if not marker.exists():
+                atomic_json(marker, existing)
         return existing
     bundles, thresholds, summary = {}, {}, {}
     for task in TASKS[:2]:
@@ -1331,11 +1548,14 @@ def freeze_analysis(root, cfg, manifest, index, environment, unembedding):
     path = out / "analysis_bundle.joblib"
     # Bundle is local trusted analysis state; never load a third-party pickle/joblib file.
     joblib.dump({"bundles": bundles, "calibration": calibration, "thresholds": thresholds}, path)
-    freeze = {"status": "frozen_before_test", "signature": signature, "manifest_sha256": digest(manifest),
+    freeze = {"status": "frozen_before_test_evaluation" if manifest.get("test_scoring_policy") == "sealed_precompute" else "frozen_before_test",
+              "signature": signature, "manifest_sha256": digest(manifest),
               "audit_sha256": file_hash(Path(root) / "audit.csv"),
               "bundle_sha256": file_hash(path), "thresholds": thresholds, "probe_choices": summary,
               "environment": environment, "unembedding_sha256": digest(np.asarray(unembedding).tolist())}
     atomic_json(freeze_path, freeze)
+    if manifest.get("test_scoring_policy") == "sealed_precompute":
+        atomic_json(out / "FROZEN.json", freeze)
     return freeze
 
 
