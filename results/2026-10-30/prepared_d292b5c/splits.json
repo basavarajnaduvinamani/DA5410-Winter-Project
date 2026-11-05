@@ -1,0 +1,18 @@
+{
+  "attr_01_green_banana": "calibration",
+  "abs_01_nomouse": "calibration",
+  "abs_02_blank_sign": "calibration",
+  "abs_06_empty_chair": "validation",
+  "abs_13_empty_bed": "test",
+  "ctrl_01_real_yellow_banana": "test",
+  "ctrl_04_real_apples": "calibration",
+  "ctrl_05_real_dog": "calibration",
+  "ctrl_06_real_coffee": "test",
+  "ctrl_07_real_clothes": "validation",
+  "ctrl_08_real_car": "validation",
+  "ctrl_09_real_book": "validation",
+  "ctrl_11_real_cat": "test",
+  "ctrl_12_real_guitar": "calibration",
+  "ctrl_13_real_bicycle": "calibration",
+  "ctrl_14_real_pizza": "calibration"
+}

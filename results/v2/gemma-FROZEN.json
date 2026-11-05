@@ -1,0 +1,87 @@
+{
+  "status": "frozen_before_test_evaluation",
+  "signature": "ef564807124738021c5f30c506027283c50657113cbdea45f838ea6aceb1cc2c",
+  "manifest_sha256": "108a74b1e7e583f9d77e3984fb689afcb59f551e9c7ff20fa1538d0fe30bfe8c",
+  "audit_sha256": "a8cbc26e7d1942d046a13ac8ec5278c247c1d465772188aaf9d8884f86d9fa59",
+  "bundle_sha256": "90add587488eda20abb923a7f0d47b072539ccf7345486cd31c27e7fa9fe58ff",
+  "thresholds": {
+    "Video-driven Audio Hallucination": {
+      "contrast": -1.6269869804382324,
+      "blank_contrast": -0.882533073425293,
+      "probe_risk": 0.8458805158856058
+    },
+    "Audio-driven Video Hallucination": {
+      "contrast": 2.982947826385498,
+      "blank_contrast": 7.714470863342285,
+      "probe_risk": 0.844389606804418
+    }
+  },
+  "probe_choices": {
+    "Video-driven Audio Hallucination": {
+      "status": "fitted",
+      "counts": {
+        "calibration_yes": 16,
+        "validation_yes": 18,
+        "calibration_false_yes": 4,
+        "validation_false_yes": 6
+      },
+      "selected_layer": 31
+    },
+    "Audio-driven Video Hallucination": {
+      "status": "fitted",
+      "counts": {
+        "calibration_yes": 55,
+        "validation_yes": 54,
+        "calibration_false_yes": 8,
+        "validation_false_yes": 7
+      },
+      "selected_layer": 15
+    }
+  },
+  "environment": {
+    "python": "3.13.16",
+    "torch": "2.11.0+cu130",
+    "transformers": "5.22.0",
+    "gpu": "Tesla T4",
+    "cuda": "13.0",
+    "attention_backend": {
+      "": "sdpa",
+      "text_config": "sdpa",
+      "vision_config": "sdpa",
+      "audio_config": "eager"
+    },
+    "packages": {
+      "torch": "2.11.0+cu130",
+      "transformers": "5.22.0",
+      "numpy": "2.2.5",
+      "Pillow": "11.3.0",
+      "av": "16.0.1",
+      "soundfile": "0.13.1",
+      "librosa": "0.11.0",
+      "accelerate": "1.10.1"
+    },
+    "scoring_mode": "full_forward",
+    "fp16_reduced_precision_reduction": true
+  },
+  "unembedding_sha256": "4a9fb2a4ef06bbbd70bfeccc8c8b3095c66f33eab66a05bf9d384f86be559a35",
+  "filter_comparison": {
+    "primary": "held-out delta AUROC, probe-augmented versus full baseline",
+    "secondary": "probe filter versus blank-modality filter",
+    "method": "paired source-group bootstrap, 2000 resamples",
+    "validation_recall_loss_budget": 0.02,
+    "preregistration_sha256": "d6c0e8988f621e7f550962397d8420bc341d8e0821dd112f4fc1521ffc7a9227",
+    "analysis_code_sha256": "d45e2d90b3520d6ad8006a32989b4d21ee17ba36bc4036838cfd28db42e97d1a",
+    "validation_operating_points": {
+      "Video-driven Audio Hallucination": {
+        "contrast": "beneficial",
+        "blank_contrast": "beneficial",
+        "probe_risk": "beneficial"
+      },
+      "Audio-driven Video Hallucination": {
+        "contrast": "beneficial",
+        "blank_contrast": "beneficial",
+        "probe_risk": "beneficial"
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "scope": "Pre-PR local checkout at original head 500cf7325ab32443c42b4b5f725e879a86e5e1ae",
+  "model_answer_jsonl": [],
+  "csv_files": [],
+  "hidden_state_caches": [],
+  "notebook_saved_outputs": [
+    {
+      "path": "notebooks\\CounterPrior_Mechanistic_Steering.ipynb",
+      "output_cells": 0,
+      "classification": "no saved cell outputs"
+    },
+    {
+      "path": "notebooks\\legacy_experiments.ipynb",
+      "output_cells": 1,
+      "classification": "installation log only"
+    }
+  ],
+  "legacy_claim_status": "DROPPED: no rescorable case-level legacy predictions found; PDF prose/figures and one truncated SMART RESULT passage do not support an aggregate rerun",
+  "rescore_executed": false,
+  "raw_originals": "preserved locally and in verified private backups; sanitized hashes in docs/local_snapshot_inventory_2026-10-30.json",
+  "local_final_pdf_matches_tracked_report": true
+}

@@ -1,0 +1,26 @@
+{
+  "benchmark": "POPE: Polling-based Object Probing Evaluation (Li et al., EMNLP 2023)",
+  "repository": "https://github.com/AoiDragon/POPE",
+  "commit": "08d957b917e5a378a2f99d35b6293c536a66298b",
+  "licence": "MIT (dataset/pope/LICENSE_POPE, copied from the same commit)",
+  "files": {
+    "coco_pope_random.json": {
+      "url": "https://raw.githubusercontent.com/AoiDragon/POPE/08d957b917e5a378a2f99d35b6293c536a66298b/output/coco/coco_pope_random.json",
+      "sha256": "ac25245170b975a5bdf9080b23fd431dfe6be458bc038259c1f4f09a6bef7994", "questions": 3000, "images": 500, "yes": 1500},
+    "coco_pope_popular.json": {
+      "url": "https://raw.githubusercontent.com/AoiDragon/POPE/08d957b917e5a378a2f99d35b6293c536a66298b/output/coco/coco_pope_popular.json",
+      "sha256": "72c1a8ad45d0c13514f5f22598261df41d3b533854d29682e924db50ed8aa753", "questions": 3000, "images": 500, "yes": 1500},
+    "coco_pope_adversarial.json": {
+      "url": "https://raw.githubusercontent.com/AoiDragon/POPE/08d957b917e5a378a2f99d35b6293c536a66298b/output/coco/coco_pope_adversarial.json",
+      "sha256": "420b3407db1fa9f1187a805dca41cb7b97fd91504e6c2179706188c107fb8ef8", "questions": 3000, "images": 500, "yes": 1500}
+  },
+  "images": {
+    "dataset": "MS-COCO 2014 validation images (the same 500 images are used by all three POPE splits)",
+    "per_image_url": "http://images.cocodataset.org/val2014/{image}",
+    "full_archive": "http://images.cocodataset.org/zips/val2014.zip",
+    "licence": "COCO images carry their Flickr licences; see https://cocodataset.org/#termsofuse",
+    "fetch": "python -m scripts.fetch_pope --coco-dir data/coco/val2014"
+  },
+  "retrieved": "2026-10-30",
+  "scoring": "src/pope.py parse_yes_no reproduces evaluate.py at the same commit"
+}

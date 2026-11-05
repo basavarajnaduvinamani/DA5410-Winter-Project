@@ -1,0 +1,33 @@
+{
+  "provenance": "Rounded values transcribed from the reviewed one-time test result in the project conversation. Original held-out metrics JSON and receipt unavailable in the local release workspace. Rates reconstructed from audited manifest task totals and reported Yes and false-Yes counts.",
+  "tasks": [
+    {
+      "task": "Video-driven Audio Hallucination",
+      "n": 772,
+      "positive": 386,
+      "yes": 54,
+      "falseYes": 15,
+      "recall": 0.10103626943005181,
+      "yesRate": 0.06994818652849741,
+      "delta": 0.027,
+      "ci": [
+        -0.231,
+        0.29
+      ]
+    },
+    {
+      "task": "Audio-driven Video Hallucination",
+      "n": 387,
+      "positive": 192,
+      "yes": 171,
+      "falseYes": 24,
+      "recall": 0.765625,
+      "yesRate": 0.4418604651162791,
+      "delta": -0.101,
+      "ci": [
+        -0.217,
+        0.005
+      ]
+    }
+  ]
+}

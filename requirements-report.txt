@@ -1,0 +1,2 @@
+# Local saved-run publication; inference dependencies remain in requirements-colab.txt.
+reportlab==5.0.1

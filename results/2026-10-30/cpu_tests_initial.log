@@ -1,0 +1,20 @@
+test_adversarial_negations (test_adjudication.ScoringTests.test_adversarial_negations) ... ok
+test_attributes_and_controls (test_adjudication.ScoringTests.test_attributes_and_controls) ... ok
+test_legacy_cannot_accept_contradiction (test_adjudication.ScoringTests.test_legacy_cannot_accept_contradiction) ... ok
+test_calibration_requires_class_support (test_protocol.ProtocolTests.test_calibration_requires_class_support) ... C:\Users\Viraj\AppData\Local\Programs\Python\Python311\Lib\site-packages\sklearn\decomposition\_pca.py:646: RuntimeWarning: invalid value encountered in divide
+  explained_variance_ratio_ = explained_variance_ / total_var
+C:\Users\Viraj\AppData\Local\Programs\Python\Python311\Lib\site-packages\sklearn\decomposition\_pca.py:646: RuntimeWarning: invalid value encountered in divide
+  explained_variance_ratio_ = explained_variance_ / total_var
+C:\Users\Viraj\AppData\Local\Programs\Python\Python311\Lib\site-packages\sklearn\decomposition\_pca.py:646: RuntimeWarning: invalid value encountered in divide
+  explained_variance_ratio_ = explained_variance_ / total_var
+ok
+test_group_disjoint_and_reproducible (test_protocol.ProtocolTests.test_group_disjoint_and_reproducible) ... ok
+test_hook_per_sample_terminal_and_removal (test_protocol.ProtocolTests.test_hook_per_sample_terminal_and_removal) ... ok
+test_paired_cluster_resampling (test_protocol.ProtocolTests.test_paired_cluster_resampling) ... ok
+test_slerp_edge_norms (test_protocol.ProtocolTests.test_slerp_edge_norms) ... ok
+test_random_weight_tiny_model_no_download (test_protocol.TinyLlavaIntegration.test_random_weight_tiny_model_no_download) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 24.155s
+
+OK

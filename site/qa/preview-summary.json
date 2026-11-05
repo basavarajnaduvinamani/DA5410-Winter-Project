@@ -1,0 +1,16 @@
+{
+  "scope": "Authenticated deployed-preview verification",
+  "url": "https://counterprior-8l4s4mcrw-basavarajnaduvinamani34-1831.vercel.app",
+  "authentication": "Short-lived same-project development OIDC; origin-scoped; protection unchanged",
+  "traces": "off for authenticated requests to avoid persisting headers",
+  "stats": {
+    "startTime": "2026-11-01T18:56:20.112Z",
+    "duration": 96912.32800000001,
+    "expected": 44,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "assertions": "All original flow/axe/screenshot assertions plus byte-for-byte research.json parity",
+  "evidence_sha256": "1b3a64287bff592fd7b136fda710cdc70186ad243146c28259fb36df66f0fb0a"
+}

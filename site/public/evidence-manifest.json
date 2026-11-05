@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "exportSha256": "1b3a64287bff592fd7b136fda710cdc70186ad243146c28259fb36df66f0fb0a",
+  "sources": {
+    "configs/pope_llava.json": "68ad00a3b62fd3f61ac5eb47f31ae7152fb3b65e41cdb068bf0e8a5e3a15f935",
+    "configs/pope_qwen_replication.json": "1ecbef8601fc7533127b7ccf1abddf90178bea84691a08c57f599dc061de2e66",
+    "dataset/pope/splits_seed20261030.json": "1285a9120ab9c2321ba76da6ccf5f8b35d056dc25dd17e7ae93e2605a2ed493b",
+    "dataset/pope/sources.json": "1335d5d4533bc89a49b0b7ccff64bd2de632ce0905722f718569583add8b294a",
+    "dataset/audit_2026-10-30.json": "a363bc7711390522b8427f104e729d74316495525bfe65da7ad737970761451d",
+    "dataset/counterprior_corrected.json": "f2c8de33ce31e175102d6fb10fe0a7e3d689e6cb8aa8e4c1da2be21b60dfe159",
+    "results/REPORT_metrics.json": "61f7ef1a64c0966f4f3decf9841b24911b28dd82c25812d4dd009097550ba1ef",
+    "results/published_run.json": "035740712496a4f7b3804ef4f99a9d35ec104198e23caf711571f957788add08",
+    "results/examples_manifest.json": "b9fd6864586bae3d8a1de3f375236cfcd81a3db725b233f6256ab615ee15a45c"
+  },
+  "scope": "Source hashes use UTF-8 text with CRLF normalized to LF; exportSha256 is byte-exact. They identify inputs, not unseen model weights or source-run image bytes."
+}

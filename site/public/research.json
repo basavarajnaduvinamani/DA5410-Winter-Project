@@ -1,0 +1,2384 @@
+{
+  "schemaVersion": 1,
+  "status": "measured",
+  "statusDetail": "Generated from a verified saved run.",
+  "builtFrom": [
+    "configs/pope_llava.json",
+    "configs/pope_qwen_replication.json",
+    "dataset/pope/splits_seed20261030.json",
+    "dataset/pope/sources.json",
+    "dataset/audit_2026-10-30.json",
+    "dataset/counterprior_corrected.json",
+    "results/REPORT_metrics.json",
+    "results/published_run.json",
+    "results/examples_manifest.json"
+  ],
+  "protocol": {
+    "counts": {
+      "calibration": 100,
+      "validation": 50,
+      "test": 350
+    },
+    "quickCounts": {
+      "calibration": 40,
+      "validation": 20,
+      "test": 100
+    },
+    "seed": 20261030,
+    "bootstrapIterations": 1000,
+    "target": "error",
+    "model": "llava-hf/llava-1.5-7b-hf",
+    "revision": "b234b804b114d9e37bb655e11cbbb5f5e971b7a9",
+    "questionHashes": {
+      "coco_pope_random.json": "ac25245170b975a5bdf9080b23fd431dfe6be458bc038259c1f4f09a6bef7994",
+      "coco_pope_popular.json": "72c1a8ad45d0c13514f5f22598261df41d3b533854d29682e924db50ed8aa753",
+      "coco_pope_adversarial.json": "420b3407db1fa9f1187a805dca41cb7b97fd91504e6c2179706188c107fb8ef8"
+    },
+    "audit": {
+      "original": 50,
+      "retained": 16,
+      "excluded": 34
+    },
+    "source": "dataset/pope/splits_seed20261030.json"
+  },
+  "run": {
+    "id": "a57da9f4810959cc",
+    "profile": "quick",
+    "testImages": 100,
+    "model": "llava-hf/llava-1.5-7b-hf",
+    "revision": "b234b804b114d9e37bb655e11cbbb5f5e971b7a9",
+    "target": "error",
+    "hardware": "Tesla T4",
+    "runtime": null,
+    "source": "results/published_run.json"
+  },
+  "summary": [
+    "The layer 13 error-detection probe reached AUROC 0.719 [0.667, 0.769]; its paired improvement over answer-token confidence is inconclusive.",
+    "SLERP changed false-yes rate by -0.007 [-0.016, -0.001] and recall by -0.020 [-0.037, -0.007]; superiority to both matched controls is inconclusive."
+  ],
+  "results": {
+    "baseline": {
+      "all:random": {
+        "n": 960,
+        "images": 160,
+        "accuracy": {
+          "estimate": 0.884375,
+          "ci95": [
+            0.865625,
+            0.9020833333333333
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 960
+        },
+        "precision": {
+          "estimate": 0.9718670076726342,
+          "ci95": [
+            0.9527554158342147,
+            0.9876643511125306
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 960
+        },
+        "recall": {
+          "estimate": 0.7916666666666666,
+          "ci95": [
+            0.7604166666666666,
+            0.8229166666666666
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 960
+        },
+        "f1": {
+          "estimate": 0.8725602755453501,
+          "ci95": [
+            0.8505141612956624,
+            0.8937190583682683
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 960
+        },
+        "yes_ratio": {
+          "estimate": 0.40729166666666666,
+          "ci95": [
+            0.390625,
+            0.4239583333333333
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 960
+        },
+        "false_yes_rate": {
+          "estimate": 0.022916666666666665,
+          "ci95": [
+            0.010364583333333335,
+            0.03958333333333333
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 960
+        }
+      },
+      "all:popular": {
+        "n": 960,
+        "images": 160,
+        "accuracy": {
+          "estimate": 0.86875,
+          "ci95": [
+            0.8489583333333334,
+            0.8875
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 960
+        },
+        "precision": {
+          "estimate": 0.9359605911330049,
+          "ci95": [
+            0.912610703291499,
+            0.9597002645469159
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 960
+        },
+        "recall": {
+          "estimate": 0.7916666666666666,
+          "ci95": [
+            0.7604166666666666,
+            0.8229166666666666
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 960
+        },
+        "f1": {
+          "estimate": 0.8577878103837472,
+          "ci95": [
+            0.835235263183928,
+            0.8793710490819778
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 960
+        },
+        "yes_ratio": {
+          "estimate": 0.42291666666666666,
+          "ci95": [
+            0.4041666666666667,
+            0.4427083333333333
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 960
+        },
+        "false_yes_rate": {
+          "estimate": 0.05416666666666667,
+          "ci95": [
+            0.03333333333333333,
+            0.07505208333333328
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 960
+        }
+      },
+      "all:adversarial": {
+        "n": 960,
+        "images": 160,
+        "accuracy": {
+          "estimate": 0.840625,
+          "ci95": [
+            0.8197916666666667,
+            0.861484375
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 960
+        },
+        "precision": {
+          "estimate": 0.8775981524249422,
+          "ci95": [
+            0.851010802590938,
+            0.9053422444857583
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 960
+        },
+        "recall": {
+          "estimate": 0.7916666666666666,
+          "ci95": [
+            0.7604166666666666,
+            0.8229166666666666
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 960
+        },
+        "f1": {
+          "estimate": 0.832420591456736,
+          "ci95": [
+            0.8092600316253699,
+            0.8546881607527294
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 960
+        },
+        "yes_ratio": {
+          "estimate": 0.4510416666666667,
+          "ci95": [
+            0.43125,
+            0.471875
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 960
+        },
+        "false_yes_rate": {
+          "estimate": 0.11041666666666666,
+          "ci95": [
+            0.08333333333333333,
+            0.1375
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 960
+        }
+      },
+      "all:pooled": {
+        "n": 2880,
+        "images": 160,
+        "accuracy": {
+          "estimate": 0.8645833333333334,
+          "ci95": [
+            0.8454861111111112,
+            0.8826388888888889
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 2880
+        },
+        "precision": {
+          "estimate": 0.926829268292683,
+          "ci95": [
+            0.9086521263910969,
+            0.945139730706931
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 2880
+        },
+        "recall": {
+          "estimate": 0.7916666666666666,
+          "ci95": [
+            0.7604166666666666,
+            0.8229166666666666
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 2880
+        },
+        "f1": {
+          "estimate": 0.8539325842696629,
+          "ci95": [
+            0.8320639918411847,
+            0.8749536178107606
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 2880
+        },
+        "yes_ratio": {
+          "estimate": 0.4270833333333333,
+          "ci95": [
+            0.41041666666666665,
+            0.4444444444444444
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 2880
+        },
+        "false_yes_rate": {
+          "estimate": 0.0625,
+          "ci95": [
+            0.04583333333333333,
+            0.07848958333333332
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 160,
+          "n": 2880
+        }
+      },
+      "test:random": {
+        "n": 600,
+        "images": 100,
+        "accuracy": {
+          "estimate": 0.8816666666666667,
+          "ci95": [
+            0.86,
+            0.905
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 600
+        },
+        "precision": {
+          "estimate": 0.9711934156378601,
+          "ci95": [
+            0.9504080792839752,
+            0.9882174962398124
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 600
+        },
+        "recall": {
+          "estimate": 0.7866666666666666,
+          "ci95": [
+            0.7433333333333333,
+            0.8266666666666667
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 600
+        },
+        "f1": {
+          "estimate": 0.8692449355432781,
+          "ci95": [
+            0.8424947568161391,
+            0.8965610775082622
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 600
+        },
+        "yes_ratio": {
+          "estimate": 0.405,
+          "ci95": [
+            0.38166666666666665,
+            0.42833333333333334
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 600
+        },
+        "false_yes_rate": {
+          "estimate": 0.023333333333333334,
+          "ci95": [
+            0.00991666666666667,
+            0.04
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 600
+        }
+      },
+      "test:popular": {
+        "n": 600,
+        "images": 100,
+        "accuracy": {
+          "estimate": 0.865,
+          "ci95": [
+            0.84,
+            0.89
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 600
+        },
+        "precision": {
+          "estimate": 0.932806324110672,
+          "ci95": [
+            0.8999806201550388,
+            0.9626670804707163
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 600
+        },
+        "recall": {
+          "estimate": 0.7866666666666666,
+          "ci95": [
+            0.7433333333333333,
+            0.8266666666666667
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 600
+        },
+        "f1": {
+          "estimate": 0.8535262206148283,
+          "ci95": [
+            0.8233151183970856,
+            0.8821455247301029
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 600
+        },
+        "yes_ratio": {
+          "estimate": 0.4216666666666667,
+          "ci95": [
+            0.39666666666666667,
+            0.44666666666666666
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 600
+        },
+        "false_yes_rate": {
+          "estimate": 0.056666666666666664,
+          "ci95": [
+            0.03,
+            0.08666666666666667
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 600
+        }
+      },
+      "test:adversarial": {
+        "n": 600,
+        "images": 100,
+        "accuracy": {
+          "estimate": 0.8433333333333334,
+          "ci95": [
+            0.815,
+            0.8716666666666667
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 600
+        },
+        "precision": {
+          "estimate": 0.8872180451127819,
+          "ci95": [
+            0.8518486590038314,
+            0.921875
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 600
+        },
+        "recall": {
+          "estimate": 0.7866666666666666,
+          "ci95": [
+            0.7433333333333333,
+            0.8266666666666667
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 600
+        },
+        "f1": {
+          "estimate": 0.833922261484099,
+          "ci95": [
+            0.802841292872689,
+            0.8651488616462347
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 600
+        },
+        "yes_ratio": {
+          "estimate": 0.44333333333333336,
+          "ci95": [
+            0.4182916666666667,
+            0.47
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 600
+        },
+        "false_yes_rate": {
+          "estimate": 0.1,
+          "ci95": [
+            0.06666666666666667,
+            0.13333333333333333
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 600
+        }
+      },
+      "test:pooled": {
+        "n": 1800,
+        "images": 100,
+        "accuracy": {
+          "estimate": 0.8633333333333333,
+          "ci95": [
+            0.84,
+            0.8877777777777778
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "precision": {
+          "estimate": 0.9291338582677166,
+          "ci95": [
+            0.904872139168936,
+            0.950845367901365
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "recall": {
+          "estimate": 0.7866666666666666,
+          "ci95": [
+            0.7433333333333333,
+            0.8266666666666667
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "f1": {
+          "estimate": 0.8519855595667869,
+          "ci95": [
+            0.8235257918552037,
+            0.8804733727810651
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "yes_ratio": {
+          "estimate": 0.42333333333333334,
+          "ci95": [
+            0.4,
+            0.4466805555555555
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "false_yes_rate": {
+          "estimate": 0.06,
+          "ci95": [
+            0.04111111111111111,
+            0.08224999999999998
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        }
+      }
+    },
+    "detection": {
+      "n": 1800,
+      "positives": 246,
+      "base_rate": 0.13666666666666666,
+      "detectors": {
+        "probe": {
+          "auroc": {
+            "estimate": 0.7185103221688588,
+            "ci95": [
+              0.6667840755468812,
+              0.7685054413568458
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 1800
+          },
+          "auprc": {
+            "estimate": 0.2678488146148564,
+            "ci95": [
+              0.207921779584029,
+              0.34886616950215615
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 1800
+          }
+        },
+        "mean_difference": {
+          "auroc": {
+            "estimate": 0.7825072459218801,
+            "ci95": [
+              0.7451366232294611,
+              0.8225402516979338
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 1800
+          },
+          "auprc": {
+            "estimate": 0.3200145023997662,
+            "ci95": [
+              0.2501811755429918,
+              0.41122316186084296
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 1800
+          }
+        },
+        "pca": {
+          "auroc": {
+            "estimate": 0.5837884923250777,
+            "ci95": [
+              0.5216935272651967,
+              0.6410906813753837
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 1800
+          },
+          "auprc": {
+            "estimate": 0.17482955086817645,
+            "ci95": [
+              0.1333842509084185,
+              0.22709204034220365
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 1800
+          }
+        },
+        "neg_logprob": {
+          "auroc": {
+            "estimate": 0.7450586474976719,
+            "ci95": [
+              0.6834452633550857,
+              0.8037184766454526
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 1800
+          },
+          "auprc": {
+            "estimate": 0.35018644553729317,
+            "ci95": [
+              0.26601521957147994,
+              0.44845845804548606
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 1800
+          }
+        },
+        "entropy": {
+          "auroc": {
+            "estimate": 0.7450010986596353,
+            "ci95": [
+              0.6833747609001982,
+              0.8035424779573269
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 1800
+          },
+          "auprc": {
+            "estimate": 0.34734870822584213,
+            "ci95": [
+              0.2635484079964241,
+              0.4468856771539294
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 1800
+          }
+        }
+      },
+      "per_split": {
+        "random": {
+          "probe": {
+            "estimate": 0.7584600228973082,
+            "ci95": [
+              0.6978916689999963,
+              0.8122048885693746
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 600
+          },
+          "neg_logprob": {
+            "estimate": 0.7549721771080168,
+            "ci95": [
+              0.6850590149840334,
+              0.8195803262748367
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 600
+          }
+        },
+        "popular": {
+          "probe": {
+            "estimate": 0.7236375746330788,
+            "ci95": [
+              0.6709104227400241,
+              0.7788808092630322
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 600
+          },
+          "neg_logprob": {
+            "estimate": 0.7471633483194177,
+            "ci95": [
+              0.6828502092697544,
+              0.8079884460197103
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 600
+          }
+        },
+        "adversarial": {
+          "probe": {
+            "estimate": 0.669392818097721,
+            "ci95": [
+              0.6181777526630765,
+              0.7196478019900088
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 600
+          },
+          "neg_logprob": {
+            "estimate": 0.7287444285594147,
+            "ci95": [
+              0.6666450157254206,
+              0.7880750069085034
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 600
+          }
+        }
+      },
+      "comparisons": {
+        "probe_minus_neg_logprob": {
+          "estimate": -0.026548325328813127,
+          "ci95": [
+            -0.08473783499410577,
+            0.028774107988589214
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        }
+      }
+    },
+    "steering": {
+      "slerp_pca": {
+        "n": 1800,
+        "strength": 0.05,
+        "intervention": {
+          "direction": "pca",
+          "layer": 13,
+          "state_index": 13,
+          "threshold": 0.3173275566101074,
+          "mode": "adaptive",
+          "vector_sha256": "8b3cdc6392637054ede0d4c2c65a9cb6c518ceb69f7c39ab96de396f40d0d3a2",
+          "operation": "slerp",
+          "strength": 0.05,
+          "alpha": 0.05
+        },
+        "accuracy": {
+          "estimate": 0.8566666666666667,
+          "ci95": [
+            0.8316527777777778,
+            0.8827777777777778
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "f1": {
+          "estimate": 0.8424908424908426,
+          "ci95": [
+            0.8120300751879699,
+            0.8736514892521728
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "yes_ratio": {
+          "estimate": 0.41,
+          "ci95": [
+            0.3861111111111111,
+            0.43390277777777775
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "false_yes_rate": {
+          "estimate": 0.05333333333333334,
+          "ci95": [
+            0.034444444444444444,
+            0.07444444444444444
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "recall": {
+          "estimate": 0.7666666666666667,
+          "ci95": [
+            0.7233333333333334,
+            0.81
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "delta_accuracy": {
+          "estimate": -0.006666666666666599,
+          "ci95": [
+            -0.016111111111111076,
+            0.002222222222222128
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "delta_false_yes_rate": {
+          "estimate": -0.006666666666666661,
+          "ci95": [
+            -0.015555555555555552,
+            -0.0011111111111111044
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "delta_recall": {
+          "estimate": -0.019999999999999907,
+          "ci95": [
+            -0.036666666666666736,
+            -0.006666666666666599
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "retention": {
+          "estimate": 0.9884169884169884,
+          "ci95": [
+            0.978749089034976,
+            0.9961784047647042
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "per_split_delta_accuracy": {
+          "random": {
+            "estimate": -0.00666666666666671,
+            "ci95": [
+              -0.016666666666666607,
+              0.0016666666666667052
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 600
+          },
+          "popular": {
+            "estimate": -0.008333333333333304,
+            "ci95": [
+              -0.018333333333333313,
+              0
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 600
+          },
+          "adversarial": {
+            "estimate": -0.0050000000000000044,
+            "ci95": [
+              -0.015000000000000013,
+              0.0050000000000000044
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 600
+          }
+        },
+        "per_split_metrics": {
+          "random": {
+            "false_yes_rate": {
+              "estimate": 0.016666666666666666,
+              "ci95": [
+                0.0033333333333333335,
+                0.03
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            },
+            "recall": {
+              "estimate": 0.7666666666666667,
+              "ci95": [
+                0.7233333333333334,
+                0.81
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            }
+          },
+          "popular": {
+            "false_yes_rate": {
+              "estimate": 0.05333333333333334,
+              "ci95": [
+                0.02666666666666667,
+                0.08341666666666658
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            },
+            "recall": {
+              "estimate": 0.7666666666666667,
+              "ci95": [
+                0.7233333333333334,
+                0.81
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            }
+          },
+          "adversarial": {
+            "false_yes_rate": {
+              "estimate": 0.09,
+              "ci95": [
+                0.06,
+                0.12341666666666659
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            },
+            "recall": {
+              "estimate": 0.7666666666666667,
+              "ci95": [
+                0.7233333333333334,
+                0.81
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            }
+          }
+        },
+        "versus_controls_false_yes": {
+          "random_direction": {
+            "estimate": -0.00555555555555555,
+            "ci95": [
+              -0.01444444444444444,
+              0
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 1800
+          },
+          "shuffled_labels": {
+            "estimate": -0.0022222222222222157,
+            "ci95": [
+              -0.005555555555555557,
+              0
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 1800
+          }
+        }
+      },
+      "add_mean_difference": {
+        "n": 1800,
+        "strength": 0.05,
+        "intervention": {
+          "direction": "mean_difference",
+          "layer": 13,
+          "state_index": 13,
+          "threshold": -0.21641434729099274,
+          "mode": "adaptive",
+          "vector_sha256": "defa028774e00af3d762245eb988f1bddcfa84713794f54e5f5a57269a79c7b2",
+          "operation": "addition",
+          "strength": 0.05,
+          "alpha": 1.1582849502563477
+        },
+        "accuracy": {
+          "estimate": 0.8655555555555555,
+          "ci95": [
+            0.8416527777777778,
+            0.8894583333333334
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "f1": {
+          "estimate": 0.8550898203592814,
+          "ci95": [
+            0.8270581352833638,
+            0.8833922261484098
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "yes_ratio": {
+          "estimate": 0.42777777777777776,
+          "ci95": [
+            0.4038888888888889,
+            0.4527777777777778
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "false_yes_rate": {
+          "estimate": 0.06222222222222222,
+          "ci95": [
+            0.043333333333333335,
+            0.08444444444444445
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "recall": {
+          "estimate": 0.7933333333333333,
+          "ci95": [
+            0.75,
+            0.8334166666666666
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "delta_accuracy": {
+          "estimate": 0.0022222222222222365,
+          "ci95": [
+            -0.0016666666666667052,
+            0.007777777777777772
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "delta_false_yes_rate": {
+          "estimate": 0.0022222222222222227,
+          "ci95": [
+            0,
+            0.005555555555555557
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "delta_recall": {
+          "estimate": 0.00666666666666671,
+          "ci95": [
+            0,
+            0.01666666666666672
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "retention": {
+          "estimate": 0.9987129987129987,
+          "ci95": [
+            0.9967616055628125,
+            1
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "per_split_delta_accuracy": {
+          "random": {
+            "estimate": 0.0016666666666665941,
+            "ci95": [
+              -0.0033333333333334103,
+              0.00666666666666671
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 600
+          },
+          "popular": {
+            "estimate": 0.0033333333333332993,
+            "ci95": [
+              0,
+              0.008333333333333304
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 600
+          },
+          "adversarial": {
+            "estimate": 0.0016666666666665941,
+            "ci95": [
+              -0.0033333333333334103,
+              0.00666666666666671
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 600
+          }
+        },
+        "per_split_metrics": {
+          "random": {
+            "false_yes_rate": {
+              "estimate": 0.02666666666666667,
+              "ci95": [
+                0.01,
+                0.043333333333333335
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            },
+            "recall": {
+              "estimate": 0.7933333333333333,
+              "ci95": [
+                0.75,
+                0.8334166666666666
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            }
+          },
+          "popular": {
+            "false_yes_rate": {
+              "estimate": 0.056666666666666664,
+              "ci95": [
+                0.03,
+                0.08666666666666667
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            },
+            "recall": {
+              "estimate": 0.7933333333333333,
+              "ci95": [
+                0.75,
+                0.8334166666666666
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            }
+          },
+          "adversarial": {
+            "false_yes_rate": {
+              "estimate": 0.10333333333333333,
+              "ci95": [
+                0.07,
+                0.13674999999999993
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            },
+            "recall": {
+              "estimate": 0.7933333333333333,
+              "ci95": [
+                0.75,
+                0.8334166666666666
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            }
+          }
+        }
+      },
+      "random_direction": {
+        "n": 1800,
+        "strength": 0.05,
+        "intervention": {
+          "direction": "random_direction",
+          "layer": 13,
+          "state_index": 13,
+          "threshold": 0.03297277452066207,
+          "mode": "adaptive",
+          "vector_sha256": "273d0813b7535f9cb9a322ea430b036572e4867c99a2b09fc478d2a28596c56c",
+          "operation": "slerp",
+          "strength": 0.05,
+          "alpha": 0.05
+        },
+        "accuracy": {
+          "estimate": 0.8638888888888889,
+          "ci95": [
+            0.8405555555555555,
+            0.8877916666666666
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "f1": {
+          "estimate": 0.8524984948826009,
+          "ci95": [
+            0.8242518484681086,
+            0.8804944409292235
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "yes_ratio": {
+          "estimate": 0.42277777777777775,
+          "ci95": [
+            0.39944444444444444,
+            0.4461111111111111
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "false_yes_rate": {
+          "estimate": 0.058888888888888886,
+          "ci95": [
+            0.04,
+            0.08113888888888886
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "recall": {
+          "estimate": 0.7866666666666666,
+          "ci95": [
+            0.7433333333333333,
+            0.8266666666666667
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "delta_accuracy": {
+          "estimate": 0.0005555555555556424,
+          "ci95": [
+            0,
+            0.0016666666666667052
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "delta_false_yes_rate": {
+          "estimate": -0.0011111111111111113,
+          "ci95": [
+            -0.003333333333333341,
+            0
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "delta_recall": {
+          "estimate": 0,
+          "ci95": [
+            0,
+            0
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "retention": {
+          "estimate": 1,
+          "ci95": [
+            1,
+            1
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "per_split_delta_accuracy": {
+          "random": {
+            "estimate": 0,
+            "ci95": [
+              0,
+              0
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 600
+          },
+          "popular": {
+            "estimate": 0,
+            "ci95": [
+              0,
+              0
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 600
+          },
+          "adversarial": {
+            "estimate": 0.0016666666666665941,
+            "ci95": [
+              0,
+              0.0050000000000000044
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 600
+          }
+        },
+        "per_split_metrics": {
+          "random": {
+            "false_yes_rate": {
+              "estimate": 0.023333333333333334,
+              "ci95": [
+                0.00991666666666667,
+                0.04
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            },
+            "recall": {
+              "estimate": 0.7866666666666666,
+              "ci95": [
+                0.7433333333333333,
+                0.8266666666666667
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            }
+          },
+          "popular": {
+            "false_yes_rate": {
+              "estimate": 0.056666666666666664,
+              "ci95": [
+                0.03,
+                0.08666666666666667
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            },
+            "recall": {
+              "estimate": 0.7866666666666666,
+              "ci95": [
+                0.7433333333333333,
+                0.8266666666666667
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            }
+          },
+          "adversarial": {
+            "false_yes_rate": {
+              "estimate": 0.09666666666666666,
+              "ci95": [
+                0.06658333333333334,
+                0.13
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            },
+            "recall": {
+              "estimate": 0.7866666666666666,
+              "ci95": [
+                0.7433333333333333,
+                0.8266666666666667
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            }
+          }
+        }
+      },
+      "shuffled_labels": {
+        "n": 1800,
+        "strength": 0.05,
+        "intervention": {
+          "direction": "shuffled_labels",
+          "layer": 13,
+          "state_index": 13,
+          "threshold": 0.2678882944583893,
+          "mode": "adaptive",
+          "vector_sha256": "7bb46032256135eb67b62815690a3032c47f8f1d7c479be905fd7079cce66911",
+          "operation": "slerp",
+          "strength": 0.05,
+          "alpha": 0.05
+        },
+        "accuracy": {
+          "estimate": 0.8588888888888889,
+          "ci95": [
+            0.8327638888888889,
+            0.8844444444444445
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "f1": {
+          "estimate": 0.8456865127582017,
+          "ci95": [
+            0.814162226763493,
+            0.8758865248226951
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "yes_ratio": {
+          "estimate": 0.41444444444444445,
+          "ci95": [
+            0.39055555555555554,
+            0.4388888888888889
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "false_yes_rate": {
+          "estimate": 0.05555555555555555,
+          "ci95": [
+            0.03666666666666667,
+            0.07666666666666666
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "recall": {
+          "estimate": 0.7733333333333333,
+          "ci95": [
+            0.7266666666666667,
+            0.8167499999999999
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "delta_accuracy": {
+          "estimate": -0.004444444444444362,
+          "ci95": [
+            -0.011666666666666714,
+            0.002777777777777768
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "delta_false_yes_rate": {
+          "estimate": -0.004444444444444445,
+          "ci95": [
+            -0.013333333333333329,
+            0
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "delta_recall": {
+          "estimate": -0.013333333333333308,
+          "ci95": [
+            -0.026666666666666727,
+            -0.0033333333333332993
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "retention": {
+          "estimate": 0.9922779922779923,
+          "ci95": [
+            0.9844549491958818,
+            0.9981132371950713
+          ],
+          "valid_bootstrap": 1000,
+          "image_clusters": 100,
+          "n": 1800
+        },
+        "per_split_delta_accuracy": {
+          "random": {
+            "estimate": -0.0050000000000000044,
+            "ci95": [
+              -0.011666666666666714,
+              0.0016666666666667052
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 600
+          },
+          "popular": {
+            "estimate": -0.0050000000000000044,
+            "ci95": [
+              -0.011666666666666714,
+              0.0016666666666667052
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 600
+          },
+          "adversarial": {
+            "estimate": -0.0033333333333334103,
+            "ci95": [
+              -0.010000000000000009,
+              0.0050000000000000044
+            ],
+            "valid_bootstrap": 1000,
+            "image_clusters": 100,
+            "n": 600
+          }
+        },
+        "per_split_metrics": {
+          "random": {
+            "false_yes_rate": {
+              "estimate": 0.02,
+              "ci95": [
+                0.006666666666666667,
+                0.03666666666666667
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            },
+            "recall": {
+              "estimate": 0.7733333333333333,
+              "ci95": [
+                0.7266666666666667,
+                0.8167499999999999
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            }
+          },
+          "popular": {
+            "false_yes_rate": {
+              "estimate": 0.05333333333333334,
+              "ci95": [
+                0.02666666666666667,
+                0.08341666666666658
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            },
+            "recall": {
+              "estimate": 0.7733333333333333,
+              "ci95": [
+                0.7266666666666667,
+                0.8167499999999999
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            }
+          },
+          "adversarial": {
+            "false_yes_rate": {
+              "estimate": 0.09333333333333334,
+              "ci95": [
+                0.06,
+                0.12666666666666668
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            },
+            "recall": {
+              "estimate": 0.7733333333333333,
+              "ci95": [
+                0.7266666666666667,
+                0.8167499999999999
+              ],
+              "valid_bootstrap": 1000,
+              "image_clusters": 100,
+              "n": 600
+            }
+          }
+        }
+      }
+    }
+  },
+  "calibrationCurve": [
+    {
+      "layer": 0,
+      "probe": 0.5606517847897159,
+      "meanDifference": 0.49867601591739524,
+      "pca": 0.5612065267237681
+    },
+    {
+      "layer": 1,
+      "probe": 0.59963904791491,
+      "meanDifference": 0.4913238361514224,
+      "pca": 0.5225669018772467
+    },
+    {
+      "layer": 2,
+      "probe": 0.5129365819020992,
+      "meanDifference": 0.5442831994556132,
+      "pca": 0.5381736416219175
+    },
+    {
+      "layer": 3,
+      "probe": 0.5134839272770307,
+      "meanDifference": 0.5199189337120372,
+      "pca": 0.5253775943431115
+    },
+    {
+      "layer": 4,
+      "probe": 0.514164410716135,
+      "meanDifference": 0.4193849021435228,
+      "pca": 0.5171969999556205
+    },
+    {
+      "layer": 5,
+      "probe": 0.5374339857098478,
+      "meanDifference": 0.44089409606650987,
+      "pca": 0.503661296764745
+    },
+    {
+      "layer": 6,
+      "probe": 0.6270211097797305,
+      "meanDifference": 0.4927439755025962,
+      "pca": 0.499755913549017
+    },
+    {
+      "layer": 7,
+      "probe": 0.6647287681770441,
+      "meanDifference": 0.45221083152117636,
+      "pca": 0.5095489578248199
+    },
+    {
+      "layer": 8,
+      "probe": 0.6556310004585867,
+      "meanDifference": 0.438497610911404,
+      "pca": 0.4766046835012352
+    },
+    {
+      "layer": 9,
+      "probe": 0.6680424266631164,
+      "meanDifference": 0.5311912898119794,
+      "pca": 0.45221083152117636
+    },
+    {
+      "layer": 10,
+      "probe": 0.6693590141866004,
+      "meanDifference": 0.5939436973919733,
+      "pca": 0.44775810293051665
+    },
+    {
+      "layer": 11,
+      "probe": 0.7108093314989865,
+      "meanDifference": 0.6603204189411085,
+      "pca": 0.4712347815796092
+    },
+    {
+      "layer": 12,
+      "probe": 0.7037826003343245,
+      "meanDifference": 0.6810603707155432,
+      "pca": 0.4816787230580334
+    },
+    {
+      "layer": 13,
+      "probe": 0.7523927868755456,
+      "meanDifference": 0.7035902897971864,
+      "pca": 0.4979215668870841
+    },
+    {
+      "layer": 14,
+      "probe": 0.745055400227814,
+      "meanDifference": 0.6995517685172857,
+      "pca": 0.4668560185801565
+    },
+    {
+      "layer": 15,
+      "probe": 0.7440494681873991,
+      "meanDifference": 0.7355878045533218,
+      "pca": 0.4551842482876965
+    },
+    {
+      "layer": 16,
+      "probe": 0.747792127102472,
+      "meanDifference": 0.7323629047766979,
+      "pca": 0.45774345774345776
+    },
+    {
+      "layer": 17,
+      "probe": 0.7345966656311484,
+      "meanDifference": 0.6702613943993254,
+      "pca": 0.4774478912409947
+    },
+    {
+      "layer": 18,
+      "probe": 0.7176141658900279,
+      "meanDifference": 0.6143729936833385,
+      "pca": 0.5361321913046051
+    },
+    {
+      "layer": 19,
+      "probe": 0.723620171896034,
+      "meanDifference": 0.6936345212207282,
+      "pca": 0.507300403852128
+    },
+    {
+      "layer": 20,
+      "probe": 0.7339753546650098,
+      "meanDifference": 0.6703353599905324,
+      "pca": 0.42595304664270184
+    },
+    {
+      "layer": 21,
+      "probe": 0.7297149366114883,
+      "meanDifference": 0.6802023698575422,
+      "pca": 0.40738768324975216
+    },
+    {
+      "layer": 22,
+      "probe": 0.7258539327504845,
+      "meanDifference": 0.6592996937824523,
+      "pca": 0.39398511812304915
+    },
+    {
+      "layer": 23,
+      "probe": 0.7263864850071746,
+      "meanDifference": 0.6623026967854553,
+      "pca": 0.4058491989526472
+    },
+    {
+      "layer": 24,
+      "probe": 0.7212680660956523,
+      "meanDifference": 0.6578055888400716,
+      "pca": 0.3946212222074291
+    },
+    {
+      "layer": 25,
+      "probe": 0.7166969925590615,
+      "meanDifference": 0.6566961049719671,
+      "pca": 0.39178094350508136
+    },
+    {
+      "layer": 26,
+      "probe": 0.7219781357712393,
+      "meanDifference": 0.6368733265284989,
+      "pca": 0.3941330493054631
+    },
+    {
+      "layer": 27,
+      "probe": 0.7332504918711815,
+      "meanDifference": 0.6283968697761801,
+      "pca": 0.4080681666888563
+    },
+    {
+      "layer": 28,
+      "probe": 0.7370079439044956,
+      "meanDifference": 0.645246231453128,
+      "pca": 0.47403068092723266
+    },
+    {
+      "layer": 29,
+      "probe": 0.736120356810012,
+      "meanDifference": 0.6463113359665084,
+      "pca": 0.4731283007145076
+    },
+    {
+      "layer": 30,
+      "probe": 0.732481249722629,
+      "meanDifference": 0.6380715691060519,
+      "pca": 0.41213627420523974
+    },
+    {
+      "layer": 31,
+      "probe": 0.7273776239293481,
+      "meanDifference": 0.552907587390346,
+      "pca": 0.49752215269456657
+    }
+  ],
+  "selectedLayers": {
+    "probe": 13,
+    "mean_difference": 15,
+    "pca": 0
+  },
+  "hypotheses": [
+    {
+      "id": "detection",
+      "status": "inconclusive",
+      "finding": "For the configured error target, the paired probe-minus-confidence AUROC difference is -0.027 [-0.085, 0.029].",
+      "source": "results/REPORT_metrics.json"
+    },
+    {
+      "id": "geometry",
+      "status": "supported",
+      "finding": "Held-out PCA-projection AUROC is 0.584 [0.522, 0.641]; this does not establish a universal truth direction.",
+      "source": "results/REPORT_metrics.json"
+    },
+    {
+      "id": "steering",
+      "status": "inconclusive",
+      "reduction_status": "supported",
+      "finding": "SLERP false-yes delta is -0.007 [-0.016, -0.001]; recall delta is -0.020 [-0.037, -0.007] (recall 0.767 [0.723, 0.810]). A measured reduction comes with lower recall. Geometric superiority to both matched controls is inconclusive. No unqualified safety improvement is established.",
+      "source": "results/REPORT_metrics.json"
+    }
+  ],
+  "examples": [
+    {
+      "id": "random:1124",
+      "image": "COCO_val2014_000000011241.jpg",
+      "imageId": 11241,
+      "imageSrc": "/examples/COCO_val2014_000000011241.jpg",
+      "imageSha256": "f229b7d36a23be6d10ff8557e421af7bd0b9e0491ffa6a41a0c3154d57fbae3e",
+      "imageAlt": "COCO val2014 image for the saved question: Is there an apple in the image?",
+      "attribution": {
+        "creator": "Karen V Bryan",
+        "source": "https://www.flickr.com/photos/europealacarte/8866970733/",
+        "license": "Attribution-NoDerivs License",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nd/2.0/",
+        "title": "Breakfast buffet at Hotel Silken Rio Santander"
+      },
+      "split": "random",
+      "question": "Is there an apple in the image?",
+      "truth": "no",
+      "baseline": "Yes",
+      "baselinePred": "yes",
+      "steered": "No",
+      "steeredPred": "no",
+      "probeScore": 0.0003142382271104033,
+      "probeThreshold": 0.5,
+      "gate": {
+        "triggered": null,
+        "alignment": null,
+        "threshold": 0.3173275566101074,
+        "source": "not recorded"
+      }
+    },
+    {
+      "id": "adversarial:1141",
+      "image": "COCO_val2014_000000313162.jpg",
+      "imageId": 313162,
+      "imageSrc": "/examples/COCO_val2014_000000313162.jpg",
+      "imageSha256": "24417d3310b875a82ec07b400521b283e1cf233eafe8cbcc84c3654a936d31b9",
+      "imageAlt": "COCO val2014 image for the saved question: Is there a pizza in the image?",
+      "attribution": {
+        "creator": "David Berkowitz",
+        "source": "https://www.flickr.com/photos/davidberkowitz/8424762787/",
+        "license": "Attribution License",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+        "title": "Mac and cheese pizza FTW - w @pezmeister1 @mwurst"
+      },
+      "split": "adversarial",
+      "question": "Is there a pizza in the image?",
+      "truth": "yes",
+      "baseline": "Yes",
+      "baselinePred": "yes",
+      "steered": "Yes",
+      "steeredPred": "yes",
+      "probeScore": 0.7096399790067666,
+      "probeThreshold": 0.5,
+      "gate": {
+        "triggered": null,
+        "alignment": null,
+        "threshold": 0.3173275566101074,
+        "source": "not recorded"
+      }
+    },
+    {
+      "id": "adversarial:1183",
+      "image": "COCO_val2014_000000175437.jpg",
+      "imageId": 175437,
+      "imageSrc": "/examples/COCO_val2014_000000175437.jpg",
+      "imageSha256": "a6a0a777209658123361454bb80233e88f9fcd0ad12c706b5c6759d0891cfe80",
+      "imageAlt": "COCO val2014 image for the saved question: Is there a person in the image?",
+      "attribution": {
+        "creator": "WordRidden",
+        "source": "https://www.flickr.com/photos/wordridden/9822540544/",
+        "license": "Attribution License",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+        "title": "Making donuts"
+      },
+      "split": "adversarial",
+      "question": "Is there a person in the image?",
+      "truth": "yes",
+      "baseline": "Yes",
+      "baselinePred": "yes",
+      "steered": "Yes",
+      "steeredPred": "yes",
+      "probeScore": 0.000012642527533727722,
+      "probeThreshold": 0.5,
+      "gate": {
+        "triggered": null,
+        "alignment": null,
+        "threshold": 0.3173275566101074,
+        "source": "not recorded"
+      }
+    },
+    {
+      "id": "adversarial:1375",
+      "image": "COCO_val2014_000000037900.jpg",
+      "imageId": 37900,
+      "imageSrc": "/examples/COCO_val2014_000000037900.jpg",
+      "imageSha256": "195d1d581b8078291ff1ecb80247dbdd9a2ce97661a7ce0ced0d16ffdb9216af",
+      "imageAlt": "COCO val2014 image for the saved question: Is there a backpack in the image?",
+      "attribution": {
+        "creator": "OctopusHat",
+        "source": "https://www.flickr.com/photos/octopushat/2514224801/",
+        "license": "Attribution-ShareAlike License",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+        "title": "Daily Carry"
+      },
+      "split": "adversarial",
+      "question": "Is there a backpack in the image?",
+      "truth": "yes",
+      "baseline": "Yes",
+      "baselinePred": "yes",
+      "steered": "Yes",
+      "steeredPred": "yes",
+      "probeScore": 0.12167915739748887,
+      "probeThreshold": 0.5,
+      "gate": {
+        "triggered": null,
+        "alignment": null,
+        "threshold": 0.3173275566101074,
+        "source": "not recorded"
+      }
+    },
+    {
+      "id": "adversarial:1453",
+      "image": "COCO_val2014_000000018918.jpg",
+      "imageId": 18918,
+      "imageSrc": "/examples/COCO_val2014_000000018918.jpg",
+      "imageSha256": "d145559f2240487d44c286e265934480125207d1e6bf449bea3acc6b435fed69",
+      "imageAlt": "COCO val2014 image for the saved question: Is there a sink in the image?",
+      "attribution": {
+        "creator": "mikecogh",
+        "source": "https://www.flickr.com/photos/mikecogh/6880735683/",
+        "license": "Attribution-ShareAlike License",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+        "title": "Bigger Galley"
+      },
+      "split": "adversarial",
+      "question": "Is there a sink in the image?",
+      "truth": "yes",
+      "baseline": "Yes",
+      "baselinePred": "yes",
+      "steered": "Yes",
+      "steeredPred": "yes",
+      "probeScore": 0.004640216573929573,
+      "probeThreshold": 0.5,
+      "gate": {
+        "triggered": null,
+        "alignment": null,
+        "threshold": 0.3173275566101074,
+        "source": "not recorded"
+      }
+    },
+    {
+      "id": "adversarial:1531",
+      "image": "COCO_val2014_000000070813.jpg",
+      "imageId": 70813,
+      "imageSrc": "/examples/COCO_val2014_000000070813.jpg",
+      "imageSha256": "2e08d56ae84d034c3bb18fe24c46743d88412c268c604a5c7b954612f75a5b49",
+      "imageAlt": "COCO val2014 image for the saved question: Is there a handbag in the image?",
+      "attribution": {
+        "creator": "Joe Shlabotnik",
+        "source": "https://www.flickr.com/photos/joeshlabotnik/2451299964/",
+        "license": "Attribution License",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+        "title": "Honeymoon Bed In The Old Mill"
+      },
+      "split": "adversarial",
+      "question": "Is there a handbag in the image?",
+      "truth": "yes",
+      "baseline": "Yes",
+      "baselinePred": "yes",
+      "steered": "Yes",
+      "steeredPred": "yes",
+      "probeScore": 0.0003888030361135903,
+      "probeThreshold": 0.5,
+      "gate": {
+        "triggered": null,
+        "alignment": null,
+        "threshold": 0.3173275566101074,
+        "source": "not recorded"
+      }
+    },
+    {
+      "id": "adversarial:157",
+      "image": "COCO_val2014_000000033270.jpg",
+      "imageId": 33270,
+      "imageSrc": "/examples/COCO_val2014_000000033270.jpg",
+      "imageSha256": "ded0f587c0c3cd320c0aa99631c2c601077e3768b56a3ff79bb543ec69a6f5b8",
+      "imageAlt": "COCO val2014 image for the saved question: Is there a tv in the image?",
+      "attribution": {
+        "creator": "Fil.Al",
+        "source": "https://www.flickr.com/photos/fbohac/5948609703/",
+        "license": "Attribution License",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+        "title": "Living Room"
+      },
+      "split": "adversarial",
+      "question": "Is there a tv in the image?",
+      "truth": "yes",
+      "baseline": "Yes",
+      "baselinePred": "yes",
+      "steered": "Yes",
+      "steeredPred": "yes",
+      "probeScore": 0.0000012783404044062282,
+      "probeThreshold": 0.5,
+      "gate": {
+        "triggered": null,
+        "alignment": null,
+        "threshold": 0.3173275566101074,
+        "source": "not recorded"
+      }
+    },
+    {
+      "id": "adversarial:1585",
+      "image": "COCO_val2014_000000198312.jpg",
+      "imageId": 198312,
+      "imageSrc": "/examples/COCO_val2014_000000198312.jpg",
+      "imageSha256": "e16abb055372893128e463ee8a7a6327cf1d9c2d5b27ca6fd668f447c46c2c4a",
+      "imageAlt": "COCO val2014 image for the saved question: Is there a bowl in the image?",
+      "attribution": {
+        "creator": "mikecogh",
+        "source": "https://www.flickr.com/photos/mikecogh/5444282457/",
+        "license": "Attribution-ShareAlike License",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+        "title": "Display Living Area"
+      },
+      "split": "adversarial",
+      "question": "Is there a bowl in the image?",
+      "truth": "yes",
+      "baseline": "Yes",
+      "baselinePred": "yes",
+      "steered": "Yes",
+      "steeredPred": "yes",
+      "probeScore": 0.00316720097862837,
+      "probeThreshold": 0.5,
+      "gate": {
+        "triggered": null,
+        "alignment": null,
+        "threshold": 0.3173275566101074,
+        "source": "not recorded"
+      }
+    },
+    {
+      "id": "adversarial:1711",
+      "image": "COCO_val2014_000000239773.jpg",
+      "imageId": 239773,
+      "imageSrc": "/examples/COCO_val2014_000000239773.jpg",
+      "imageSha256": "be75e4667ebbabacce06e80a2df46e01f0c813a3a4b54b587b22007584e10267",
+      "imageAlt": "COCO val2014 image for the saved question: Is there a baseball glove in the image?",
+      "attribution": {
+        "creator": "Robert Hensley",
+        "source": "https://www.flickr.com/photos/roberthensley/3883298746/",
+        "license": "Attribution License",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+        "title": "Pudge Rodriguez"
+      },
+      "split": "adversarial",
+      "question": "Is there a baseball glove in the image?",
+      "truth": "yes",
+      "baseline": "Yes",
+      "baselinePred": "yes",
+      "steered": "Yes",
+      "steeredPred": "yes",
+      "probeScore": 2.150167169825782e-8,
+      "probeThreshold": 0.5,
+      "gate": {
+        "triggered": null,
+        "alignment": null,
+        "threshold": 0.3173275566101074,
+        "source": "not recorded"
+      }
+    },
+    {
+      "id": "adversarial:1951",
+      "image": "COCO_val2014_000000572260.jpg",
+      "imageId": 572260,
+      "imageSrc": "/examples/COCO_val2014_000000572260.jpg",
+      "imageSha256": "889d38fbf5a7239588457ded728270b840af109e2c922c231cd7e1b7ca7fa39b",
+      "imageAlt": "COCO val2014 image for the saved question: Is there a wine glass in the image?",
+      "attribution": {
+        "creator": "chrismgrant",
+        "source": "https://www.flickr.com/photos/cgsofly/2525165021/",
+        "license": "Attribution-NoDerivs License",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nd/2.0/",
+        "title": "Day 1 - Mom's shelf"
+      },
+      "split": "adversarial",
+      "question": "Is there a wine glass in the image?",
+      "truth": "yes",
+      "baseline": "No",
+      "baselinePred": "no",
+      "steered": "No",
+      "steeredPred": "no",
+      "probeScore": 0.015718074317734747,
+      "probeThreshold": 0.5,
+      "gate": {
+        "triggered": null,
+        "alignment": null,
+        "threshold": 0.3173275566101074,
+        "source": "not recorded"
+      }
+    },
+    {
+      "id": "adversarial:1969",
+      "image": "COCO_val2014_000000044801.jpg",
+      "imageId": 44801,
+      "imageSrc": "/examples/COCO_val2014_000000044801.jpg",
+      "imageSha256": "52de355172851685348516bff5e30fe422cbd706e88becfdc3737e936ad7002b",
+      "imageAlt": "COCO val2014 image for the saved question: Is there a traffic light in the image?",
+      "attribution": {
+        "creator": "Rocco Lucia",
+        "source": "https://www.flickr.com/photos/foxtwo/11683147/",
+        "license": "Attribution License",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+        "title": "Al semaforo [ready-set-go]"
+      },
+      "split": "adversarial",
+      "question": "Is there a traffic light in the image?",
+      "truth": "yes",
+      "baseline": "Yes",
+      "baselinePred": "yes",
+      "steered": "Yes",
+      "steeredPred": "yes",
+      "probeScore": 0.0003655466328275916,
+      "probeThreshold": 0.5,
+      "gate": {
+        "triggered": null,
+        "alignment": null,
+        "threshold": 0.3173275566101074,
+        "source": "not recorded"
+      }
+    },
+    {
+      "id": "adversarial:199",
+      "image": "COCO_val2014_000000042190.jpg",
+      "imageId": 42190,
+      "imageSrc": "/examples/COCO_val2014_000000042190.jpg",
+      "imageSha256": "5c28f760d24bae430529e15ef527bacdae6c66eba9397b4ecfc8f9fcd7574161",
+      "imageAlt": "COCO val2014 image for the saved question: Is there a snowboard in the image?",
+      "attribution": {
+        "creator": "MFA of Poland",
+        "source": "https://www.flickr.com/photos/polandmfa/6975627811/",
+        "license": "Attribution-NoDerivs License",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nd/2.0/",
+        "title": "Poland, water skiing / Narty wodne w Polsce"
+      },
+      "split": "adversarial",
+      "question": "Is there a snowboard in the image?",
+      "truth": "yes",
+      "baseline": "No",
+      "baselinePred": "no",
+      "steered": "No",
+      "steeredPred": "no",
+      "probeScore": 0.01508878939938867,
+      "probeThreshold": 0.5,
+      "gate": {
+        "triggered": null,
+        "alignment": null,
+        "threshold": 0.3173275566101074,
+        "source": "not recorded"
+      }
+    },
+    {
+      "id": "adversarial:2191",
+      "image": "COCO_val2014_000000372819.jpg",
+      "imageId": 372819,
+      "imageSrc": "/examples/COCO_val2014_000000372819.jpg",
+      "imageSha256": "ba959429e80e0291609b81caa25e1a31abb24a3de0df6c7f1f68dd1649349d47",
+      "imageAlt": "COCO val2014 image for the saved question: Is there a dog in the image?",
+      "attribution": {
+        "creator": "Donelle_photos",
+        "source": "https://www.flickr.com/photos/24613361@N07/2516944023/",
+        "license": "Attribution License",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+        "title": "Coming At Me"
+      },
+      "split": "adversarial",
+      "question": "Is there a dog in the image?",
+      "truth": "yes",
+      "baseline": "Yes",
+      "baselinePred": "yes",
+      "steered": "Yes",
+      "steeredPred": "yes",
+      "probeScore": 9.434131558718927e-7,
+      "probeThreshold": 0.5,
+      "gate": {
+        "triggered": null,
+        "alignment": null,
+        "threshold": 0.3173275566101074,
+        "source": "not recorded"
+      }
+    },
+    {
+      "id": "adversarial:2473",
+      "image": "COCO_val2014_000000388237.jpg",
+      "imageId": 388237,
+      "imageSrc": "/examples/COCO_val2014_000000388237.jpg",
+      "imageSha256": "30734c54ad6af2935c2be23a3a39817a021d69d2e2b5ab4a969604c8ae83a84c",
+      "imageAlt": "COCO val2014 image for the saved question: Is there a chair in the image?",
+      "attribution": {
+        "creator": "James Buck",
+        "source": "https://www.flickr.com/photos/jameskarlbuck/5914299799/",
+        "license": "Attribution License",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+        "title": "IMG_5257.jpg"
+      },
+      "split": "adversarial",
+      "question": "Is there a chair in the image?",
+      "truth": "yes",
+      "baseline": "No",
+      "baselinePred": "no",
+      "steered": "No",
+      "steeredPred": "no",
+      "probeScore": 0.000029243347308499517,
+      "probeThreshold": 0.5,
+      "gate": {
+        "triggered": null,
+        "alignment": null,
+        "threshold": 0.3173275566101074,
+        "source": "not recorded"
+      }
+    },
+    {
+      "id": "adversarial:2725",
+      "image": "COCO_val2014_000000252911.jpg",
+      "imageId": 252911,
+      "imageSrc": "/examples/COCO_val2014_000000252911.jpg",
+      "imageSha256": "60ce32253ff6a3ed11d92450dd3cdf542800a27d0d5023f64572b941d189f43d",
+      "imageAlt": "COCO val2014 image for the saved question: Is there a person in the image?",
+      "attribution": {
+        "creator": "globallivesproject",
+        "source": "https://www.flickr.com/photos/globallives/9613547985/",
+        "license": "Attribution-ShareAlike License",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+        "title": "Lives in Transit: Behind the Scenes with Pierre Valée"
+      },
+      "split": "adversarial",
+      "question": "Is there a person in the image?",
+      "truth": "yes",
+      "baseline": "Yes",
+      "baselinePred": "yes",
+      "steered": "Yes",
+      "steeredPred": "yes",
+      "probeScore": 0.000012087127377699625,
+      "probeThreshold": 0.5,
+      "gate": {
+        "triggered": null,
+        "alignment": null,
+        "threshold": 0.3173275566101074,
+        "source": "not recorded"
+      }
+    },
+    {
+      "id": "adversarial:535",
+      "image": "COCO_val2014_000000498374.jpg",
+      "imageId": 498374,
+      "imageSrc": "/examples/COCO_val2014_000000498374.jpg",
+      "imageSha256": "960c164e87d24eedbb744fa7b158630bbadd30de20f4de8f3ff1716309449b65",
+      "imageAlt": "COCO val2014 image for the saved question: Is there a sink in the image?",
+      "attribution": {
+        "creator": "Tirch",
+        "source": "https://www.flickr.com/photos/tirch/5562549647/",
+        "license": "Attribution License",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+        "title": "a bathroom"
+      },
+      "split": "adversarial",
+      "question": "Is there a sink in the image?",
+      "truth": "yes",
+      "baseline": "Yes",
+      "baselinePred": "yes",
+      "steered": "Yes",
+      "steeredPred": "yes",
+      "probeScore": 0.0000022937682444546474,
+      "probeThreshold": 0.5,
+      "gate": {
+        "triggered": null,
+        "alignment": null,
+        "threshold": 0.3173275566101074,
+        "source": "not recorded"
+      }
+    },
+    {
+      "id": "adversarial:607",
+      "image": "COCO_val2014_000000520524.jpg",
+      "imageId": 520524,
+      "imageSrc": "/examples/COCO_val2014_000000520524.jpg",
+      "imageSha256": "10d0f9a17fe58609ee2fe1dabadb78bc7a567a1c581af4905f49a17fd266e59f",
+      "imageAlt": "COCO val2014 image for the saved question: Is there a motorcycle in the image?",
+      "attribution": {
+        "creator": "funcrush28",
+        "source": "https://www.flickr.com/photos/funcrush/8699326112/",
+        "license": "Attribution License",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+        "title": "bicycle & motorcycle"
+      },
+      "split": "adversarial",
+      "question": "Is there a motorcycle in the image?",
+      "truth": "yes",
+      "baseline": "Yes",
+      "baselinePred": "yes",
+      "steered": "Yes",
+      "steeredPred": "yes",
+      "probeScore": 0.0038802968213104616,
+      "probeThreshold": 0.5,
+      "gate": {
+        "triggered": null,
+        "alignment": null,
+        "threshold": 0.3173275566101074,
+        "source": "not recorded"
+      }
+    },
+    {
+      "id": "adversarial:79",
+      "image": "COCO_val2014_000000569839.jpg",
+      "imageId": 569839,
+      "imageSrc": "/examples/COCO_val2014_000000569839.jpg",
+      "imageSha256": "4adb958675d119a8aafc33fdd8bf58e79163552cafa12595421f2c1c731c926c",
+      "imageAlt": "COCO val2014 image for the saved question: Is there a person in the image?",
+      "attribution": {
+        "creator": "stevendepolo",
+        "source": "https://www.flickr.com/photos/stevendepolo/3187069218/",
+        "license": "Attribution License",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+        "title": "IMG_3723.JPG"
+      },
+      "split": "adversarial",
+      "question": "Is there a person in the image?",
+      "truth": "yes",
+      "baseline": "Yes",
+      "baselinePred": "yes",
+      "steered": "Yes",
+      "steeredPred": "yes",
+      "probeScore": 0.00000984968785184356,
+      "probeThreshold": 0.5,
+      "gate": {
+        "triggered": null,
+        "alignment": null,
+        "threshold": 0.3173275566101074,
+        "source": "not recorded"
+      }
+    }
+  ],
+  "modern": {
+    "status": "Not executed",
+    "model": "Qwen/Qwen2.5-VL-7B-Instruct",
+    "revision": "cc594898137f460bfe9f0759e9844b3ce807cfb5",
+    "source": "configs/pope_qwen_replication.json"
+  }
+}

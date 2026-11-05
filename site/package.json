@@ -1,0 +1,47 @@
+{
+  "name": "counterprior-research-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1",
+    "export:data": "node scripts/export-data.mjs",
+    "prepare:examples": "node scripts/prepare-examples.mjs",
+    "prebuild": "npm run prepare:examples && npm run export:data",
+    "build": "next build",
+    "start": "node scripts/serve.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "qa:screenshots": "playwright test qa.spec.ts --project=chromium",
+    "qa:lighthouse": "node scripts/lighthouse.mjs",
+    "runtime": "node -p process.version",
+    "postbuild": "node scripts/static-aliases.mjs"
+  },
+  "dependencies": {
+    "geist": "1.9.0",
+    "next": "16.4.3",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.64.1",
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "26.6.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.4.3",
+    "lighthouse": "13.6.0",
+    "node": "24.22.2",
+    "prettier": "3.9.10",
+    "tailwindcss": "4.3.3",
+    "typescript": "6.0.3",
+    "vitest": "5.0.5"
+  }
+}

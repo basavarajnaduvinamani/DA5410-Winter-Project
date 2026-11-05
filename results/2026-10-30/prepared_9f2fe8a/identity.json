@@ -1,0 +1,43 @@
+{
+  "config": {
+    "model_id": "llava-hf/llava-1.5-7b-hf",
+    "revision": "b234b804b114d9e37bb655e11cbbb5f5e971b7a9",
+    "dataset": "dataset/counterprior_corrected.json",
+    "seed": 20261030,
+    "bootstrap_iterations": 1000,
+    "alpha": 0.25,
+    "max_new_tokens": 40,
+    "attn_implementation": "eager",
+    "load_in_4bit": true,
+    "direction": "pca",
+    "gate": "calibration_group_loo_cosine",
+    "layer_indexing": "zero_based_raw_decoder_output",
+    "ablation_methods": [
+      "random_direction",
+      "shuffled_labels",
+      "mean_difference",
+      "addition",
+      "constant"
+    ]
+  },
+  "dataset_sha256": "51b4f2090b600367169eb93659117e71333e67b2827a59a55f23d8a9ba67e6de",
+  "environment_lock_sha256": "33782035481f6cefc7533065254bfb5f4e683fa7a534f0a5528ccfb4629c7395",
+  "source_sha256": {
+    "scripts\\analyze_run.py": "9e8cf830ee93e7de92b6c76b6cb347b2a862a01206a97c2624c09a3f3e40f9d0",
+    "scripts\\audit_dataset.py": "fe5110ec48c38a4926877d348e3c7787e18550634b09b0d101823247d50047b1",
+    "scripts\\blind_review.py": "d1bbc57a74455ae89a01a8d59c8c38386e12444f06c95f30cd5884eaca24bff9",
+    "scripts\\generate_dataset.py": "5209649dd0e206d794fcc9b9f0fee54b3014291a90ff0ad8693fb9714ccde950",
+    "scripts\\run_experiment.py": "f9bd9aac18f6b8823d9a5847f0cb1737c58a5f72404f16b21ed639fdd2aba293",
+    "scripts\\verify_cpu.py": "50083269013c4b48a2ef835805601cde2a009803cebc3d6a0f231415d5a64ee0",
+    "src\\__init__.py": "5380b65f5f00d929432c58e1e33ffd04ec9442c1ada40e355108385f05f7cad7",
+    "src\\adjudication.py": "9ca2d33c2fa0aca3efb496c679be8430e74729419a5302e283434a5f1ca98fd2",
+    "src\\benchmark.py": "0d4fafd0e0a2c054e7e4eb47333a563ff3e3988580117ec4d48c3682c2e1d21b",
+    "src\\latent_geometry.py": "291def23fad2c1ffd2f2ea61846fb4d888e54ff1a08f3e2e90442543f6b9ce7c",
+    "src\\model_loader.py": "750a6967f221b85f0d3156495711a6e48d2a5b11cee2bf2660aa8ab82882012b",
+    "src\\probe.py": "433ab7b25df78abba7f28329646d9952feebe36a8538b2b6a81f32b0e35615c6",
+    "src\\protocol.py": "a536cb01f10bbb69ccfc7e2a1b0aab57b6c735a24028469f1cff7b19fe625541",
+    "src\\rotational_steering.py": "e5d4a02391ed037f24d9bd17783fdbe6f89daa84bc402f486f98ac479f5895fe"
+  },
+  "commit": "9f2fe8a5cbd325b4ebdff575516dc2be259e2121",
+  "run_id": "e849aace85789f59c25f7850f554c05fad4e3427b2b82054a9c04f114bbce89d"
+}

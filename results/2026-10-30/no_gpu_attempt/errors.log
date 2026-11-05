@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "C:\Users\Viraj\OneDrive\Desktop\Winter Project\scripts\run_experiment.py", line 158, in <module>
+    main()
+  File "C:\Users\Viraj\OneDrive\Desktop\Winter Project\scripts\run_experiment.py", line 74, in main
+    raise RuntimeError('Select a Colab GPU runtime; no model inference executed')
+RuntimeError: Select a Colab GPU runtime; no model inference executed
+
