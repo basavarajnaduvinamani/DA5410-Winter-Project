@@ -9,11 +9,12 @@ export const metadata: Metadata = {
 export default function About() {
   return (
     <div className="narrow-page">
-      <PageIntro eyebrow="PEOPLE / RESEARCH CONTEXT" title="About CounterPrior">
+      <PageIntro eyebrow="People and research context" title="About CounterPrior">
         <p>
           CounterPrior is research on object hallucination and
-          representation-level intervention in vision-language models, conducted
-          at AI4Bharat Lab, IIT Madras.
+          representation-level intervention in multimodal models. LLaVA work at
+          AI4Bharat, IIT Madras (Prof. Mitesh Khapra), Nov 2025 to Feb 2026.
+          Extended to audio and video in Nov 2026.
         </p>
       </PageIntro>
       <section className="about-section">
@@ -37,7 +38,7 @@ export default function About() {
           </div>
           <div>
             <dt>Research setting</dt>
-            <dd>AI4Bharat Lab, IIT Madras</dd>
+            <dd>LLaVA work at AI4Bharat Lab, IIT Madras (Nov 2025 to Feb 2026)</dd>
           </div>
         </dl>
         <p className="caption">
