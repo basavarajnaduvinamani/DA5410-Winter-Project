@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { SavedExample } from "@/components/saved-example";
 import { code, research } from "@/lib/data";
 import results from "@/lib/final-results.json";
@@ -41,7 +40,7 @@ function LLaVAChart() {
 
 function QwenChart() {
   const { delta, ci } = results.qwen[0];
-  const x = (v: number) => 180 + 164 * v;
+  const x = (v: number) => 24 + 780 * (v + 0.1);
   const signed = (v: number) => `+${v.toFixed(3)}`;
   const summary = `${signed(delta)} (95% CI ${signed(ci[0])} to ${signed(ci[1])})`;
   return (
@@ -51,13 +50,13 @@ function QwenChart() {
       <svg viewBox="0 0 360 178" role="img" aria-label={`AUROC difference: ${summary}`}>
         <text x={x(0)} y="30" textAnchor="middle">No difference</text>
         <path d={`M${x(0)} 40V127`} className="plot-axis zero-line" />
-        <path d={`M${x(-1)} 127H${x(1)}`} className="plot-axis" />
+        <path d={`M${x(-0.1)} 127H${x(0.3)}`} className="plot-axis" />
         <path d={whisker(x(ci[0]), x(ci[1]), 79)} className="difference-whisker" />
         <circle cx={x(delta)} cy="79" r="5" fill="var(--accent)" />
-        {[-1, 0, 1].map(v => <text key={v} x={x(v)} y="147" textAnchor="middle">{v > 0 ? "+1" : v}</text>)}
+        {[-0.1, 0, 0.1, 0.2, 0.3].map(v => <text key={v} x={x(v)} y="147" textAnchor="middle">{v > 0 ? `+${v}` : v}</text>)}
         <text x="180" y="170" textAnchor="middle">AUROC difference</text>
       </svg>
-      <figcaption>Adding the probe improved AUROC over the full baseline, which includes confidence.</figcaption>
+      <figcaption>The probe improved on a baseline fitted to the original Yes–No score, its change after audio swaps, the score without media, and how often Qwen said Yes for that object and task in calibration.</figcaption>
     </figure>
   );
 }
@@ -66,25 +65,25 @@ export default function Home() {
   const example = research.examples.find(row => row.baselinePred !== row.steeredPred);
   return (
     <article className="redesign">
-      <header className="question-stage">
+      <header>
         <div className="question-copy">
           <h1>Do multimodal models know when they are guessing?</h1>
           <p>We tested whether a probe of a model’s hidden states can spot wrong answers better than the model’s own scores.</p>
           <p className="research-credit">AI4Bharat, IIT Madras, with Prof. Mitesh Khapra. Nov 2025 - present.</p>
         </div>
-        {example && <SavedExample example={example} />}
       </header>
 
-      <section id="results" className="redesign-section">
+      <section id="results" className="redesign-section opening-results">
         <h2>Results</h2>
         <p>AUROC measures how well a score ranks errors above correct answers. Higher is better.</p>
         <div className="result-grid"><LLaVAChart /><QwenChart /></div>
-        <p className="swap-finding">In an exploratory check, swapping the video stream shifted answer scores {results.exploratory.soundSwap.estimate.toFixed(2)}× more than swapping the audio stream.</p>
+        <p className="swap-finding">In an exploratory Gemma 4 E2B check, video swaps shifted sound-question scores {results.exploratory.soundSwap.estimate.toFixed(2)}× as much as audio swaps.</p>
         <p>Gemma 4 E2B: inconclusive.</p>
-        <Link href="/record/">Complete results and swap diagram</Link>
+        <a href="/record/">Complete results and swap diagram</a>
       </section>
 
       <div className="reading-column">
+        {example && <SavedExample example={example} />}
         <section id="method" className="redesign-section">
           <h2>Method</h2>
           <p>We fit layer-wise linear probes on hidden states. The image experiment used image-disjoint splits. We selected settings before held-out evaluation and used bootstrap confidence intervals.</p>
@@ -95,7 +94,7 @@ export default function Home() {
         </section>
         <section id="code" className="redesign-section">
           <h2>Code and evidence</h2>
-          <div className="redesign-links"><a href={code}>GitHub repository</a><Link href="/explorer/">Example explorer</Link><Link href="/ablations/">Ablations</Link></div>
+          <div className="redesign-links"><a href={code}>GitHub repository</a><a href="/explorer/">Example explorer</a><a href="/ablations/">Ablations</a></div>
         </section>
       </div>
     </article>
