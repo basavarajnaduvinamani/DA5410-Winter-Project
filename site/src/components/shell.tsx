@@ -9,8 +9,8 @@ export function Header() {
           <span>CounterPrior</span>
         </Link>
         <nav aria-label="Main navigation">
-          <Link href="/#chapter-3">Research</Link>
-          <Link href="/explorer/">Explorer</Link>
+          <Link href="/#results">Results</Link>
+          <Link href="/explorer/" prefetch={false}>Explorer</Link>
           <Link href="/ablations/">Ablations</Link>
           <Link href="/about/">About</Link>
         </nav>
@@ -23,11 +23,11 @@ export function Footer() {
     <footer className="site-footer">
       <div>
         <strong>CounterPrior</strong>
-        <p>A research record. Evidence before claims.</p>
+        <p>Model answers, methods and saved results.</p>
       </div>
       <div className="footer-links">
         <a href={code}>
-          Source code <span aria-hidden="true">↗</span>
+          Source code
         </a>
         <a href="/research.json" download>
           Evidence JSON
@@ -41,7 +41,7 @@ export function Footer() {
 export function Source({ path, label }: { path: string; label?: string }) {
   return (
     <a className="source" href={sourceUrl(path)}>
-      {label || `Source: ${path}`} <span aria-hidden="true">↗</span>
+      {label || `Source: ${path}`}
     </a>
   );
 }

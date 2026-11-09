@@ -3,10 +3,11 @@ import type { ResearchData, Metric } from "./types";
 export const research = snapshot as ResearchData;
 export const repo =
   "https://github.com/basavarajnaduvinamani/DA5410-Winter-Project";
-export const code = `${repo}/tree/claude/site-2026-11`;
-export const colab = `https://colab.research.google.com/github/basavarajnaduvinamani/DA5410-Winter-Project/blob/claude/site-2026-11/notebooks/CounterPrior_Mechanistic_Steering.ipynb`;
+const release = "v2.0-final";
+export const code = `${repo}/tree/${release}`;
+export const colab = `https://colab.research.google.com/github/basavarajnaduvinamani/DA5410-Winter-Project/blob/${release}/notebooks/CounterPrior_Mechanistic_Steering.ipynb`;
 export const sourceUrl = (path: string) =>
-  `${repo}/blob/claude/site-2026-11/${path}`;
+  `${repo}/blob/${release}/${path}`;
 export function value(n: number | null | undefined, digits = 3) {
   return n == null ? "Not available" : n.toFixed(digits);
 }

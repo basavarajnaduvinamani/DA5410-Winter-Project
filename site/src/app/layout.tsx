@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
-import { GeistMono } from "geist/font/mono";
 import { Header, Footer } from "@/components/shell";
 import "./globals.css";
 const origin =
@@ -11,13 +10,13 @@ const origin =
 export const metadata: Metadata = {
   metadataBase: new URL(origin),
   title: {
-    default: "CounterPrior — How small AI models see and hear",
+    default: "CounterPrior | Do multimodal models know when they are guessing?",
     template: "%s — CounterPrior",
   },
   description:
     "Object and sound grounding in LLaVA, Gemma 4 E2B and Qwen2.5-Omni-3B, with held-out results and recorded limitations.",
   openGraph: {
-    title: "CounterPrior — How small AI models see and hear",
+    title: "CounterPrior | Do multimodal models know when they are guessing?",
     description:
       "Question, frozen protocol, honest results and reproducibility for representation-level hallucination research.",
     type: "website",
@@ -42,7 +41,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${GeistSans.variable} ${GeistMono.variable}`}
+      className={GeistSans.variable}
     >
       <body>
         <a className="skip-link" href="#main">
