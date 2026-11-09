@@ -4,7 +4,8 @@ import { readFileSync } from "node:fs";
 import { authenticatePreview, previewRequestOptions } from "./preview-auth";
 test.beforeEach(async ({ context }) => authenticatePreview(context));
 const routes = [
-  ["/", "CounterPrior: Detecting"],
+  ["/", "Do multimodal models know when they are guessing?"],
+  ["/record/", "Small on-device AI models don’t see and hear equally."],
   ["/explorer/", "An answer is not the whole story."],
   ["/ablations/", "A reduction is not enough."],
   ["/about/", "About CounterPrior"],
@@ -48,20 +49,16 @@ test("explorer filters and resets without fabricating examples", async ({
     page.getByRole("button", { name: "All outcomes", exact: true }),
   ).toHaveAttribute("aria-pressed", "true");
 });
-test("theme toggle works with keyboard and persists locally", async ({
-  page,
-}) => {
-  await page.addInitScript(() =>
-    localStorage.setItem("counterprior-theme", "light"),
-  );
+test("the saved example changes answers with the keyboard", async ({ page }) => {
   await page.goto("/");
-  const toggle = page.getByRole("button", { name: "Switch to dark theme" });
+  const example = page.getByRole("region", { name: "One saved answer change" });
+  const toggle = example.getByRole("button", { name: "With steering" });
+  await expect(example.getByText("Model answer Yes")).toBeVisible();
   await toggle.focus();
   await page.keyboard.press("Enter");
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  await expect(
-    page.getByRole("button", { name: "Switch to light theme" }),
-  ).toBeVisible();
+  await expect(toggle).toHaveAttribute("aria-pressed", "true");
+  await expect(example.getByText("Model answer No")).toBeVisible();
+  await expect(example.getByText("Unavailable", { exact: true })).toHaveCount(2);
 });
 test("reproducibility assets are real files", async ({ request }) => {
   for (const path of [

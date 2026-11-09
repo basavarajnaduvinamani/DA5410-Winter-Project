@@ -6,7 +6,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     (process.env.VERCEL_PROJECT_PRODUCTION_URL
       ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
       : "http://localhost:4173");
-  return ["/", "/explorer/", "/ablations/", "/about/"].map((p) => ({
+  return ["/", "/record/", "/explorer/", "/ablations/", "/about/"].map((p) => ({
     url: origin + p,
   }));
 }
