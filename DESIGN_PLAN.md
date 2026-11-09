@@ -37,3 +37,7 @@ Code          Repository and complete results
 The first sketch used a margin index and rules between chapters, which read like a generic broadsheet. Replace the index and rules with vertical space and one asymmetrical, blue-wash instrument. Use a cool sans palette in place of cream, serif and terracotta. Drop stat tiles, all-caps labels, numbered chapters, arrow links and motion. The controls do one job and expose exactly which saved observation is displayed.
 
 The public site data records one changed answer under LLaVA steering, including the original probe score. It contains aggregate Gemma swap measurements but no public per-item swap with answer, confidence and probe score. Use the saved steering example and disclose unavailable scores. Keep the existing swap diagram with the complete results. Show the Qwen comparison against its recorded full baseline, which includes confidence.
+
+## Review round
+
+Lead with both measured results. Move the saved LLaVA example below them as a native disclosure, and load its image lazily. The charts use static SVG, and the explorer loads on navigation. Use one self-hosted font and omit the landing page's client bootstrap.

@@ -49,16 +49,17 @@ test("explorer filters and resets without fabricating examples", async ({
     page.getByRole("button", { name: "All outcomes", exact: true }),
   ).toHaveAttribute("aria-pressed", "true");
 });
-test("the saved example changes answers with the keyboard", async ({ page }) => {
-  await page.goto("/");
-  const example = page.getByRole("region", { name: "One saved answer change" });
-  const toggle = example.getByRole("button", { name: "With steering" });
-  await expect(example.getByText("Model answer Yes")).toBeVisible();
+test("the landing page and steering disclosure work without scripts", async ({ page }) => {
+  const response = await page.goto("/");
+  expect(await response?.text()).not.toMatch(/<script\b/);
+  const example = page.getByRole("region", { name: "Steering example" });
+  const toggle = example.locator("summary");
+  await toggle.scrollIntoViewIfNeeded();
+  await expect(example.getByText("Original model answer Yes")).toBeVisible();
+  await expect(example.getByText("Original probe score: < 0.001")).toBeVisible();
   await toggle.focus();
   await page.keyboard.press("Enter");
-  await expect(toggle).toHaveAttribute("aria-pressed", "true");
-  await expect(example.getByText("Model answer No")).toBeVisible();
-  await expect(example.getByText("Unavailable", { exact: true })).toHaveCount(2);
+  await expect(example.getByText("Model answer No", { exact: true })).toBeVisible();
 });
 test("reproducibility assets are real files", async ({ request }) => {
   for (const path of [

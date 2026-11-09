@@ -10,7 +10,7 @@ export function Header() {
         </Link>
         <nav aria-label="Main navigation">
           <Link href="/#results">Results</Link>
-          <Link href="/explorer/">Explorer</Link>
+          <Link href="/explorer/" prefetch={false}>Explorer</Link>
           <Link href="/ablations/">Ablations</Link>
           <Link href="/about/">About</Link>
         </nav>
