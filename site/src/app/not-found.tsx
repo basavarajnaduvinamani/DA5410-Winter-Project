@@ -3,10 +3,10 @@ export default function NotFound() {
   return (
     <div className="not-found narrow-page">
       <p className="eyebrow">Page not found</p>
-      <h1>This path has no evidence.</h1>
+      <h1>This page does not exist.</h1>
       <p>
-        The page may have moved, or the address may be incomplete. The research
-        record and example explorer are still available.
+        The page may have moved, or the address may be incomplete. Start from the
+        results or the example explorer.
       </p>
       <div className="resource-links">
         <Link className="button-primary" href="/">

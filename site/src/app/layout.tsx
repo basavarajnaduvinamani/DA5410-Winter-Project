@@ -14,11 +14,11 @@ export const metadata: Metadata = {
     template: "%s — CounterPrior",
   },
   description:
-    "Object and sound grounding in LLaVA, Gemma 4 E2B and Qwen2.5-Omni-3B, with held-out results and recorded limitations. LLaVA work at AI4Bharat, IIT Madras (Prof. Mitesh Khapra), Nov 2025 to Feb 2026. Extended to audio and video in Nov 2026.",
+    "How LLaVA, Qwen2.5-Omni-3B and Gemma 4 E2B use images and sound, with held-out results and their limits. LLaVA work at AI4Bharat, IIT Madras (Prof. Mitesh Khapra), Nov 2025 to Feb 2026. Extended to audio and video in Nov 2026.",
   openGraph: {
     title: "CounterPrior | Do multimodal models know when they are guessing?",
     description:
-      "Question, frozen protocol, honest results and reproducibility for representation-level hallucination research.",
+      "Probes, input swaps and matched controls test whether multimodal models know when they are guessing.",
     type: "website",
     images: [
       {

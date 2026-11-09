@@ -13,12 +13,12 @@ export default function Ablations() {
     <div className="wide-page">
       <PageIntro
         eyebrow="Controls and alternative explanations"
-        title="A reduction is not enough."
+        title="Steering against matched controls"
       >
         <p>
-          A useful direction should do more than a matched random vector or
-          shuffled labels. Recognition loss must stay visible beside fewer
-          false-yes answers.
+          A steering direction only counts if it beats a matched random vector
+          and a direction learned from shuffled labels. Each result shows lost
+          recognition next to the drop in false Yes answers.
         </p>
       </PageIntro>
       {research.status === "pending" ? (
