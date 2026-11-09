@@ -56,7 +56,7 @@ function QwenChart() {
         {[-0.1, 0, 0.1, 0.2, 0.3].map(v => <text key={v} x={x(v)} y="147" textAnchor="middle">{v > 0 ? `+${v}` : v}</text>)}
         <text x="180" y="170" textAnchor="middle">AUROC difference</text>
       </svg>
-      <figcaption>Dot: AUROC difference; whiskers: 95% bootstrap CI. The probe improved on a baseline fitted to the original Yes–No score, its change after audio swaps, the score without media, and how often Qwen said Yes for that object and task in calibration.</figcaption>
+      <figcaption>Dot: AUROC difference; whiskers: 95% bootstrap CI. The baseline uses Qwen’s own Yes–No scores: the original score, its change after audio swaps, the score without media, and how often Qwen said Yes for that object and task in calibration.</figcaption>
     </figure>
   );
 }
@@ -68,7 +68,7 @@ export default function Home() {
       <header>
         <div className="question-copy">
           <h1>Do multimodal models know when they are guessing?</h1>
-          <p>How do machines see? A workbench for tinkering with open-weight multimodal models and testing whether they know when they’re guessing.</p>
+          <p>How do machines see? A workbench for tinkering with open-weight multimodal models.</p>
           <p>We tested whether a probe of a model’s hidden states can spot wrong answers better than the model’s own scores.</p>
           <p className="research-credit">LLaVA work at AI4Bharat, IIT Madras (Prof. Mitesh Khapra), Nov 2025 to Feb 2026. Extended to audio and video in Nov 2026.</p>
         </div>
@@ -79,7 +79,7 @@ export default function Home() {
         <p>AUROC measures how well a score ranks errors above correct answers. Higher is better.</p>
         <div className="result-grid"><LLaVAChart /><QwenChart /></div>
         <h3 className="swap-heading">Gemma 4 E2B, audio and video</h3>
-        <p className="swap-finding">Inconclusive. In this exploratory check, video swaps shifted sound-question scores {results.exploratory.soundSwap.estimate.toFixed(2)}× as much as audio swaps.</p>
+        <p className="swap-finding">Inconclusive: too few wrong answers to compare. Exploratory only: video swaps shifted sound-question scores {results.exploratory.soundSwap.estimate.toFixed(2)}× as much as audio swaps.</p>
         <a href="/record/">Complete results and swap diagram</a>
       </section>
 

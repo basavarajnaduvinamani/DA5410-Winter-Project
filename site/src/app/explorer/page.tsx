@@ -12,12 +12,11 @@ export default function ExplorerPage() {
     <div className="wide-page">
       <PageIntro
         eyebrow="Inspect the evidence"
-        title="An answer is not the whole story."
+        title="Example explorer"
       >
         <p>
-          Look at the image, the exact question and both model answers. Filter
-          for improvements and regressions; the same evidence standard applies
-          to each.
+          See the image, the exact question and the answer before and after
+          steering. Filter for answers that improved or got worse.
         </p>
       </PageIntro>
       <Explorer

@@ -11,8 +11,9 @@ export default function About() {
     <div className="narrow-page">
       <PageIntro eyebrow="People and research context" title="About CounterPrior">
         <p>
-          CounterPrior is research on object hallucination and
-          representation-level intervention in multimodal models. LLaVA work at
+          CounterPrior studies why multimodal models report objects and sounds
+          that are not there, and whether their hidden states can flag those
+          answers. LLaVA work at
           AI4Bharat, IIT Madras (Prof. Mitesh Khapra), Nov 2025 to Feb 2026.
           Extended to audio and video in Nov 2026.
         </p>
@@ -20,9 +21,9 @@ export default function About() {
       <section className="about-section">
         <h2>Basavaraj A Naduvinamani</h2>
         <p>
-          Joint Master&apos;s student in Data Science & AI at IIT Madras and the
-          University of Birmingham. Research interests include visual grounding,
-          interpretable model behaviour and reliable evaluation.
+          Master&apos;s student in Data Science and AI at IIT Madras, with an
+          exchange semester at the University of Birmingham. Works on visual
+          grounding, interpretable model behaviour and reliable evaluation.
         </p>
         <a href="https://github.com/basavarajnaduvinamani">
           Contact through GitHub <span aria-hidden="true">↗</span>

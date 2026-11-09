@@ -1367,3 +1367,6 @@ select {
   .header-inner nav { gap: 0 10px; }
   .header-inner nav a { font-size: 14px; min-height: 44px; display: inline-flex; align-items: center; padding: 0 6px; }
 }
+
+.question-copy p, .swap-finding { text-wrap: pretty; }
+h1, h2, h3 { text-wrap: balance; }

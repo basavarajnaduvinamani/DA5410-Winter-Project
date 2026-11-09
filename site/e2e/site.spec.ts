@@ -6,8 +6,8 @@ test.beforeEach(async ({ context }) => authenticatePreview(context));
 const routes = [
   ["/", "Do multimodal models know when they are guessing?"],
   ["/record/", "Small on-device AI models don’t see and hear equally."],
-  ["/explorer/", "An answer is not the whole story."],
-  ["/ablations/", "A reduction is not enough."],
+  ["/explorer/", "Example explorer"],
+  ["/ablations/", "Steering against matched controls"],
   ["/about/", "About CounterPrior"],
 ];
 for (const [route, heading] of routes)
@@ -95,7 +95,7 @@ test("missing pages have a designed recovery", async ({ page }) => {
   const r = await page.goto("/a-path-that-does-not-exist/");
   expect(r?.status()).toBe(404);
   await expect(
-    page.getByRole("heading", { name: "This path has no evidence." }),
+    page.getByRole("heading", { name: "This page does not exist." }),
   ).toBeVisible();
   await expect(
     page.getByRole("link", { name: "Return to the research" }),
@@ -112,7 +112,7 @@ test("internal navigation works on a plain static host", async ({ page }) => {
   await nav.getByRole("link", { name: "Explorer", exact: true }).click();
   await expect(page).toHaveURL(/\/explorer\/$/);
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "An answer is not the whole story.",
+    "Example explorer",
   );
   await nav.getByRole("link", { name: "Ablations", exact: true }).click();
   await expect(page).toHaveURL(/\/ablations\/$/);
