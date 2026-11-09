@@ -1361,3 +1361,12 @@ select {
   .saved-case img { max-height: 160px; }
   .header-inner nav { gap: 12px 20px; flex-wrap: wrap; }
 }
+.swap-heading { font-size: 1rem; margin: 24px 0 4px; }
+.header-inner nav a { display: inline-block; padding: 12px 6px; }
+@media (max-width: 760px) {
+  .header-inner nav { gap: 0 10px; }
+  .header-inner nav a { font-size: 14px; min-height: 44px; display: inline-flex; align-items: center; padding: 0 6px; }
+}
+
+.question-copy p, .swap-finding { text-wrap: pretty; }
+h1, h2, h3 { text-wrap: balance; }

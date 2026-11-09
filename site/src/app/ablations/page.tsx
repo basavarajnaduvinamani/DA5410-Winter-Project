@@ -12,13 +12,13 @@ export default function Ablations() {
   return (
     <div className="wide-page">
       <PageIntro
-        eyebrow="CONTROLS / ALTERNATIVE EXPLANATIONS"
-        title="A reduction is not enough."
+        eyebrow="Controls and alternative explanations"
+        title="Steering against matched controls"
       >
         <p>
-          A useful direction should do more than a matched random vector or
-          shuffled labels. Recognition loss must stay visible beside fewer
-          false-yes answers.
+          A steering direction only counts if it beats a matched random vector
+          and a direction learned from shuffled labels. Each result shows lost
+          recognition next to the drop in false Yes answers.
         </p>
       </PageIntro>
       {research.status === "pending" ? (
@@ -83,7 +83,7 @@ export default function Ablations() {
         <Source path="docs/PROTOCOL.md" />
       </section>
       <section className="paper-section compact">
-        <p className="eyebrow">ARCHITECTURE CHECK</p>
+        <p className="eyebrow">Architecture check</p>
         <h2>A newer model is a separate replication.</h2>
         <p className="mono break-anywhere">{research.modern.model}</p>
         <p>
