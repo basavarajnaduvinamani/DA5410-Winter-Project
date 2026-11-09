@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { formatScore } from "@/lib/format";
 import type { Example } from "@/lib/types";
 
 export function SavedExample({ example }: { example: Example }) {
@@ -16,7 +17,7 @@ export function SavedExample({ example }: { example: Example }) {
           <p className="case-question">{example.question}</p>
           <p className="case-label">Dataset answer: {example.truth === "no" ? "No" : "Yes"}</p>
           <p className="case-answer">Original model answer <strong>{example.baseline}</strong></p>
-          <p className="case-label">Original probe score: {score === null ? "Unavailable" : score > 0 && score < 0.001 ? "< 0.001" : score.toFixed(3)}</p>
+          <p className="case-label">Original probe score: {score === null ? "Unavailable" : formatScore(score)}</p>
           <details className="case-toggle">
             <summary>Show answer with steering</summary>
             <p className="case-answer">Model answer <strong>{example.steered}</strong></p>

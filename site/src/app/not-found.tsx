@@ -2,7 +2,7 @@ import Link from "next/link";
 export default function NotFound() {
   return (
     <div className="not-found narrow-page">
-      <p className="eyebrow">PAGE NOT FOUND</p>
+      <p className="eyebrow">Page not found</p>
       <h1>This path has no evidence.</h1>
       <p>
         The page may have moved, or the address may be incomplete. The research

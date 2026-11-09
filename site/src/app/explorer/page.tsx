@@ -11,7 +11,7 @@ export default function ExplorerPage() {
   return (
     <div className="wide-page">
       <PageIntro
-        eyebrow="INSPECT THE EVIDENCE"
+        eyebrow="Inspect the evidence"
         title="An answer is not the whole story."
       >
         <p>

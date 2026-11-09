@@ -17,24 +17,24 @@ function Heading({ index }: { index: number }) {
 function Forest() {
   const rows = [...gemma, ...qwen];
   const names = ["Gemma sound", "Gemma video", "Qwen sound", "Qwen video"];
-  const x = (v: number) => 150 + v * 450;
+  const x = (v: number) => 160 + v * 400;
   return <figure>
-    <svg viewBox="0 0 320 192" role="img" aria-label="Forest plot of paired AUROC differences. Only the Qwen sound interval excludes zero.">
-      <path d="M150 6V145" stroke="var(--muted)" strokeDasharray="3 3" />
+    <svg viewBox="0 0 320 192" style={{ overflow: "visible" }} role="img" aria-label="Forest plot of paired AUROC differences. Only the Qwen sound interval excludes zero.">
+      <path d="M160 6V145" stroke="var(--muted)" strokeDasharray="3 3" />
       {rows.map((r, i) => {
         const y = 19 + i * 32;
         const color = r.falseYes < 40 ? "var(--muted)" : "var(--accent)";
         return <g key={names[i]} fill={color} stroke={color}>
-          <text x="2" y={y - 7} stroke="none" fontSize="10">{names[i]}{r.falseYes < 40 ? " · underpowered" : ""}</text>
+          <text x="2" y={y - 7} stroke="none" fontSize="10">{names[i]}{r.falseYes < 40 ? ", underpowered" : ""}</text>
           <path d={`M${x(r.ci[0])} ${y}H${x(r.ci[1])} M${x(r.ci[0])} ${y-3}v6 M${x(r.ci[1])} ${y-3}v6`} />
           <circle cx={x(r.delta)} cy={y} r="3" />
         </g>;
       })}
       {[-.25, 0, .25].map(v => <text key={v} x={x(v)} y="163" textAnchor="middle" fontSize="10" fill="currentColor">{v.toFixed(2)}</text>)}
-      <text x="150" y="184" textAnchor="middle" fontSize="11" fill="currentColor">ΔAUROC (probe minus baseline)</text>
+      <text x="160" y="184" textAnchor="middle" fontSize="11" fill="currentColor">ΔAUROC (probe minus baseline)</text>
     </svg>
     <figcaption className="caption">Only Qwen sound clears zero (held-out, n = Yes answers).</figcaption>
-    <ul className="plain-list mono">{rows.map((r,i) => <li key={names[i]}>{names[i]} {signed(r.delta)} {interval(r.ci)} · n={r.yes} · {r.falseYes} false Yes</li>)}</ul>
+    <ul className="plain-list mono">{rows.map((r,i) => <li key={names[i]}>{names[i]} {signed(r.delta)} {interval(r.ci)}, n={r.yes}, {r.falseYes} false Yes</li>)}</ul>
   </figure>;
 }
 
@@ -48,7 +48,8 @@ function Tradeoff() {
       <path d={`M36 12V128H285 M${x(.02)} 12V128`} stroke="var(--muted)" fill="none" strokeDasharray="3 2" />
       {points.map((p, i) => <g key={i} stroke={p.task === "Sound" ? "var(--accent)" : "var(--muted)"}>
         <path d={`M${x(p.cost.estimate)} ${y(p.cut.ci95[0])}V${y(p.cut.ci95[1])}`} />
-        <circle cx={x(p.cost.estimate)} cy={y(p.cut.estimate)} r="3.5" fill="var(--surface)" />
+        <circle cx={x(p.cost.estimate)} cy={y(p.cut.estimate)} r="6" fill="var(--surface)" />
+        <text x={x(p.cost.estimate)} y={y(p.cut.estimate) + 3} textAnchor="middle" fontSize="8" fill="currentColor" stroke="none">{i + 1}</text>
       </g>)}
       <g fontSize="10" fill="currentColor">
         <text x="36" y="10">False-Yes reduction (pp)</text>
@@ -58,8 +59,8 @@ function Tradeoff() {
         <text x="155" y="166" textAnchor="middle">Recall drop (percentage points)</text>
       </g>
     </svg>
-    <figcaption className="caption">The sound probe exceeded the recall cap (held-out, sound n={qwen[0].n}, video n={qwen[1].n}). Lines show 95% CIs for false-Yes reduction.</figcaption>
-    <ul className="plain-list mono">{points.map(p => <li key={p.task+p.name}>{p.task} {p.name.toLowerCase()} · {percentage(p.cut.estimate)} pp cut · {percentage(p.cost.estimate)} pp recall drop</li>)}</ul>
+    <figcaption className="caption">The sound probe exceeded the recall cap (held-out, sound n={qwen[0].n}, video n={qwen[1].n}). Numbered points match the list below; lines show 95% CIs for false-Yes reduction.</figcaption>
+    <ul className="plain-list mono">{points.map((p, i) => <li key={p.task+p.name}>{i + 1}. {p.task} {p.name.toLowerCase()}: {percentage(p.cut.estimate)} pp cut, {percentage(p.cost.estimate)} pp recall drop</li>)}</ul>
   </figure>;
 }
 
@@ -86,12 +87,12 @@ function MirroredRates() {
 
 export default function Home() {
   return <div className="research-layout">
-    <aside className="page-toc" aria-label="On this page"><p className="eyebrow">RESEARCH RECORD</p><nav>
+    <aside className="page-toc" aria-label="On this page"><p className="eyebrow">Research record</p><nav>
       {chapters.map((chapter,i) => <a key={chapter} href={`#chapter-${i+1}`}>{chapter}</a>)}
     </nav></aside>
     <article className="research-article">
       <header className="hero">
-        <p className="eyebrow">COUNTERPRIOR / BASAVARAJ A NADUVINAMANI</p>
+        <p className="eyebrow">CounterPrior, by Basavaraj A Naduvinamani</p>
         <p className="caption">I take small multimodal models apart by muting, swapping and probing what they’re given, to find out what they actually perceive, and I report what didn’t work as carefully as what did.</p>
         <h1>Small on-device AI models don’t see and hear equally.</h1>
         <p className="lead">I measured where they make things up across image, audio and video, and chose not to ship my own detector.</p>
@@ -99,14 +100,14 @@ export default function Home() {
         <div className="tldr"><p>On held-out Qwen2.5-Omni-3B sound questions, a hidden-state probe improved false-Yes detection by ΔAUROC* {signed(qwen[0].delta)} (95% CI* {interval(qwen[0].ci)}), test run once. A probe filter cut false Yes by 12.4 points at a 3.2-point recall cost, above our preset 2-point cap, so it did not ship.</p></div>
       </header>
       <section id="chapter-1" className="paper-section"><Heading index={0} />
-        <p className="eyebrow">LLAVA-1.5 / AI4BHARAT, NOVEMBER 2025–FEBRUARY 2026</p>
+        <p className="eyebrow">LLaVA-1.5 at AI4Bharat, November 2025 to February 2026</p>
         <p>I designed CounterPrior-50 during the internship. The September 2026 release has 50 images, with 18 attribute traps, 18 absence traps and 14 positive controls.</p>
         <p>A later verified POPE* run scored 1,800 held-out questions with accuracy 0.863 [0.840, 0.888]. The hidden-state probe reached 0.719 AUROC versus 0.745 for answer confidence. Steering did not beat the matched controls.</p>
         <p className="endpoint-note">The probe lost, so I kept going.</p>
         <a href={record("results/REPORT_metrics.json")}>POPE results</a>
       </section>
       <section id="chapter-2" className="paper-section"><Heading index={1} />
-        <p className="eyebrow">GEMMA 4 E2B / INDEPENDENT CONTINUATION, NOVEMBER 2026</p>
+        <p className="eyebrow">Gemma 4 E2B, follow-up, November 2026</p>
         <p>Silencing audio shifted the Yes–No score by {e.silence.estimate.toFixed(2)} on average and flipped {e.silenceFlips} of {e.silence.n} answers.</p>
         <SwapDiagram />
         <p className="caption"><em>Exploratory.</em> Video swaps moved sound-question scores {e.soundSwap.estimate.toFixed(2)}× as much as audio swaps [{e.soundSwap.ci95.map(v => v.toFixed(2)).join(", ")}] (calibration and validation, n={e.soundSwap.n}).</p>
@@ -114,7 +115,7 @@ export default function Home() {
         <a href={record("results/v2/gemma-exploratory-summary.json")}>Gemma exploratory results</a>
       </section>
       <section id="chapter-3" className="paper-section"><Heading index={2} />
-        <p className="eyebrow">QWEN2.5-OMNI-3B / INDEPENDENT CONTINUATION, NOVEMBER 2026</p>
+        <p className="eyebrow">Qwen2.5-Omni-3B, follow-up, November 2026</p>
         <p>Qwen’s held-out raw-margin AUROC was {qwen[0].auc.estimate.toFixed(3)} on sound questions and {qwen[1].auc.estimate.toFixed(3)} on video questions.</p>
         <MirroredRates />
         <Forest />
