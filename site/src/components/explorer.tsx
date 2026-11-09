@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { formatScore } from "@/lib/format";
 import type { Example } from "@/lib/types";
 import { filterExamples } from "@/lib/explorer";
 export function Explorer({
@@ -169,8 +170,8 @@ export function Explorer({
                       <i style={{ left: `${example.probeThreshold * 100}%` }} />
                     </div>
                     <p className="mono">
-                      {example.probeScore.toFixed(3)}{" "}
-                      <span>· threshold {example.probeThreshold}</span>
+                      {formatScore(example.probeScore)}{" "}
+                      <span>(threshold {example.probeThreshold})</span>
                     </p>
                   </>
                 )}

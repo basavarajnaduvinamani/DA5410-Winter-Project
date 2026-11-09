@@ -12,7 +12,7 @@ export default function Ablations() {
   return (
     <div className="wide-page">
       <PageIntro
-        eyebrow="CONTROLS / ALTERNATIVE EXPLANATIONS"
+        eyebrow="Controls and alternative explanations"
         title="A reduction is not enough."
       >
         <p>
@@ -83,7 +83,7 @@ export default function Ablations() {
         <Source path="docs/PROTOCOL.md" />
       </section>
       <section className="paper-section compact">
-        <p className="eyebrow">ARCHITECTURE CHECK</p>
+        <p className="eyebrow">Architecture check</p>
         <h2>A newer model is a separate replication.</h2>
         <p className="mono break-anywhere">{research.modern.model}</p>
         <p>
